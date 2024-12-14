@@ -68,7 +68,7 @@ const Footer = () => {
             height={24}
           />
         </Link>
-        <Link href="">
+        <Link href="https://discord.gg/bugV8tzp">
           <Image
             className="hover:scale-110 transition-transform duration-300"
             src="/discord.svg"
