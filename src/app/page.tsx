@@ -1,101 +1,100 @@
+"use client";
+import { useState, FormEvent } from "react";
 import Image from "next/image";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Loading } from "@/components/ui/loading";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const { toast } = useToast();
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (response.ok) {
+        toast({
+          variant: "success",
+          description: "Email saved. Thank you for joining the waitlist!",
+        });
+        setEmail("");
+      } else if (response.status === 409 || response.status === 500) {
+        toast({
+          variant: "destructive",
+          description: "Email already exists in the waitlist.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          description: "Failed to save email. Please try again.",
+        });
+      }
+      /* eslint-disable  @typescript-eslint/no-unused-vars */
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        description: "Failed to save email. Please try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-background flex flex-col justify-center items-center py-10 md:py-[80px] min-h-screen">
+      <div className="flex flex-col max-w-full md:max-w-[766px] items-center text-center">
+        <h1 className="font-bold text-3xl md:text-6xl md:leading-[90px] text-foreground mb-4 md:mb-0">
+          Your AI partner for smarter, faster marketing
+        </h1>
+        <p className="text-primary-foreground text-center font-normal text-base md:text-lg leading-relaxed md:leading-7 max-w-full md:max-w-[732px] px-2 md:px-[21.5px] my-4 md:my-5">
+          Our AI Marketing Assistant analyzes data, predicts trends, and crafts
+          personalized strategies to help your business thrive. Boost
+          engagement, save time, and drive results—all with the power of AI at
+          your fingertips.
+        </p>
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-full md:max-w-[605px] px-4 md:px-0"
+        >
+          <div className="relative flex flex-col md:block items-center space-y-2 md:space-y-0 md:space-x-0">
+            <Input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full md:flex-grow bg-white h-[50px] md:h-[61px] border-0 outline-primary px-4"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+            <Button
+              className="w-full md:w-auto md:absolute md:right-2 md:top-1/2 md:-translate-y-1/2 text-white font-semibold"
+              size="lg"
+              type="submit"
+            >
+              {loading ? (
+                <Loading width="20" height="40" />
+              ) : (
+                "Join our waitlist"
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-[20px] mt-10 md:mt-[80px] w-full max-w-[1200px] px-4">
+        <Image src="/image0.jpg" alt="Reports" width={359} height={294} />
+        <Image src="/image1.jpg" alt="Reports" width={359} height={294} />
+        <Image src="/image2.jpg" alt="Reports" width={359} height={294} />
+      </div>
     </div>
   );
 }
