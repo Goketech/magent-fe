@@ -14,7 +14,6 @@
     "@supabase/ssr": "^0.5.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "cogo-toast": "^4.2.3",
     "lucide-react": "^0.468.0",
     "next": "15.1.0",
     "react": "^19.0.0",
