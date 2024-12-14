@@ -55,7 +55,7 @@ const Navbar = () => {
             </Link>
             
             <Link 
-              href="mailto:modupe775@gmail.com"
+              href="mailto:hellomagent@gmail.com"
               className="text-2xl font-bold text-primary"
               onClick={toggleMenu}
             >

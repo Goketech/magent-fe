@@ -91,9 +91,50 @@ export default function Home() {
         </form>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-[20px] mt-10 md:mt-[80px] w-full max-w-[1200px] px-4">
-        <Image src="/image0.jpg" alt="Reports" width={359} height={294} />
-        <Image src="/image1.jpg" alt="Reports" width={359} height={294} />
-        <Image src="/image2.jpg" alt="Reports" width={359} height={294} />
+        {[
+          {
+            src: "/image0.webp",
+            alt: "Reports",
+            icon: "/report.svg",
+            label: "Reports",
+            bgColor: "bg-[#E0EEC6]",
+            textColor: "text-[#5E6453]",
+          },
+          {
+            src: "/image1.webp",
+            alt: "Analytics",
+            icon: "/analytics.svg",
+            label: "Analytics",
+            bgColor: "bg-[#A5FFD6]",
+            textColor: "text-[#456B5A]",
+          },
+          {
+            src: "/image2.webp",
+            alt: "AI Assistant",
+            icon: "/ai.svg",
+            label: "AI Assistant",
+            bgColor: "bg-[#B5E2FA]",
+            textColor: "text-[#095AD3]",
+          },
+        ].map((item, index) => (
+          <div key={index} className="relative rounded-lg overflow-hidden">
+            {/* Label div */}
+            <div
+              className={`absolute top-2 right-2 bg-white p-2 flex items-center gap-2 rounded-md shadow-sm ${item.bgColor} ${item.textColor}`}
+            >
+              <Image src={item.icon} alt={item.label} width={18} height={18} />
+              <span className="text-sm font-medium">{item.label}</span>
+            </div>
+            {/* Image */}
+            <Image
+              src={item.src}
+              alt={item.alt}
+              width={359}
+              height={294}
+              className="w-full h-[200px] md:h-[300px] object-cover rounded-lg"
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
