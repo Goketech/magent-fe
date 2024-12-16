@@ -120,7 +120,7 @@ export default function Home() {
           <div key={index} className="relative rounded-lg overflow-hidden">
             {/* Label div */}
             <div
-              className={`absolute top-2 right-2 bg-white p-2 flex items-center gap-2 rounded-md shadow-sm ${item.bgColor} ${item.textColor}`}
+              className={`absolute top-2 right-2 p-2 flex items-center gap-2 rounded-md shadow-sm ${item.bgColor} ${item.textColor}`}
             >
               <Image src={item.icon} alt={item.label} width={18} height={18} />
               <span className="text-sm font-medium">{item.label}</span>
