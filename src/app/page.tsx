@@ -11,8 +11,30 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const validateEmail = (email: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!email.trim()) {
+      toast({
+        variant: "destructive",
+        description: "Please enter an email address.",
+      });
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      toast({
+        variant: "destructive",
+        description: "Please enter a valid email address.",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
