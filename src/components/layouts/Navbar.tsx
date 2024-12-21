@@ -13,23 +13,46 @@ const Navbar = () => {
 
   return (
     <nav className="relative">
-      <div className="flex justify-between items-center bg-white px-4 md:px-[80px] py-[24.5px]">
+      <div className="flex justify-between items-center px-4 md:px-[80px] py-[24.5px]">
         {/* Logo */}
         <Link href="/" className="z-50">
-          <h5 className="font-bold text-2xl text-primary">magent</h5>
+          <h5 className="font-bold text-2xl text-primary bg-gradient-border bg-clip-text text-transparent">
+            magent
+          </h5>
         </Link>
+
+        <div className="hidden md:flex gap-[16px] text-white">
+          <Link href="https://discord.gg/bugV8tzp">
+            <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px]  text-white font-[500] text-[14px] leading-[21px]">
+              <span>Discord</span>
+            </Button>
+          </Link>
+          <Link href="https://x.com/hellomagent">
+            <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px]  text-white font-[500] text-[14px] leading-[21px]">
+              <span>X</span>
+            </Button>
+          </Link>
+          <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px]  text-white font-[500] text-[14px] leading-[21px]">
+            <span>Facebook</span>
+          </Button>
+          <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px]">
+            <span>Telegram</span>
+          </Button>
+        </div>
 
         {/* Desktop Contact Button */}
         <div className="hidden md:block">
           <Link href="mailto:modupe775@gmail.com">
-            <Button className="text-white">Contact Sales</Button>
+            <Button className="bg-[#242424] px-[16px] py-[12px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px] border border-white">
+              Contact Sales
+            </Button>
           </Link>
         </div>
 
         {/* Mobile Menu Toggle */}
         <div className="md:hidden z-50">
-          <button 
-            onClick={toggleMenu} 
+          <button
+            onClick={toggleMenu}
             className="focus:outline-none"
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           >
@@ -44,17 +67,36 @@ const Navbar = () => {
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className="fixed inset-0 bg-white z-40 md:hidden">
+        <div className="fixed inset-0 bg-background z-40 md:hidden">
           <div className="flex flex-col items-center justify-center h-full space-y-8">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="text-2xl font-bold text-primary"
               onClick={toggleMenu}
             >
               Home
             </Link>
-            
-            <Link 
+
+            <div className="flex gap-0.5">
+              <Link href="https://discord.gg/bugV8tzp">
+                <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px]  text-white font-[500] text-[14px] leading-[21px]">
+                  <span>Discord</span>
+                </Button>
+              </Link>
+              <Link href="https://x.com/hellomagent">
+                <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px]  text-white font-[500] text-[14px] leading-[21px]">
+                  <span>X</span>
+                </Button>
+              </Link>
+              <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px]  text-white font-[500] text-[14px] leading-[21px]">
+                <span>Facebook</span>
+              </Button>
+              <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px]">
+                <span>Telegram</span>
+              </Button>
+            </div>
+
+            <Link
               href="mailto:hellomagent@gmail.com"
               className="text-2xl font-bold text-primary"
               onClick={toggleMenu}

@@ -1,10 +1,10 @@
 import { supabase } from "../utils/supabase-client";
 
 export async function POST(req: Request) {
-  const { email } = await req.json();
+  const { email, name } = await req.json();
 
   try {
-    const { error } = await supabase.from("waitlist").insert([{ email }]);
+    const { error } = await supabase.from("waitlist").insert([{ email, name }]);
     if (error) {
       console.error("Error saving email to Supabase:", error);
       return new Response("Failed to save email", { status: 500 });
