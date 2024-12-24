@@ -44,7 +44,7 @@ const Page = () => {
     try {
       /* eslint-disable  @typescript-eslint/no-explicit-any */
       const response: any = await fetch(
-        "https://magent-be.onrender.com/api/ai/query",
+        "https://magent-be.vercel.app/api/ai/query",
         {
           method: "POST",
 
