@@ -8,10 +8,14 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "overrides": {
+    "react-is": "^19.0.0-rc-69d4b800-20241021"
+  },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.4",
     "@radix-ui/react-label": "^2.1.1",
     "@radix-ui/react-slot": "^1.1.1",
+    "@radix-ui/react-tabs": "^1.1.2",
     "@radix-ui/react-toast": "^1.2.3",
     "@supabase/ssr": "^0.5.2",
     "class-variance-authority": "^0.7.1",
@@ -22,6 +26,7 @@
     "react-dom": "^19.0.0",
     "react-loader-spinner": "^6.1.6",
     "react-typed": "^2.0.12",
+    "recharts": "^2.15.0",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7"
   },

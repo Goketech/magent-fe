@@ -157,7 +157,7 @@ const Page = () => {
             className="w-full outline-[#D7D7D7] rounded-[6px] resize-none p-2 md:p-5 text-white border-[0.5px] border-[#D7D7D7] bg-[#1D1C1A]"
             placeholder="Ask us..."
           ></textarea>
-          <Button className="w-25 h-25 absolute bottom-5 right-5 bg-[#D7D7D7] rounded-full p-2 flex items-center justify-center">
+          <Button onClick={handleSubmit} className="w-25 h-25 absolute bottom-5 right-5 bg-[#D7D7D7] rounded-full p-2 flex items-center justify-center">
             <MoveRight className="text-white" size={15} />
           </Button>
         </div>
