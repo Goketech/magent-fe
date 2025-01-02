@@ -77,7 +77,7 @@ export default function Home() {
   };
 
   return (
-    <>
+    <div className="max-w-screen-2xl 2xl:mx-auto">
       <div className="min-h-screen flex flex-col md:flex-row gap-[60px] md:gap-0 md:justify-between px-[20px] mt-[40px] md:mt-0 md:px-[80px] items-center">
         <div className="max-w-[581px] text-white ">
           <h1 className="text-[30px] md:text-[60px] font-[800] leading-[38.4px] md:leading-[72px]">
@@ -332,6 +332,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
