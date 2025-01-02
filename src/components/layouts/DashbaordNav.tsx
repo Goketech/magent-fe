@@ -86,12 +86,12 @@ const DashbaordNav = () => {
     const errors: {
       email?: string;
       password?: string;
-      fullName?: string;
+      businessName?: string;
       confirmPassword?: string;
     } = {};
     const { businessName, email, password, confirmPassword } = formData.signup;
 
-    if (!businessName) errors.fullName = "Business name is required";
+    if (!businessName) errors.businessName = "Business name is required";
     if (!email) errors.email = "Email is required";
     else if (!validateEmail(email)) errors.email = "Invalid email format";
 
@@ -327,12 +327,12 @@ const DashbaordNav = () => {
             ) : (
               <form onSubmit={handleSignUp} className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="name-signup">Full Name</Label>
+                  <Label htmlFor="name-signup">Business Name</Label>
                   <Input
                     id="name-signup"
-                    name="fullName"
+                    name="businessName"
                     type="text"
-                    placeholder="Enter your full name"
+                    placeholder="Enter your Business name"
                     value={formData.signup.businessName}
                     onChange={(e) => handleInputChange(e, "signup")}
                     className={`text-white ${
