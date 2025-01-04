@@ -147,7 +147,7 @@ const Page = () => {
           </div>
         )}
 
-        <div className="relative mx-5 md:mx-0  md:w-[600px]">
+        <div className="relative mx-auto lg:mx-0  md:w-[600px] lg:w-[800px]">
           <textarea
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
@@ -161,10 +161,10 @@ const Page = () => {
             <MoveRight className="text-white" size={15} />
           </Button>
         </div>
-        <p className="mx-5 md:mx-0 mt-[24px] mb-[16px] text-white">
+        <p className="mx-auto lg:mx-0 mt-[24px] mb-[16px] text-white">
           Try searching for
         </p>
-        <div className="mx-5 md:mx-0 flex flex-col md:flex-row text-white gap-[8px] md:gap-[16px]">
+        <div className="mx-auto lg:mx-0 flex flex-col lg:flex-row text-white gap-[8px] md:gap-[16px]">
           {[
             "Number of Facebook users in 2024",
             "How to increase Instagram followers",
@@ -179,7 +179,7 @@ const Page = () => {
             </p>
           ))}
         </div>
-        <div className="mt-[16px] mx-5 md:mx-0 flex flex-col md:flex-row text-white gap-[16px]">
+        <div className="mt-[16px] mx-auto lg:mx-0 flex flex-col lg:flex-row text-white gap-[16px]">
           {[
             "Solana adoption rate in 2024",
             "How to increase Twitter engagement",
