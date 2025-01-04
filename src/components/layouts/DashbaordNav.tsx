@@ -140,7 +140,7 @@ const DashbaordNav = () => {
     try {
       setIsLoading(true);
       const response = await fetch(
-        "https://magent-be.onrender.com/auth/login",
+        "https://www.api.hellomagent.com/auth/login",
         {
           method: "POST",
           headers: {
@@ -176,7 +176,7 @@ const DashbaordNav = () => {
     try {
       setIsLoading(true);
       const response = await fetch(
-        "https://magent-be.onrender.com/auth/register",
+        "https://www.api.hellomagent.com/auth/register",
         {
           method: "POST",
           headers: {
