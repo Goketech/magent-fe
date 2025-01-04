@@ -166,9 +166,9 @@ const Page = () => {
         </p>
         <div className="mx-5 md:mx-0 flex flex-col md:flex-row text-white gap-[8px] md:gap-[16px]">
           {[
-            "How many Facebook users are in Nigeria",
-            "Global inflation",
-            "Tiktok users",
+            "Number of Facebook users in 2024",
+            "How to increase Instagram followers",
+            "Top 10 marketing strategies",
           ].map((text, index) => (
             <p
               key={index}
@@ -181,9 +181,9 @@ const Page = () => {
         </div>
         <div className="mt-[16px] mx-5 md:mx-0 flex flex-col md:flex-row text-white gap-[16px]">
           {[
-            "Crypto users in 2024",
-            "Superteam members",
-            "Crypto users in Nigeria",
+            "Solana adoption rate in 2024",
+            "How to increase Twitter engagement",
+            "Online Community building strategies",
           ].map((text, index) => (
             <p
               key={index}
