@@ -27,7 +27,7 @@ const Navbar = () => {
               <span>Discord</span>
             </Button>
           </Link>
-          <Link href="https://x.com/hellomagent">
+          <Link href="https://x.com/magenthq">
             <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px]  text-white font-[500] text-[14px] leading-[21px]">
               <span>X</span>
             </Button>
@@ -82,7 +82,7 @@ const Navbar = () => {
                   <span>Discord</span>
                 </Button>
               </Link>
-              <Link href="https://x.com/hellomagent">
+              <Link href="https://x.com/magenthq">
                 <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px]  text-white font-[500] text-[14px] leading-[21px]">
                   <span>X</span>
                 </Button>
