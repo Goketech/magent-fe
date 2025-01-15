@@ -22,7 +22,7 @@ const Navbar = () => {
         </Link>
 
         <div className="hidden md:flex gap-[16px] text-white">
-          <Link href="https://discord.gg/bugV8tzp">
+          <Link href="https://discord.gg/5yzAZgaJ">
             <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px]  text-white font-[500] text-[14px] leading-[21px]">
               <span>Discord</span>
             </Button>
@@ -77,7 +77,7 @@ const Navbar = () => {
             </Link>
 
             <div className="flex gap-0.5">
-              <Link href="https://discord.gg/bugV8tzp">
+              <Link href="https://discord.gg/5yzAZgaJ">
                 <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px]  text-white font-[500] text-[14px] leading-[21px]">
                   <span>Discord</span>
                 </Button>
