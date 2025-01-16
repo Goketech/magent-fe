@@ -1,6 +1,6 @@
 "use client";
 import { ReactTyped } from "react-typed";
-import { MoveRight, X } from "lucide-react";
+import { MoveRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
