@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 interface SignInData {
   email: string;
@@ -37,6 +38,7 @@ interface ValidationErrors {
 }
 
 const DashbaordNav = () => {
+  const { toast } = useToast();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [active, setActive] = useState("home");
   const [activeTab, setActiveTab] = useState<FormType>("signin");
@@ -160,7 +162,10 @@ const DashbaordNav = () => {
       setIsAuthenticated(true);
       /* eslint-disable  @typescript-eslint/no-explicit-any */
     } catch (err: any) {
-      setError(err.message);
+      toast({
+        variant: "destructive",
+        description: err.message,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -197,7 +202,10 @@ const DashbaordNav = () => {
       setIsAuthenticated(true);
       /* eslint-disable  @typescript-eslint/no-explicit-any */
     } catch (err: any) {
-      setError(err.message);
+      toast({
+        variant: "destructive",
+        description: err.message,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -218,7 +226,10 @@ const DashbaordNav = () => {
       localStorage.removeItem("access_token");
       /* eslint-disable  @typescript-eslint/no-explicit-any */
     } catch (err: any) {
-      setError(err.message);
+      toast({
+        variant: "destructive",
+        description: err.message,
+      });
     }
   };
 

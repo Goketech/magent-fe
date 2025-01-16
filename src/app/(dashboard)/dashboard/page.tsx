@@ -1,11 +1,12 @@
 "use client";
 import { ReactTyped } from "react-typed";
-import { MoveRight } from "lucide-react";
+import { MoveRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import ChatModal from "@/components/layouts/ChatModal";
 
-interface Message {
+export interface Message {
   user: "user" | "magent";
   text: string;
   action: "NONE" | "SEARCH" | "LINK";
@@ -15,7 +16,7 @@ const Page = () => {
   const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
-  /* eslint-disable  @typescript-eslint/no-unused-vars */
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -29,6 +30,8 @@ const Page = () => {
       });
       return;
     }
+
+    setIsModalOpen(true);
 
     // Add user message
     const userMessage: Message = {
@@ -55,6 +58,15 @@ const Page = () => {
           body: JSON.stringify({ input: inputText }),
         }
       );
+
+      if (response.status === 401) {
+        toast({
+          variant: "destructive",
+          description: "Please sign in.",
+        });
+        localStorage.removeItem("access_token");
+        return;
+      }
 
       console.log(response);
 
@@ -109,6 +121,11 @@ const Page = () => {
     setInputText(text);
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setMessages([]);
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div>
@@ -130,23 +147,6 @@ const Page = () => {
           </span>
         </p>
 
-        {messages.length > 0 && (
-          <div className="mx-5 md:mx-0 mb-4 max-h-[300px] overflow-y-auto">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`mb-2 p-3 rounded-lg ${
-                  message.user === "user"
-                    ? "bg-primary/10 ml-auto max-w-[80%]"
-                    : "bg-[#1D1C1A] max-w-[80%]"
-                }`}
-              >
-                <p className="text-white">{message.text}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
         <div className="relative mx-auto lg:mx-0  md:w-[600px] lg:w-[800px]">
           <textarea
             value={inputText}
@@ -157,7 +157,10 @@ const Page = () => {
             className="w-full outline-[#D7D7D7] rounded-[6px] resize-none p-2 md:p-5 text-white border-[0.5px] border-[#D7D7D7] bg-[#1D1C1A]"
             placeholder="Ask us..."
           ></textarea>
-          <Button onClick={handleSubmit} className="w-25 h-25 absolute bottom-5 right-5 bg-[#D7D7D7] rounded-full p-2 flex items-center justify-center">
+          <Button
+            onClick={handleSubmit}
+            className="w-25 h-25 absolute bottom-5 right-5 bg-[#D7D7D7] rounded-full p-2 flex items-center justify-center"
+          >
             <MoveRight className="text-white" size={15} />
           </Button>
         </div>
@@ -194,6 +197,12 @@ const Page = () => {
             </p>
           ))}
         </div>
+        <ChatModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          messages={messages}
+          isLoading={isLoading}
+        />
       </div>
     </div>
   );
