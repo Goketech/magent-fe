@@ -32,9 +32,19 @@ const Navbar = () => {
               <span>X</span>
             </Button>
           </Link>
-          <Link href="https://t.me/hellomagent_bot">
+          {/* <Link href="https://t.me/hellomagent_bot">
             <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px]">
               <span>Telegram</span>
+            </Button>
+          </Link> */}
+          <Link href="https://www.instagram.com/magenthq/">
+            <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px]">
+              <span>Instagram</span>
+            </Button>
+          </Link>
+          <Link href="https://www.linkedin.com/company/magenthq">
+            <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px]">
+              <span>Linkedin</span>
             </Button>
           </Link>
         </div>
@@ -87,9 +97,19 @@ const Navbar = () => {
                   <span>X</span>
                 </Button>
               </Link>
-              <Link href="https://t.me/hellomagent_bot">
+              {/* <Link href="https://t.me/hellomagent_bot">
                 <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px]">
                   <span>Telegram</span>
+                </Button>
+              </Link> */}
+              <Link href="https://www.instagram.com/magenthq/">
+                <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px]">
+                  <span>Instagram</span>
+                </Button>
+              </Link>
+              <Link href="https://www.linkedin.com/company/magenthq">
+                <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px]">
+                  <span>Linkedin</span>
                 </Button>
               </Link>
             </div>
