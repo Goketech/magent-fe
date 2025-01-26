@@ -3,6 +3,7 @@ import { Public_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import "../globals.css";
 import DashbaordNav from "@/components/layouts/DashbaordNav";
+import SideNav from "@/components/layouts/SideNav";
 
 const pulicSans = Public_Sans({
   variable: "--font-public-sans",
@@ -27,7 +28,7 @@ export default function RootLayout({
       <body
         className={`${pulicSans.className} antialiased`}
       >
-        <DashbaordNav />
+        <SideNav />
         {children}
         <Toaster />
       </body>
