@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Public_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import "../globals.css";
-import DashbaordNav from "@/components/layouts/DashbaordNav";
 import SideNav from "@/components/layouts/SideNav";
 
 const pulicSans = Public_Sans({
