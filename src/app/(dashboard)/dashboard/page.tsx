@@ -15,9 +15,10 @@ const page = () => {
   const handleTwitterLogin = () => {
     const { url, state } = twitterAuth.getAuthUrl();
     // Store state in session/cookies to verify later
-    sessionStorage.setItem("twitter_oauth_state", state);
+    localStorage.setItem("twitter_oauth_state", state);
     // Redirect user to Twitter auth page
     window.location.href = url;
+    console.log(state);
   };
 
   return (

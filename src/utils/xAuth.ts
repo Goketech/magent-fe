@@ -36,10 +36,11 @@ export class TwitterAuth {
   // Generate the authorization URL
   public getAuthUrl(): { url: string; state: string } {
     const state = randomBytes(16).toString('hex');
-    const codeVerifier = this.generateCodeVerifier();
-    const codeChallenge = this.generateCodeChallenge(codeVerifier);
+    this.codeVerifier = this.generateCodeVerifier();
+    const codeChallenge = this.generateCodeChallenge(this.codeVerifier);
 
-    sessionStorage.setItem('twitter_code_verifier', codeVerifier);
+    localStorage.setItem("twitter_oauth_state", state);
+    localStorage.setItem("twitter_code_verifier", this.codeVerifier);
 
     const params = new URLSearchParams({
       response_type: 'code',
@@ -63,9 +64,9 @@ export class TwitterAuth {
     refresh_token?: string;
     expires_in: number;
   }> {
-    const codeVerifier = sessionStorage.getItem('twitter_code_verifier')!;
+    const codeVerifier = localStorage.getItem("twitter_code_verifier") || this.codeVerifier;
     if (!codeVerifier) {
-        console.log(codeVerifier);
+        console.log(this.codeVerifier);
       throw new Error('Code verifier not found. Please generate an auth URL first.');
     }
 
@@ -74,7 +75,7 @@ export class TwitterAuth {
       grant_type: 'authorization_code',
       client_id: this.config.clientId,
       redirect_uri: this.config.redirectUri,
-      code_verifier: codeVerifier
+      code_verifier: this.codeVerifier!
     });
 
     const headers: HeadersInit = {

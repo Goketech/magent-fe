@@ -24,7 +24,10 @@ function CallbackHandler() {
       const code = searchParams.get("code");
 
       // Verify state matches what we stored
-      const savedState = sessionStorage.getItem("twitter_oauth_state");
+      const savedState = localStorage.getItem("twitter_oauth_state");
+      console.log(savedState);
+      console.log(state);
+      console.log(code);
       if (!state || !code || state !== savedState) {
         console.error("Invalid state or code");
         return;
@@ -35,8 +38,8 @@ function CallbackHandler() {
         localStorage.setItem("twitter_access_token", tokens.access_token);
         
         // Clean up session storage
-        sessionStorage.removeItem("twitter_oauth_state");
-        sessionStorage.removeItem("twitter_code_verifier");
+        localStorage.removeItem("twitter_oauth_state");
+        localStorage.removeItem("twitter_code_verifier");
         
         router.push("/dashboard");
       } catch (error) {
