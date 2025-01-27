@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { twitterAuth } from "@/utils/xAuth";
+import { Suspense } from 'react'
 
 export default function AuthCallback() {
 
@@ -41,5 +42,7 @@ export default function AuthCallback() {
     handleCallback();
   }, []);
 
-  return <div>Processing authentication...</div>;
+  return <Suspense>
+    <div>Processing authentication...</div>
+  </Suspense>;
 }
