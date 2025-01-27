@@ -9,7 +9,6 @@ interface TwitterAuthConfig {
 
 export class TwitterAuth {
   private config: TwitterAuthConfig;
-  private codeVerifier: string | null = null;
   
   constructor(config: TwitterAuthConfig) {
     this.config = config;
@@ -34,13 +33,10 @@ export class TwitterAuth {
   }
 
   // Generate the authorization URL
-  public getAuthUrl(): { url: string; state: string } {
+  public getAuthUrl(): { url: string; state: string, codeVerifier: string } {
     const state = randomBytes(16).toString('hex');
-    this.codeVerifier = this.generateCodeVerifier();
-    const codeChallenge = this.generateCodeChallenge(this.codeVerifier);
-
-    localStorage.setItem("twitter_oauth_state", state);
-    localStorage.setItem("twitter_code_verifier", this.codeVerifier);
+    const codeVerifier = this.generateCodeVerifier();
+    const codeChallenge = this.generateCodeChallenge(codeVerifier);
 
     const params = new URLSearchParams({
       response_type: 'code',
@@ -54,19 +50,19 @@ export class TwitterAuth {
 
     return {
       url: `https://x.com/i/oauth2/authorize?${params.toString()}`,
-      state
+      state,
+      codeVerifier,
     };
   }
 
   // Exchange authorization code for tokens
-  public async getAccessToken(code: string): Promise<{
+  public async getAccessToken(code: string, codeVerifier: string): Promise<{
     access_token: string;
     refresh_token?: string;
     expires_in: number;
   }> {
-    const codeVerifier = localStorage.getItem("twitter_code_verifier") || this.codeVerifier;
     if (!codeVerifier) {
-        console.log(this.codeVerifier);
+        console.log(codeVerifier);
       throw new Error('Code verifier not found. Please generate an auth URL first.');
     }
 
@@ -75,7 +71,7 @@ export class TwitterAuth {
       grant_type: 'authorization_code',
       client_id: this.config.clientId,
       redirect_uri: this.config.redirectUri,
-      code_verifier: this.codeVerifier!
+      code_verifier: codeVerifier
     });
 
     const headers: HeadersInit = {
@@ -89,12 +85,15 @@ export class TwitterAuth {
       ).toString('base64');
       headers['Authorization'] = `Basic ${basicAuth}`;
     }
+    console.log(params.toString());
 
     const response = await fetch('https://api.x.com/2/oauth2/token', {
       method: 'POST',
       headers,
       body: params.toString(),
     });
+
+    console.log(response);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -170,9 +169,9 @@ export class TwitterAuth {
 }
 
 export const twitterAuth = new TwitterAuth({
-    clientId: process.env.NEXT_PUBLIC_TWITTER_CLIENT_ID!,
-    clientSecret: process.env.NEXT_PUBLIC_TWITTER_CLIENT_SECRET,
-    redirectUri: process.env.NEXT_PUBLIC_REDIRECT_URL!,
+    clientId: process.env.TWITTER_CLIENT_ID!,
+    clientSecret: process.env.TWITTER_CLIENT_SECRET,
+    redirectUri: process.env.REDIRECT_URL!,
     scopes: [
       "tweet.read",
       "tweet.write",
