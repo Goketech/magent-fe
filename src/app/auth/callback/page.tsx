@@ -1,7 +1,6 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { twitterAuth } from "@/utils/xAuth";
 import { Suspense } from "react";
 
 // Loading component

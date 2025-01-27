@@ -9,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { twitterAuth } from "@/utils/xAuth";
 
 const page = () => {
   const handleTwitterLogin = async () => {
