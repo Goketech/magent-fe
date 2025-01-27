@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -8,8 +9,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { twitterAuth } from "@/utils/xAuth";
 
 const page = () => {
+  const handleTwitterLogin = () => {
+    const { url, state } = twitterAuth.getAuthUrl();
+    // Store state in session/cookies to verify later
+    sessionStorage.setItem("twitter_oauth_state", state);
+    // Redirect user to Twitter auth page
+    window.location.href = url;
+  };
+
   return (
     <div className="ml-[201px] flex mt-[86px] justify-center">
       <div>
@@ -18,7 +28,7 @@ const page = () => {
         </h2>
         <div className="mt-[36px] bg-[#F6F6F6] rounded-[4px] px-[20px] py-[12px] w-[438px] flex justify-between items-center">
           <p>Connect your X account</p>
-          <Button variant="light">Connect</Button>
+          <Button onClick={handleTwitterLogin} variant="light">Connect</Button>
         </div>
         <div>
           <div>
