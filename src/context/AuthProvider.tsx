@@ -1,3 +1,4 @@
+"use client"
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import bs58 from "bs58";
