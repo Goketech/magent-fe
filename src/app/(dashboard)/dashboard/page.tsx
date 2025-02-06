@@ -1,4 +1,6 @@
 "use client";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,7 +12,50 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+interface TwitterProfile {
+  profile_image_url: string;
+  name: string;
+  username: string;
+}
+
 const page = () => {
+  const [profile, setProfile] = useState<TwitterProfile | null>(null);
+  async function fetchTwitterProfile(): Promise<TwitterProfile | null> {
+    try {
+      const accessToken = localStorage.getItem("twitter_access_token");
+
+      if (!accessToken) {
+        throw new Error("No access token found");
+      }
+
+      const response = await fetch("/api/auth/twitter/me", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch user profile");
+      }
+
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      console.error("Error fetching Twitter profile:", error);
+      return null;
+    }
+  }
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const profile = await fetchTwitterProfile();
+      setProfile(profile);
+      console.log(profile);
+    };
+
+    fetchProfile();
+  }, []);
+
   const handleTwitterLogin = async () => {
     try {
       const response = await fetch("/api/auth/twitter/login", {
@@ -33,6 +78,32 @@ const page = () => {
     }
   };
 
+  const handleDisconnectTwitter = async () => {
+    try {
+      // const accessToken = localStorage.getItem("twitter_access_token");
+
+      // if (!accessToken) {
+      //   throw new Error("No access token found");
+      // }
+
+      // const response = await fetch("/api/auth/twitter/logout", {
+      //   method: "POST",
+      //   headers: {
+      //     Authorization: `Bearer ${accessToken}`,
+      //   },
+      // });
+
+      // if (!response.ok) {
+      //   throw new Error("Failed to disconnect Twitter");
+      // }
+
+      localStorage.removeItem("twitter_access_token");
+      setProfile(null);
+    } catch (error) {
+      console.error("Error disconnecting Twitter:", error);
+    }
+  }
+
   return (
     <div className="ml-[201px] flex mt-[86px] justify-center">
       <div>
@@ -40,10 +111,33 @@ const page = () => {
           Generate content
         </h2>
         <div className="mt-[36px] bg-[#F6F6F6] rounded-[4px] px-[20px] py-[12px] w-[438px] flex justify-between items-center">
-          <p>Connect your X account</p>
-          <Button onClick={handleTwitterLogin} variant="light">
-            Connect
-          </Button>
+          {!profile ? (
+            <>
+              <p>Connect your X account</p>
+              <Button onClick={handleTwitterLogin} variant="light">
+                Connect
+              </Button>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-[12px]">
+                <Image
+                  src={profile.profile_image_url}
+                  alt="Profile image"
+                  width={40}
+                  height={40}
+                  className="rounded-full"
+                />
+                <div>
+                  <p className="text-[16px] text-[#212221] font-medium leading-[24px]">{profile.name}</p>
+                  <p className="text-[#6A6B6A] text-[14px] leading-[21px]">@{profile.username}</p>
+                </div>
+              </div>
+              <Button onClick={handleTwitterLogin} variant="danger">
+                Disconnect
+              </Button>
+            </>
+          )}
         </div>
         <div>
           <div>

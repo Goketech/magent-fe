@@ -10,6 +10,17 @@ import {
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "../ui/button";
+import { CustomWalletButton } from "../CustomWalletButton";
+
+const customLabels = {
+  'change-wallet': 'Change wallet',
+  connecting: 'Connecting ...',
+  'copy-address': 'Copy address',
+  copied: 'Copied',
+  disconnect: 'Disconnect',
+  'has-wallet': 'Connect',
+  'no-wallet': 'Connect Wallet', // Changed from 'Select Wallet' to 'Connect Wallet'
+};
 
 const SideNav = () => {
   const [activeNav, setActiveNav] = useState("Research"); // Track the active nav item
@@ -70,9 +81,10 @@ const SideNav = () => {
         </div>
       </div>
       <div className="mt-auto">
-        <Button className="w-full" variant="main">
+        {/* <Button className="w-full" variant="main">
           Connect wallet
-        </Button>
+        </Button> */}
+        <CustomWalletButton/>
       </div>
     </div>
   );

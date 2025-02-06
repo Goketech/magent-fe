@@ -11,6 +11,7 @@ const buttonVariants = cva(
       variant: {
         main: "bg-[#330065] text-white shadow hover:bg-[#330065]/90 hover:text-[#6A6B6A]",
         light: "bg-white text-[#330065] border border-[#330065] hover:bg-[#F2F2F2] hover:text-[#330065]",
+        danger: "bg-white text-[#D42620] border border-[#D42620] hover:bg-[#F2F2F2] hover:text-[#D42620]",
         default:
           "bg-primary text-primary-foreground shadow hover:bg-primary/90 hover:text-primary-foreground",
         destructive:
