@@ -2,9 +2,9 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
 interface StepData {
-    socialMediaAccount: string;
-    topic: string;
-    minFrequency: string;
+  socialMediaAccount: string;
+  topic: string;
+  minFrequency: string;
   maxFrequency: string;
   duration: string;
   postStyle: string;
@@ -12,32 +12,32 @@ interface StepData {
 }
 
 interface StepContextType {
-    stepData: StepData;
-    updateStepData: (newData: Partial<StepData>) => void;
-  }
+  stepData: StepData;
+  updateStepData: (newData: Partial<StepData>) => void;
+}
 
 const StepContext = createContext<StepContextType | undefined>(undefined);
 
-  export const StepProvider = ({ children }: { children: ReactNode }) => {
-    const [stepData, setStepData] = useState<StepData>({
-        socialMediaAccount: "",
-        topic: "",
-        minFrequency: "",
-        maxFrequency: "",
-        duration: "",
-        postStyle: "",
-        commentStyle: "",
-    });
+export const StepProvider = ({ children }: { children: ReactNode }) => {
+  const [stepData, setStepData] = useState<StepData>({
+    socialMediaAccount: "",
+    topic: "",
+    minFrequency: "",
+    maxFrequency: "",
+    duration: "",
+    postStyle: "",
+    commentStyle: "",
+  });
 
-    const updateStepData = (newData: Partial<StepData>) => {
-        setStepData({ ...stepData, ...newData });
-    };
+  const updateStepData = (newData: Partial<StepData>) => {
+    setStepData({ ...stepData, ...newData });
+  };
 
-    return (
-         <StepContext.Provider value={{ stepData, updateStepData }}>
-            {children}
-        </StepContext.Provider>
-    );
+  return (
+    <StepContext.Provider value={{ stepData, updateStepData }}>
+      {children}
+    </StepContext.Provider>
+  );
 };
 
 export const useStepContext = () => {

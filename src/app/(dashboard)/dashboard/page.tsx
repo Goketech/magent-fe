@@ -6,8 +6,6 @@
 // import { useToast } from "@/hooks/use-toast";
 // import ChatModal from "@/components/layouts/ChatModal";
 
-
-
 // const Page = () => {
 //   const { toast } = useToast();
 //   const [messages, setMessages] = useState<Message[]>([]);
@@ -206,12 +204,12 @@
 
 // export default Page;
 
-"use client"
-import React, { useState} from 'react'
-import SideBar from '@/components/layouts/SideBar';
-import DashboardContent from '@/components/layouts/DashboardContent';
-import { SidebarItem } from '@/components/layouts/SidebarItem';
-import Content from '@/components/layouts/Content';
+"use client";
+import React, { useState } from "react";
+import SideBar from "@/components/layouts/SideBar";
+import DashboardContent from "@/components/layouts/DashboardContent";
+import { SidebarItem } from "@/components/layouts/SidebarItem";
+import Content from "@/components/layouts/Content";
 
 export interface Message {
   user: "user" | "magent";
@@ -220,26 +218,49 @@ export interface Message {
 }
 
 const Page: React.FC = () => {
-
   const [active, setActive] = useState<string>("content");
 
   const sidebarItems: SidebarItem[] = [
-    { id: "research", label: "Research", icon: "/research.svg", component: Content  },
+    {
+      id: "research",
+      label: "Research",
+      icon: "/research.svg",
+      component: Content,
+    },
     { id: "ads", label: "Ads", icon: "/ads.svg", component: Content },
-    { id: "content", label: "Content", icon: "/flashon.svg", component: Content },
-    { id: "library", label: "Library", icon: "/bookmarks.svg", component: Content },
-    { id: "settings", label: "Settings", icon: "/setting.svg", component: Content },
+    {
+      id: "content",
+      label: "Content",
+      icon: "/flashon.svg",
+      component: Content,
+    },
+    {
+      id: "library",
+      label: "Library",
+      icon: "/bookmarks.svg",
+      component: Content,
+    },
+    {
+      id: "settings",
+      label: "Settings",
+      icon: "/setting.svg",
+      component: Content,
+    },
     { id: "logout", label: "Logout", icon: "/logout.svg", component: Content },
   ];
 
   return (
-    <div className='flex justify-center min-h-screen bg-[#F2F2F2] w-full relative'>
-          <SideBar sidebarItems={sidebarItems} active={active} setActive={setActive} />
-          <div className='w-full m-3'>
-          <DashboardContent sidebarItems={sidebarItems}  active={active} />
-          </div>
+    <div className="flex justify-center min-h-screen bg-[#F2F2F2] w-full relative">
+      <SideBar
+        sidebarItems={sidebarItems}
+        active={active}
+        setActive={setActive}
+      />
+      <div className="w-full m-3">
+        <DashboardContent sidebarItems={sidebarItems} active={active} />
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Page
+export default Page;
