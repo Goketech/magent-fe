@@ -211,11 +211,11 @@ import DashboardContent from "@/components/layouts/DashboardContent";
 import { SidebarItem } from "@/components/layouts/SidebarItem";
 import Content from "@/components/layouts/Content";
 
-export interface Message {
-  user: "user" | "magent";
-  text: string;
-  action: "NONE" | "SEARCH" | "LINK";
-}
+// interface TwitterProfile {
+//   profile_image_url: string;
+//   name: string;
+//   username: string;
+// }
 
 const Page: React.FC = () => {
   const [active, setActive] = useState<string>("content");

@@ -411,7 +411,7 @@ function Content() {
                       onClick={handleGenerateClick}
                       disabled={!allStepsCompleted() || loading || isGenerateCompleted}
                       className={`rounded-[32px] px-4 py-2 text-sm font-semibold transition ${
-                        isStepCompleted(currentStep) && !isGenerateCompleted
+                        isStepCompleted(currentStep) && !isGenerateCompleted 
                           ? "bg-[#330065] text-white hover:opacity-90"
                           : "bg-[#D7D7D7] text-white cursor-not-allowed"
                       }`}

@@ -1,7 +1,7 @@
 import React from "react";
 import { X, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Message } from "../../app/(dashboard)/dashboard/page";
+import { Message } from "../../app/(dashboard)/try/page";
 
 interface ChatModalProps {
   isOpen: boolean;
