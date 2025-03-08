@@ -25,9 +25,6 @@ function CallbackHandler() {
       // Verify state matches what we stored
       const savedState = localStorage.getItem("twitter_oauth_state");
       const codeVerifier = localStorage.getItem("twitter_code_verifier");
-      console.log(savedState);
-      console.log(state);
-      console.log(code);
       if (!state || !code || state !== savedState) {
         console.error("Invalid state or code");
         return;

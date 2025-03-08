@@ -28,7 +28,7 @@ const SideNav = () => {
   const navItems = [
     { id: "Research", label: "Research", icon: <MdManageSearch size={20} /> },
     { id: "Advert", label: "Advert", icon: <MdAdsClick size={20} /> },
-    { id: "Thread", label: "Thread", icon: <MdFlashOn size={20} /> },
+    { id: "Content", label: "Content", icon: <MdFlashOn size={20} /> },
     { id: "Library", label: "Library", icon: <MdBookmark size={20} /> },
   ];
 

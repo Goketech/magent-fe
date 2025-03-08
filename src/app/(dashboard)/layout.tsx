@@ -1,37 +1,36 @@
-import type { Metadata } from "next";
+"use client";
+import { useEffect } from "react";
 import { Public_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import "../globals.css";
-import { StepProvider } from "@/context/StepContext";
-import DashbaordNav from "@/components/layouts/DashbaordNav";
+import SideNav from "@/components/layouts/SideNav";
+import { useAuth } from "@/context/AuthProvider";
 
 const pulicSans = Public_Sans({
   variable: "--font-public-sans",
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Magent",
-  icons: {
-    icon: "/MagentIcon.svg",
-  },
-  description: "Your AI partner for smarter, faster marketing",
-};
-
-export default function RootLayout({
+export default function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { jwt, connected, authenticate } = useAuth();
+
+  useEffect(() => {
+    if (!jwt && connected) {
+      authenticate(); // Try to authenticate if connected but no JWT
+    }
+  }, [jwt, connected, authenticate]);
+
   return (
-    <html lang="en">
-      <body className={`${pulicSans.className} antialiased`}>
-        <DashbaordNav />
-        <StepProvider>
-          {children}
-          <Toaster />
-        </StepProvider>
-      </body>
-    </html>
+    <div className={`${pulicSans.className} antialiased`}>
+      <SideNav />
+      <div className="flex-1">
+        {children}
+        <Toaster />
+      </div>
+    </div>
   );
 }

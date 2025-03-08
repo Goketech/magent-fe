@@ -1,12 +1,22 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Preview from "./Preview";
 import Image from "next/image";
 import { useStepContext } from "@/context/StepContext";
 import { Loading } from "../ui/loading";
 import PopUp from "./PopUp";
+import { useAuth } from "@/context/AuthProvider";
+import { useToast } from "@/hooks/use-toast";
+
+interface TwitterProfile {
+  profile_image_url: string;
+  name: string;
+  username: string;
+}
 
 function Content() {
+  const { toast } = useToast();
+  const { jwt, connected, authenticate } = useAuth();
   const [showFirstScreen, setShowFirstScreen] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -15,6 +25,207 @@ function Content() {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [isGenerateCompleted, setIsGenerateCompleted] = useState(false);
   const { stepData, updateStepData } = useStepContext();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const profile = await fetchTwitterProfile();
+      updateStepData({
+        socialMediaAccount: {
+          name: profile!.name,
+          userName: profile!.username,
+          profilePicture: profile!.profile_image_url,
+        },
+      });
+    };
+
+    fetchProfile();
+  }, []);
+
+  const handleTwitterLogin = async () => {
+    try {
+      const response = await fetch("/api/auth/twitter/login", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Unable to authenticate with Twitter");
+      }
+
+      const data = await response.json();
+      localStorage.setItem("twitter_oauth_state", data.state);
+      localStorage.setItem("twitter_code_verifier", data.codeVerifier);
+      window.location.href = data.url;
+    } catch (error) {
+      console.error("Auth error:", error);
+    }
+  };
+
+  const handleDisconnectTwitter = async () => {
+    try {
+      // const accessToken = localStorage.getItem("twitter_access_token");
+
+      // if (!accessToken) {
+      //   throw new Error("No access token found");
+      // }
+
+      // const response = await fetch("/api/auth/twitter/logout", {
+      //   method: "POST",
+      //   headers: {
+      //     Authorization: `Bearer ${accessToken}`,
+      //   },
+      // });
+
+      // if (!response.ok) {
+      //   throw new Error("Failed to disconnect Twitter");
+      // }
+
+      localStorage.removeItem("twitter_access_token");
+      updateStepData({
+        socialMediaAccount: {
+          name: "",
+          userName: "",
+          profilePicture: "",
+        },
+      });
+    } catch (error) {
+      console.error("Error disconnecting Twitter:", error);
+    }
+  };
+
+  async function fetchTwitterProfile(): Promise<TwitterProfile | null> {
+    try {
+      const accessToken = localStorage.getItem("twitter_access_token");
+
+      if (!accessToken) {
+        throw new Error("No access token found");
+      }
+
+      const response = await fetch("/api/auth/twitter/me", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch user profile");
+      }
+
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      console.error("Error fetching Twitter profile:", error);
+      return null;
+    }
+  }
+
+  const generateSampleTweet = async () => {
+    // if (!jwt) {
+    //   toast({
+    //     variant: "destructive",
+    //     description: "Please connect your wallet",
+    //   });
+    //   return;
+    // }
+
+    console.log("Sample tweet called")
+
+    try {
+      const response = await fetch(
+        "https://www.api.hellomagent.com/twitter/sample-post",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            topic: stepData.topic,
+            firstStyle: stepData.postStyle,
+            secondStyle: stepData.commentStyle,
+          }),
+        }
+      );
+
+      console.log(response, 'response from sample tweet');
+
+      if (!response.ok) {
+        toast({
+          variant: "destructive",
+          description: "Failed to generate sample post. Please try again.",
+        });
+        return;
+      }
+
+      const data = await response.json();
+      console.log(data);
+      updateStepData({ samplePost: data.data });
+      toast({
+        variant: "success",
+        description: "Tweet Scheduled successfully",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "Failed to schedule tweets. Please try again.",
+      });
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const scheduleTweet = async () => {
+    if (!jwt) {
+      toast({
+        variant: "destructive",
+        description: "Please connect your wallet",
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "https://www.api.hellomagent.com/twitter/schedule-post",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        toast({
+          variant: "destructive",
+          description: "Failed to schedule tweets. Please try again.",
+        });
+        return;
+      }
+
+      const instantResponse = await fetch("/api/auth/twitter/post-tweet", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: jwt, text: stepData.samplePost }),
+      });
+
+      const data = await response.json();
+      toast({
+        variant: "success",
+        description: "Tweet Scheduled successfully",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "Failed to schedule tweets. Please try again.",
+      });
+      console.error("Error fetching data:", error);
+    }
+  };
 
   const handleStartClick = () => {
     setShowFirstScreen(false);
@@ -51,13 +262,18 @@ function Content() {
 
     setTimeout(() => {
       updateStepData({
-        socialMediaAccount: "",
+        socialMediaAccount: {
+          name: "",
+          userName: "",
+          profilePicture: "",
+        },
         topic: "",
         minFrequency: "",
         maxFrequency: "",
         duration: "",
         postStyle: "",
         commentStyle: "",
+        samplePost: "",
       });
 
       setCurrentStep(1);
@@ -75,9 +291,11 @@ function Content() {
 
   const handleGenerateClick = () => {
     setButtonClicked(true);
-    if (loading) return; 
+    if (loading) return;
     if (!allStepsCompleted()) return;
     setLoading(true);
+    generateSampleTweet();
+    console.log("THIS WAS CALLED")
     setTimeout(() => {
       setIsGenerateCompleted(true);
       setLoading(false);
@@ -171,26 +389,34 @@ function Content() {
                       Connect your social media account
                     </h2>
                     <div className="border p-4 flex justify-between items-center mt-4 bg-[#F6F6F6] rounded-[4px]">
-                      {stepData.socialMediaAccount ? (
+                      {stepData.socialMediaAccount.name ? (
                         <>
                           <div className="flex gap-3 items-center">
                             <Image
-                              src="/profile.svg"
+                              src={stepData.socialMediaAccount.profilePicture}
                               alt="twitter"
                               width={40}
                               height={40}
                             />
                             <div>
                               <p className="text-[#212221] text-base font-medium">
-                                naeche
+                                {stepData.socialMediaAccount.name}
                               </p>
-                              <p className="text-[#6A6B6A] text-sm">@22naee</p>
+                              <p className="text-[#6A6B6A] text-sm">
+                                @{stepData.socialMediaAccount.userName}
+                              </p>
                             </div>
                           </div>
                           <button
                             className="text-red-500 hover:text-red-600 transition"
                             onClick={() =>
-                              updateStepData({ socialMediaAccount: "" })
+                              updateStepData({
+                                socialMediaAccount: {
+                                  name: "",
+                                  userName: "",
+                                  profilePicture: "",
+                                },
+                              })
                             }
                           >
                             Disconnect
@@ -210,9 +436,7 @@ function Content() {
                           </span>
                           <button
                             className="text-[#330065] text-sm hover:text-[#220044] transition"
-                            onClick={() => {
-                              updateStepData({ socialMediaAccount: "twitter" });
-                            }}
+                            onClick={handleTwitterLogin}
                           >
                             Connect
                           </button>
@@ -409,9 +633,11 @@ function Content() {
                   {currentStep === 5 ? (
                     <button
                       onClick={handleGenerateClick}
-                      disabled={!allStepsCompleted() || loading || isGenerateCompleted}
+                      disabled={
+                        !allStepsCompleted() || loading || isGenerateCompleted
+                      }
                       className={`rounded-[32px] px-4 py-2 text-sm font-semibold transition ${
-                        isStepCompleted(currentStep) && !isGenerateCompleted 
+                        isStepCompleted(currentStep) && !isGenerateCompleted
                           ? "bg-[#330065] text-white hover:opacity-90"
                           : "bg-[#D7D7D7] text-white cursor-not-allowed"
                       }`}
@@ -449,7 +675,9 @@ function Content() {
           buttonClicked={buttonClicked}
           handlePublish={handlePublish}
         />
-        {showSuccessPopup && <PopUp closePopup={closePopup} handleTryAgain={handleTryAgain} />}
+        {showSuccessPopup && (
+          <PopUp closePopup={closePopup} handleTryAgain={handleTryAgain} />
+        )}
       </div>
     </div>
   );

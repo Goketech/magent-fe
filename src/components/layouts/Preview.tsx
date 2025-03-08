@@ -1,6 +1,8 @@
+"use client";
 import { Bookmark, Heart, MessageSquare, Repeat2 } from "lucide-react";
 import Image from "next/image";
 import React from "react";
+import { useStepContext } from "@/context/StepContext";
 
 type PreviewProps = {
   isStepCompleted: (step: number) => boolean;
@@ -37,15 +39,16 @@ const Preview: React.FC<PreviewProps> = ({
   handlePublish,
 }) => {
   const paragraphs = splitParagraph(text);
+  const { stepData } = useStepContext();
 
   return (
     <div className="w-[501px] h-full p-5 bg-[#F9F9F9]">
       <h1 className="text-[18px] text-[#212221] font-semibold">Preview</h1>
       <div className="my-6 w-[435px] h-auto bg-white rounded-[6px] px-3 py-5 border flex gap-4 items-start">
         <div className="flex items-center justify-center w-full">
-          {isStepCompleted(1) ? (
+          {stepData.socialMediaAccount.profilePicture ? (
             <Image
-              src="/profile.svg"
+              src={stepData.socialMediaAccount.profilePicture}
               alt="preview"
               width={50}
               height={50}
@@ -60,9 +63,13 @@ const Preview: React.FC<PreviewProps> = ({
             {isStepCompleted(1) ? (
               <div>
                 <span className="text-[#212221] text-base font-medium mr-2">
-                  naeche
+                  {stepData.socialMediaAccount.name}
                 </span>
-                <span className="text-[#6A6B6A] text-sm">@22naee</span>
+                <span className="text-[#6A6B6A] text-sm">
+                  {" "}
+                  {stepData.socialMediaAccount.userName &&
+                    `@${stepData.socialMediaAccount.userName}`}
+                </span>
               </div>
             ) : (
               <div className="w-[76px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
