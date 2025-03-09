@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { useStepContext } from "@/context/StepContext";
 
 // Loading component
 function LoadingState() {
@@ -12,6 +13,7 @@ function LoadingState() {
 function CallbackHandler() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { stepData, updateStepData } = useStepContext();
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -25,9 +27,6 @@ function CallbackHandler() {
       // Verify state matches what we stored
       const savedState = localStorage.getItem("twitter_oauth_state");
       const codeVerifier = localStorage.getItem("twitter_code_verifier");
-      console.log(savedState);
-      console.log(state);
-      console.log(code);
       if (!state || !code || state !== savedState) {
         console.error("Invalid state or code");
         return;
@@ -53,6 +52,7 @@ function CallbackHandler() {
         localStorage.removeItem("twitter_oauth_state");
         localStorage.removeItem("twitter_code_verifier");
 
+        updateStepData({currentStep: stepData.currentStep + 1});
         router.push("/dashboard");
       } catch (error) {
         console.error("Auth error:", error);

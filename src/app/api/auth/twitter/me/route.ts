@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
         }
       }
     );
-    console.log(response);
+    console.log('response', response);
     if (!response.ok) {
       throw new Error('Failed to fetch user profile');
     }

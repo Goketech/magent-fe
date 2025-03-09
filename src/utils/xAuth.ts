@@ -62,7 +62,6 @@ export class TwitterAuth {
     expires_in: number;
   }> {
     if (!codeVerifier) {
-        console.log(codeVerifier);
       throw new Error('Code verifier not found. Please generate an auth URL first.');
     }
 
@@ -85,15 +84,12 @@ export class TwitterAuth {
       ).toString('base64');
       headers['Authorization'] = `Basic ${basicAuth}`;
     }
-    console.log(params.toString());
 
     const response = await fetch('https://api.x.com/2/oauth2/token', {
       method: 'POST',
       headers,
       body: params.toString(),
     });
-
-    console.log(response);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
