@@ -8,6 +8,7 @@ interface StepData {
     userName: string;
     profilePicture: string;
   };
+  currentStep: number;
   topic: string;
   minFrequency: number;
   maxFrequency: number;
@@ -41,6 +42,7 @@ export const StepProvider = ({ children }: { children: ReactNode }) => {
     commentStyle: "",
     active: "Content",
     samplePost: "",
+    currentStep: 1,
 
     activeComponent: Content 
   });

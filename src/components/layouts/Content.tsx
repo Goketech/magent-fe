@@ -18,7 +18,6 @@ function Content() {
   const { toast } = useToast();
   const { jwt, connected, authenticate } = useAuth();
   const [showFirstScreen, setShowFirstScreen] = useState(true);
-  const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
@@ -191,12 +190,31 @@ function Content() {
     }
 
     try {
+      const instantResponse = await fetch("/api/auth/twitter/post-tweet", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: token, text: stepData.samplePost }),
+      });
+
+      console.log("Instant Response", instantResponse);
+
+      if (!instantResponse.ok) {
+        toast({
+          variant: "destructive",
+          description: "Failed to schedule tweets. Please try again.",
+        });
+        return;
+      }
+
       const response = await fetch(
         "https://www.api.hellomagent.com/twitter/schedule-post",
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${jwt}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -211,6 +229,8 @@ function Content() {
         }
       );
 
+      console.log("Response", response);
+
       if (!response.ok) {
         toast({
           variant: "destructive",
@@ -219,21 +239,14 @@ function Content() {
         return;
       }
 
-      const instantResponse = await fetch("/api/auth/twitter/post-tweet", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token: jwt, text: stepData.samplePost }),
-      });
-
       const data = await response.json();
       console.log("Data", data);
       toast({
         variant: "success",
         description: "Tweet Scheduled successfully",
       });
+
+      setShowSuccessPopup(true);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -248,8 +261,9 @@ function Content() {
   };
 
   const handleNext = () => {
-    if (!isStepCompleted(currentStep)) return;
-    if (currentStep < 5) setCurrentStep((prev) => prev + 1);
+    if (!isStepCompleted(stepData.currentStep)) return;
+    if (stepData.currentStep < 5)
+      updateStepData({ currentStep: stepData.currentStep + 1 });
   };
 
   const isStepCompleted = (step: number) => {
@@ -270,7 +284,8 @@ function Content() {
   };
 
   const handlePrevious = () => {
-    if (currentStep > 1) setCurrentStep((prev) => prev - 1);
+    if (stepData.currentStep > 1)
+      updateStepData({ currentStep: stepData.currentStep - 1 });
   };
 
   const handleTryAgain = () => {
@@ -290,9 +305,9 @@ function Content() {
         postStyle: "",
         commentStyle: "",
         samplePost: "",
+        currentStep: 1,
       });
 
-      setCurrentStep(1);
       setShowFirstScreen(false);
       setButtonClicked(false);
       isStepCompleted(1);
@@ -316,9 +331,8 @@ function Content() {
     setLoading(false);
   };
 
-  const handlePublish = () => {
-    scheduleTweet();
-    setShowSuccessPopup(true);
+  const handlePublish = async () => {
+    await scheduleTweet();
   };
 
   const closePopup = () => {
@@ -374,9 +388,9 @@ function Content() {
                       {/* Step Circle */}
                       <span
                         className={`w-[28px] h-[18px] flex items-center p-1 justify-center border rounded-[20px] ${
-                          currentStep === step
+                          stepData.currentStep === step
                             ? "border border-[#330065] text-[#330065] bg-white"
-                            : currentStep > step
+                            : stepData.currentStep > step
                             ? "bg-[#EBE6F0] border-[#330065] text-[#330065]"
                             : "border-[#ECECEC] text-[#ECECEC]"
                         }`}
@@ -388,7 +402,9 @@ function Content() {
                       {step !== 5 && (
                         <span
                           className={`w-6 h-[2px] ${
-                            currentStep > step ? "bg-[#330065]" : "bg-[#ECECEC]"
+                            stepData.currentStep > step
+                              ? "bg-[#330065]"
+                              : "bg-[#ECECEC]"
                           }`}
                         ></span>
                       )}
@@ -398,7 +414,7 @@ function Content() {
               </div>
               <div className="mt-6 w-full">
                 {/* content 1 */}
-                {currentStep === 1 && (
+                {stepData.currentStep === 1 && (
                   <div>
                     <h2 className="text-[20px] font-semibold">
                       Connect your social media account
@@ -462,7 +478,7 @@ function Content() {
                 )}
 
                 {/* content 2 */}
-                {currentStep === 2 && (
+                {stepData.currentStep === 2 && (
                   <div>
                     <h2 className="text-[20px] font-semibold">
                       Choose a topic for your content
@@ -490,7 +506,7 @@ function Content() {
                 )}
 
                 {/* content 3 */}
-                {currentStep === 3 && (
+                {stepData.currentStep === 3 && (
                   <div>
                     <h2 className="text-[20px] font-semibold">
                       Choose the minimum frequency and the maximum frequency for
@@ -500,7 +516,9 @@ function Content() {
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
                       value={stepData.minFrequency}
                       onChange={(e) => {
-                        updateStepData({ minFrequency: Number(e.target.value) });
+                        updateStepData({
+                          minFrequency: Number(e.target.value),
+                        });
                       }}
                     >
                       <option value="">Select minimum frequency</option>
@@ -515,7 +533,9 @@ function Content() {
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
                       value={stepData.maxFrequency}
                       onChange={(e) => {
-                        updateStepData({ maxFrequency: Number(e.target.value) });
+                        updateStepData({
+                          maxFrequency: Number(e.target.value),
+                        });
                       }}
                     >
                       <option value="">Select maximum frequency</option>
@@ -530,7 +550,7 @@ function Content() {
                 )}
 
                 {/* content 4 */}
-                {currentStep === 4 && (
+                {stepData.currentStep === 4 && (
                   <div>
                     <h2 className="text-[20px] font-semibold">
                       How long do you want me to run your content
@@ -554,7 +574,7 @@ function Content() {
                 )}
 
                 {/* content 5 */}
-                {currentStep === 5 && (
+                {stepData.currentStep === 5 && (
                   <div>
                     <h2 className="text-[20px] font-semibold">
                       How do you want me to post your content and how do you
@@ -600,7 +620,7 @@ function Content() {
               {/*  Buttons */}
               <div className="flex justify-between items-center mt-24">
                 {/* Try Again Button */}
-                {currentStep > 1 ? (
+                {stepData.currentStep > 1 ? (
                   <button
                     onClick={handleTryAgain}
                     className="border-none bg-transparent text-sm font-semibold text-[#330065] flex gap-2 items-center mt-2 hover:text-[#220044] transition"
@@ -635,7 +655,7 @@ function Content() {
                 {/* next/generate Buttons */}
                 <div className="flex gap-3">
                   {/* Previous Button (Hidden on Step 1) */}
-                  {currentStep > 1 && (
+                  {stepData.currentStep > 1 && (
                     <button
                       onClick={handlePrevious}
                       className="border border-[#330065] px-4 py-2 rounded-[32px] text-sm font-semibold text-[#330065] hover:bg-[#330065] hover:text-white transition"
@@ -645,14 +665,15 @@ function Content() {
                   )}
 
                   {/* Conditional Next or Generate Button */}
-                  {currentStep === 5 ? (
+                  {stepData.currentStep === 5 ? (
                     <button
                       onClick={handleGenerateClick}
                       disabled={
                         !allStepsCompleted() || loading || isGenerateCompleted
                       }
                       className={`rounded-[32px] px-4 py-2 text-sm font-semibold transition ${
-                        isStepCompleted(currentStep) && !isGenerateCompleted
+                        isStepCompleted(stepData.currentStep) &&
+                        !isGenerateCompleted
                           ? "bg-[#330065] text-white hover:opacity-90"
                           : "bg-[#D7D7D7] text-white cursor-not-allowed"
                       }`}
@@ -669,9 +690,9 @@ function Content() {
                   ) : (
                     <button
                       onClick={handleNext}
-                      disabled={!isStepCompleted(currentStep)}
+                      disabled={!isStepCompleted(stepData.currentStep)}
                       className={`rounded-[32px] px-4 py-2 text-sm font-semibold transition ${
-                        isStepCompleted(currentStep)
+                        isStepCompleted(stepData.currentStep)
                           ? "bg-[#330065] text-white hover:opacity-90"
                           : "bg-[#D7D7D7] text-white cursor-not-allowed"
                       }`}

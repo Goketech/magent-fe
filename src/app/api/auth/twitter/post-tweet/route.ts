@@ -13,12 +13,15 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify({ text }),
     });
 
+    console.log("response", response);
+
+
     const data = await response.json();
 
     // Return the tokens
-    return NextResponse.json(data.text);
+    return NextResponse.json(data);
   } catch (error) {
-    console.error("Get Nonce Error:", error);
-    return NextResponse.json({ error: "Failed to get nonce" }, { status: 500 });
+    console.error("Failed to post tweet:", error);
+    return NextResponse.json({ error: "Failed to post tweet" }, { status: 500 });
   }
 }
