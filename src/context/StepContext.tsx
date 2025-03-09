@@ -9,9 +9,9 @@ interface StepData {
     profilePicture: string;
   };
   topic: string;
-  minFrequency: string;
-  maxFrequency: string;
-  duration: string;
+  minFrequency: number;
+  maxFrequency: number;
+  duration: number;
   postStyle: string;
   commentStyle: string;
   active: string;
@@ -34,9 +34,9 @@ export const StepProvider = ({ children }: { children: ReactNode }) => {
       profilePicture: "",
     },
     topic: "",
-    minFrequency: "",
-    maxFrequency: "",
-    duration: "",
+    minFrequency: 0,
+    maxFrequency: 0,
+    duration: 0,
     postStyle: "",
     commentStyle: "",
     active: "Content",

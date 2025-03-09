@@ -9,9 +9,8 @@ type PreviewProps = {
   loading: boolean;
   buttonClicked: boolean;
   handlePublish: () => void;
+  handleRegenerate: () => void;
 };
-
-const text = `Marketing is the strategic process of creating value for customers and building strong relationships with them. It encompasses understanding consumer needs, developing tailored offerings, and effectively communicating your brand's unique value proposition. Marketing is the strategic process of creating value for customers and building strong relationships with them. It encompasses understanding consumer needs, developing tailored offerings, and effectively communicating your brand's unique value proposition. Marketing is the strategic process of creating value for customers and building strong relationships with them. It encompasses understanding consumer needs, developing tailored offerings, and effectively communicating your brand's unique value proposition.`;
 
 const splitParagraph = (text: string, linesPerChunk: number = 5) => {
   const sentences = text.split(". "); // Split by full stop
@@ -37,9 +36,10 @@ const Preview: React.FC<PreviewProps> = ({
   loading,
   buttonClicked,
   handlePublish,
+  handleRegenerate
 }) => {
-  const paragraphs = splitParagraph(text);
   const { stepData } = useStepContext();
+  const paragraphs = splitParagraph(stepData.samplePost || "");
 
   return (
     <div className="w-[501px] h-full p-5 bg-[#F9F9F9]">
@@ -102,6 +102,7 @@ const Preview: React.FC<PreviewProps> = ({
       </div>
       <div className="flex justify-between items-center w-full">
         <button
+        onClick={handleRegenerate}
           disabled={!buttonClicked || loading}
           className={`border-none bg-transparent text-sm font-semibold flex gap-2 items-center transition ${
             !buttonClicked || loading

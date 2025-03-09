@@ -130,7 +130,7 @@ function Content() {
     //   return;
     // }
 
-    console.log("Sample tweet called")
+    console.log("Sample tweet called");
 
     try {
       const response = await fetch(
@@ -149,8 +149,6 @@ function Content() {
         }
       );
 
-      console.log(response, 'response from sample tweet');
-
       if (!response.ok) {
         toast({
           variant: "destructive",
@@ -160,11 +158,10 @@ function Content() {
       }
 
       const data = await response.json();
-      console.log(data);
-      updateStepData({ samplePost: data.data });
+      updateStepData({ samplePost: data[0].text });
       toast({
         variant: "success",
-        description: "Tweet Scheduled successfully",
+        description: "Sample post generated successfully",
       });
     } catch (error) {
       toast({
@@ -176,10 +173,19 @@ function Content() {
   };
 
   const scheduleTweet = async () => {
-    if (!jwt) {
+    // if (!jwt) {
+    //   toast({
+    //     variant: "destructive",
+    //     description: "Please connect your wallet",
+    //   });
+    //   return;
+    // }
+
+    const token = localStorage.getItem("twitter_access_token");
+    if (!token) {
       toast({
         variant: "destructive",
-        description: "Please connect your wallet",
+        description: "Please connect your twitter account",
       });
       return;
     }
@@ -190,9 +196,18 @@ function Content() {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${jwt}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({
+            topic: stepData.topic,
+            minInterval: stepData.minFrequency,
+            maxInterval: stepData.maxFrequency,
+            duration: stepData.duration,
+            firstStyle: stepData.postStyle,
+            secondStyle: stepData.commentStyle,
+            accessToken: token,
+          }),
         }
       );
 
@@ -214,6 +229,7 @@ function Content() {
       });
 
       const data = await response.json();
+      console.log("Data", data);
       toast({
         variant: "success",
         description: "Tweet Scheduled successfully",
@@ -268,9 +284,9 @@ function Content() {
           profilePicture: "",
         },
         topic: "",
-        minFrequency: "",
-        maxFrequency: "",
-        duration: "",
+        minFrequency: 0,
+        maxFrequency: 0,
+        duration: 0,
         postStyle: "",
         commentStyle: "",
         samplePost: "",
@@ -289,20 +305,19 @@ function Content() {
     return [1, 2, 3, 4, 5].every(isStepCompleted);
   };
 
-  const handleGenerateClick = () => {
+  const handleGenerateClick = async () => {
     setButtonClicked(true);
     if (loading) return;
     if (!allStepsCompleted()) return;
     setLoading(true);
-    generateSampleTweet();
-    console.log("THIS WAS CALLED")
-    setTimeout(() => {
-      setIsGenerateCompleted(true);
-      setLoading(false);
-    }, 2000);
+    await generateSampleTweet();
+    console.log("THIS WAS CALLED");
+    setIsGenerateCompleted(true);
+    setLoading(false);
   };
 
   const handlePublish = () => {
+    scheduleTweet();
     setShowSuccessPopup(true);
   };
 
@@ -485,31 +500,31 @@ function Content() {
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
                       value={stepData.minFrequency}
                       onChange={(e) => {
-                        updateStepData({ minFrequency: e.target.value });
+                        updateStepData({ minFrequency: Number(e.target.value) });
                       }}
                     >
                       <option value="">Select minimum frequency</option>
-                      <option value="0 - 10 hours">0 - 10 hours</option>
-                      <option value="10 - 20 hours">10 - 20 hours</option>
-                      <option value="20 - 30 hours">20 - 30 hours</option>
-                      <option value="30 - 40 hours">30 - 40 hours</option>
-                      <option value="40 - 50 hours">40 - 50 hours</option>
-                      <option value="50 - 60 hours">50 - 60 hours</option>
+                      <option value={0}>0 - 10 hours</option>
+                      <option value={10}>10 - 20 hours</option>
+                      <option value={20}>20 - 30 hours</option>
+                      <option value={30}>30 - 40 hours</option>
+                      <option value={40}>40 - 50 hours</option>
+                      <option value={50}>50 - 60 hours</option>
                     </select>
                     <select
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
                       value={stepData.maxFrequency}
                       onChange={(e) => {
-                        updateStepData({ maxFrequency: e.target.value });
+                        updateStepData({ maxFrequency: Number(e.target.value) });
                       }}
                     >
                       <option value="">Select maximum frequency</option>
-                      <option value="0 - 10 hours">0 - 10 hours</option>
-                      <option value="10 - 20 hours">10 - 20 hours</option>
-                      <option value="20 - 30 hours">20 - 30 hours</option>
-                      <option value="30 - 40 hours">30 - 40 hours</option>
-                      <option value="40 - 50 hours">40 - 50 hours</option>
-                      <option value="50 - 60 hours">50 - 60 hours</option>
+                      <option value={10}>0 - 10 hours</option>
+                      <option value={20}>10 - 20 hours</option>
+                      <option value={30}>20 - 30 hours</option>
+                      <option value={40}>30 - 40 hours</option>
+                      <option value={50}>40 - 50 hours</option>
+                      <option value={60}>50 - 60 hours</option>
                     </select>
                   </div>
                 )}
@@ -524,16 +539,16 @@ function Content() {
                       value={stepData.duration}
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
                       onChange={(e) => {
-                        updateStepData({ duration: e.target.value });
+                        updateStepData({ duration: Number(e.target.value) });
                       }}
                     >
                       <option value="">Select duration</option>
-                      <option value="0 - 10 hours">0 - 10 hours</option>
-                      <option value="10 - 20 hours">10 - 20 hours</option>
-                      <option value="20 - 30 hours">20 - 30 hours</option>
-                      <option value="30 - 40 hours">30 - 40 hours</option>
-                      <option value="40 - 50 hours">40 - 50 hours</option>
-                      <option value="50 - 60 hours">50 - 60 hours</option>
+                      <option value={10}>0 - 10 hours</option>
+                      <option value={20}>10 - 20 hours</option>
+                      <option value={30}>20 - 30 hours</option>
+                      <option value={40}>30 - 40 hours</option>
+                      <option value={50}>40 - 50 hours</option>
+                      <option value={60}>50 - 60 hours</option>
                     </select>
                   </div>
                 )}
@@ -670,6 +685,7 @@ function Content() {
           )}
         </div>
         <Preview
+          handleRegenerate={handleGenerateClick}
           isStepCompleted={isStepCompleted}
           loading={loading}
           buttonClicked={buttonClicked}
