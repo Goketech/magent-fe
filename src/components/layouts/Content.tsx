@@ -197,7 +197,7 @@ function Content() {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ token: token, text: stepData.samplePost }),
+        body: JSON.stringify({ token, text: stepData.samplePost }),
       });
 
       console.log("Instant Response", instantResponse);
@@ -524,7 +524,7 @@ function Content() {
                       }}
                     >
                       <option value="">Select minimum frequency</option>
-                      <option value={0}>0 - 10 hours</option>
+                      <option value={5}>0 - 10 hours</option>
                       <option value={10}>10 - 20 hours</option>
                       <option value={20}>20 - 30 hours</option>
                       <option value={30}>30 - 40 hours</option>
