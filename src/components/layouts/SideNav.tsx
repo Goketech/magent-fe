@@ -11,19 +11,22 @@ import Image from "next/image";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { CustomWalletButton } from "../CustomWalletButton";
+import { useStepContext } from "@/context/StepContext";
 
 const customLabels = {
-  'change-wallet': 'Change wallet',
-  connecting: 'Connecting ...',
-  'copy-address': 'Copy address',
-  copied: 'Copied',
-  disconnect: 'Disconnect',
-  'has-wallet': 'Connect',
-  'no-wallet': 'Connect Wallet', // Changed from 'Select Wallet' to 'Connect Wallet'
+  "change-wallet": "Change wallet",
+  connecting: "Connecting ...",
+  "copy-address": "Copy address",
+  copied: "Copied",
+  disconnect: "Disconnect",
+  "has-wallet": "Connect",
+  "no-wallet": "Connect Wallet", // Changed from 'Select Wallet' to 'Connect Wallet'
 };
 
 const SideNav = () => {
-  const [activeNav, setActiveNav] = useState("Research"); // Track the active nav item
+  // const [activeNav, setActiveNav] = useState("Research"); // Track the active nav item
+
+  const { stepData, updateStepData } = useStepContext();
 
   const navItems = [
     { id: "Research", label: "Research", icon: <MdManageSearch size={20} /> },
@@ -43,9 +46,9 @@ const SideNav = () => {
           {navItems.map((item) => (
             <div
               key={item.id}
-              onClick={() => setActiveNav(item.id)}
+              onClick={() => updateStepData({ active: item.id })}
               className={`flex items-center gap-2 p-[8px] rounded-[4px] text-[14px] leading-[21px] cursor-pointer ${
-                activeNav === item.id
+                stepData.active === item.id
                   ? "bg-[#F2F2F2] text-[#330065]"
                   : "hover:bg-[#F2F2F2] text-black"
               }`}
@@ -57,9 +60,9 @@ const SideNav = () => {
         </div>
         <div className="flex flex-col gap-4 border-t border-[#ECECEC] pt-[16px]">
           <div
-            onClick={() => setActiveNav("Settings")}
+            onClick={() => updateStepData({ active: "Settings" })}
             className={`flex items-center gap-2 p-[8px] rounded-[4px] text-[14px] leading-[21px] cursor-pointer ${
-              activeNav === "Settings"
+              stepData.active === "Settings"
                 ? "bg-[#F2F2F2] text-[#330065]"
                 : "hover:bg-[#F2F2F2] text-black"
             }`}
@@ -68,9 +71,9 @@ const SideNav = () => {
             <span>Settings</span>
           </div>
           <div
-            onClick={() => setActiveNav("Logout")}
+            onClick={() => updateStepData({ active: "" })}
             className={`flex items-center gap-2 p-[8px] rounded-[4px] text-[14px] leading-[21px] cursor-pointer ${
-              activeNav === "Logout"
+              stepData.active === "Logout"
                 ? "bg-[#F2F2F2] text-[#D42620]"
                 : "hover:bg-[#F2F2F2] text-black"
             }`}
@@ -84,7 +87,7 @@ const SideNav = () => {
         {/* <Button className="w-full" variant="main">
           Connect wallet
         </Button> */}
-        <CustomWalletButton/>
+        <CustomWalletButton />
       </div>
     </div>
   );

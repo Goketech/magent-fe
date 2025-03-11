@@ -1,6 +1,15 @@
 "use client";
-import React, { createContext, ReactNode, ComponentType, useContext, useState } from "react";
+import React, {
+  createContext,
+  ReactNode,
+  ComponentType,
+  useContext,
+  useState,
+} from "react";
 import Content from "@/components/layouts/Content";
+import Research from "@/components/layouts/Research";
+import Library from "@/components/layouts/Library";
+import Advert from "@/components/layouts/Advert";
 
 interface StepData {
   socialMediaAccount: {
@@ -40,15 +49,27 @@ export const StepProvider = ({ children }: { children: ReactNode }) => {
     duration: 0,
     postStyle: "",
     commentStyle: "",
-    active: "Content",
+    active: "Research",
     samplePost: "",
     currentStep: 1,
-
-    activeComponent: Content 
+    activeComponent: Research,
   });
 
+  const componentMap: Record<string, ComponentType<any>> = {
+    Research,
+    Content,
+    Library,
+    Advert,
+  };
+
   const updateStepData = (newData: Partial<StepData>) => {
-    setStepData({ ...stepData, ...newData });
+    setStepData((prevData) => ({
+      ...prevData,
+      ...newData,
+      activeComponent: newData.active
+        ? componentMap[newData.active]
+        : prevData.activeComponent,
+    }));
   };
 
   return (
