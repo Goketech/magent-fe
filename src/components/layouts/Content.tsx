@@ -23,6 +23,7 @@ function Content() {
   const [buttonClicked, setButtonClicked] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [isGenerateCompleted, setIsGenerateCompleted] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   const { stepData, updateStepData } = useStepContext();
 
   useEffect(() => {
@@ -179,7 +180,7 @@ function Content() {
     //   });
     //   return;
     // }
-
+   setIsPublishing(true)
     const token = localStorage.getItem("twitter_access_token");
     if (!token) {
       toast({
@@ -247,6 +248,7 @@ function Content() {
       });
 
       setShowSuccessPopup(true);
+      setIsPublishing(false);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -710,6 +712,7 @@ function Content() {
           isStepCompleted={isStepCompleted}
           loading={loading}
           buttonClicked={buttonClicked}
+          isPublishing={isPublishing}
           handlePublish={handlePublish}
         />
         {showSuccessPopup && (

@@ -3,6 +3,7 @@ import { Bookmark, Heart, MessageSquare, Repeat2 } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import { useStepContext } from "@/context/StepContext";
+import { Loading } from "../ui/loading";
 
 type PreviewProps = {
   isStepCompleted: (step: number) => boolean;
@@ -10,6 +11,7 @@ type PreviewProps = {
   buttonClicked: boolean;
   handlePublish: () => void;
   handleRegenerate: () => void;
+  isPublishing: boolean;
 };
 
 const splitParagraph = (text: string, linesPerChunk: number = 5) => {
@@ -36,7 +38,8 @@ const Preview: React.FC<PreviewProps> = ({
   loading,
   buttonClicked,
   handlePublish,
-  handleRegenerate
+  handleRegenerate,
+  isPublishing,
 }) => {
   const { stepData } = useStepContext();
   const paragraphs = splitParagraph(stepData.samplePost || "");
@@ -102,7 +105,7 @@ const Preview: React.FC<PreviewProps> = ({
       </div>
       <div className="flex justify-between items-center w-full">
         <button
-        onClick={handleRegenerate}
+          onClick={handleRegenerate}
           disabled={!buttonClicked || loading}
           className={`border-none bg-transparent text-sm font-semibold flex gap-2 items-center transition ${
             !buttonClicked || loading
@@ -123,7 +126,14 @@ const Preview: React.FC<PreviewProps> = ({
               : "bg-[#330065] hover:opacity-90"
           } text-white transition`}
         >
-          Publish
+          {isPublishing ? (
+            <div className="flex items-center gap-2">
+              <p>Publishing</p>
+              <Loading height="20" width="20" color="#FFF" />
+            </div>
+          ) : (
+            <p>Publish</p>
+          )}
         </button>
       </div>
     </div>
