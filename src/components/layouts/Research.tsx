@@ -218,6 +218,7 @@ const Research = () => {
               
                ): (
                   <ChatResponse messages={messages} />
+                  <></>
                )
             )
         }
