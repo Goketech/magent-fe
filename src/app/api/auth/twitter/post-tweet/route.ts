@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
   try {
     const { token, text } = await request.json();
+    console.log("token", token);
+    console.log("text", text);
 
     const response = await fetch("https://api.twitter.com/2/tweets", {
       method: "POST",
