@@ -52,7 +52,7 @@ function CallbackHandler() {
         localStorage.removeItem("twitter_oauth_state");
         localStorage.removeItem("twitter_code_verifier");
 
-        updateStepData({currentStep: stepData.currentStep + 1});
+        updateStepData({currentStep: stepData.currentStep + 1, active: "Content"});
         router.push("/dashboard");
       } catch (error) {
         console.error("Auth error:", error);

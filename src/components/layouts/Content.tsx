@@ -23,6 +23,7 @@ function Content() {
   const [buttonClicked, setButtonClicked] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [isGenerateCompleted, setIsGenerateCompleted] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   const { stepData, updateStepData } = useStepContext();
 
   useEffect(() => {
@@ -179,7 +180,7 @@ function Content() {
     //   });
     //   return;
     // }
-
+   setIsPublishing(true)
     const token = localStorage.getItem("twitter_access_token");
     if (!token) {
       toast({
@@ -196,7 +197,7 @@ function Content() {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ token: token, text: stepData.samplePost }),
+        body: JSON.stringify({ token, text: stepData.samplePost }),
       });
 
       console.log("Instant Response", instantResponse);
@@ -247,6 +248,7 @@ function Content() {
       });
 
       setShowSuccessPopup(true);
+      setIsPublishing(false);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -522,7 +524,7 @@ function Content() {
                       }}
                     >
                       <option value="">Select minimum frequency</option>
-                      <option value={0}>0 - 10 hours</option>
+                      <option value={5}>0 - 10 hours</option>
                       <option value={10}>10 - 20 hours</option>
                       <option value={20}>20 - 30 hours</option>
                       <option value={30}>30 - 40 hours</option>
@@ -710,6 +712,7 @@ function Content() {
           isStepCompleted={isStepCompleted}
           loading={loading}
           buttonClicked={buttonClicked}
+          isPublishing={isPublishing}
           handlePublish={handlePublish}
         />
         {showSuccessPopup && (
