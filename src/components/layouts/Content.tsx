@@ -180,7 +180,7 @@ function Content() {
     //   });
     //   return;
     // }
-   setIsPublishing(true)
+    setIsPublishing(true);
     const token = localStorage.getItem("twitter_access_token");
     if (!token) {
       toast({
@@ -271,7 +271,7 @@ function Content() {
   const isStepCompleted = (step: number) => {
     switch (step) {
       case 1:
-        return !!stepData.socialMediaAccount;
+        return !!stepData.socialMediaAccount.name;
       case 2:
         return !!stepData.topic;
       case 3:
@@ -414,6 +414,8 @@ function Content() {
                   ))}
                 </div>
               </div>
+
+              {/* content */}
               <div className="mt-6 w-full">
                 {/* content 1 */}
                 {stepData.currentStep === 1 && (
@@ -707,6 +709,7 @@ function Content() {
             </div>
           )}
         </div>
+
         <Preview
           handleRegenerate={handleGenerateClick}
           isStepCompleted={isStepCompleted}

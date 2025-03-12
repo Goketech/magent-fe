@@ -27,6 +27,7 @@ interface StepData {
   active: string;
   samplePost: string;
   activeComponent?: ComponentType<any>;
+  campaignGoal: string;
 }
 
 interface StepContextType {
@@ -53,6 +54,7 @@ export const StepProvider = ({ children }: { children: ReactNode }) => {
     samplePost: "",
     currentStep: 1,
     activeComponent: Research,
+    campaignGoal: "",
   });
 
   const componentMap: Record<string, ComponentType<any>> = {
