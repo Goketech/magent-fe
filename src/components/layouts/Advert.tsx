@@ -56,7 +56,7 @@ function Advert() {
           !!stepData.ageRange.max
         );
       case 4:
-        return !!stepData.duration;
+        return !!stepData.selectedBids && !!stepData.targetCost;
       case 5:
         return !!stepData.postStyle && !!stepData.commentStyle;
       default:
@@ -275,75 +275,188 @@ function Advert() {
 
               {/* content 3 */}
               {stepData.currentStep === 3 && (
-                <div className="bg-[#F9F9F9] p-5 flex flex-col gap-5 rounded-[12px] w-full mt-4">
-                  {/* Gender Selection */}
-                  <label className="text-[#212221] text-sm mb-2">Gender</label>
-                  <div className="flex space-x-2">
-                    {genders.map((gender) => (
-                      <button
-                        key={gender}
-                        onClick={() =>
-                          updateStepData({ selectedGender: gender })
-                        }
-                        className={`px-3 py-1 rounded-[28px] text-sm border ${
-                          stepData.selectedGender === gender
-                            ? "bg-[#EBE6F0] border-[#330065] text-[#330065]"
-                            : "border-[#D7D7D7] text-[#4D4E4D] bg-white"
-                        }`}
-                      >
-                        {gender}
-                      </button>
-                    ))}
-                  </div>
+                <div>
+                  <h2 className="text-[20px] font-semibold">
+                    Who are your target audience
+                  </h2>
+                  <div className="bg-[#F9F9F9] p-5 flex flex-col gap-5 rounded-[12px] w-full mt-4">
+                    {/* Gender Selection */}
+                    <label className="text-[#212221] text-sm mb-2">
+                      Gender
+                    </label>
+                    <div className="flex space-x-2">
+                      {genders.map((gender) => (
+                        <button
+                          key={gender}
+                          onClick={() =>
+                            updateStepData({ selectedGender: gender })
+                          }
+                          className={`px-3 py-1 rounded-[28px] text-sm border ${
+                            stepData.selectedGender === gender
+                              ? "bg-[#EBE6F0] border-[#330065] text-[#330065]"
+                              : "border-[#D7D7D7] text-[#4D4E4D] bg-white"
+                          }`}
+                        >
+                          {gender}
+                        </button>
+                      ))}
+                    </div>
 
-                  {/* Age Range Selection */}
-                  <label className="text-[#212221] text-sm mb-2">
-                    Age range
-                  </label>
-                  <div className="flex items-center space-x-2">
-                    <select
-                      className="w-[108px] text-sm text-[#6A6B6A] bg-white p-3 border-[0.5px] border-[#D7D7D7] rounded-[8px] focus:border-[#330065]"
-                      value={stepData.ageRange.min}
-                      onChange={(e) =>
-                        updateStepData({
-                          ageRange: {
-                            ...stepData.ageRange,
-                            min: Number(e.target.value),
-                          },
-                        })
-                      }
-                    >
-                      {ages.map((age) => (
-                        <option key={age} value={age}>
-                          {age}
-                        </option>
-                      ))}
-                    </select>
-                    <span className="text-[#6A6B6A] text-sm">to</span>
-                    <select
-                      className="w-[108px] text-sm text-[#6A6B6A] bg-white p-3 border-[0.5px] border-[#D7D7D7] rounded-[8px] focus:border-[#330065]"
-                      value={stepData.ageRange.max}
-                      onChange={(e) =>
-                        updateStepData({
-                          ageRange: {
-                            ...stepData.ageRange,
-                            max: Number(e.target.value),
-                          },
-                        })
-                      }
-                    >
-                      {ages.map((age) => (
-                        <option key={age} value={age}>
-                          {age}
-                        </option>
-                      ))}
-                    </select>
+                    {/* Age Range Selection */}
+                    <label className="text-[#212221] text-sm mb-2">
+                      Age range
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <select
+                        className="w-[108px] text-sm text-[#6A6B6A] bg-white p-3 border-[0.5px] border-[#D7D7D7] rounded-[8px] focus:border-[#330065]"
+                        value={stepData.ageRange.min}
+                        onChange={(e) =>
+                          updateStepData({
+                            ageRange: {
+                              ...stepData.ageRange,
+                              min: Number(e.target.value),
+                            },
+                          })
+                        }
+                      >
+                        {ages.map((age) => (
+                          <option key={age} value={age}>
+                            {age}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="text-[#6A6B6A] text-sm">to</span>
+                      <select
+                        className="w-[108px] text-sm text-[#6A6B6A] bg-white p-3 border-[0.5px] border-[#D7D7D7] rounded-[8px] focus:border-[#330065]"
+                        value={stepData.ageRange.max}
+                        onChange={(e) =>
+                          updateStepData({
+                            ageRange: {
+                              ...stepData.ageRange,
+                              max: Number(e.target.value),
+                            },
+                          })
+                        }
+                      >
+                        {ages.map((age) => (
+                          <option key={age} value={age}>
+                            {age}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 </div>
               )}
 
               {/* content 4 */}
-              {stepData.currentStep === 4 && <h1>Step 4</h1>}
+              {stepData.currentStep === 4 && (
+                <div>
+                  <h1 className="text-[20px] font-semibold">
+                    What is your bid strategy?
+                  </h1>
+                  <div className="space-y-4 mt-4">
+                    {/* Autobid Option */}
+                    <div
+                      className={`p-4 border-[0.5px] rounded-[12px] flex gap-3 cursor-pointer transition ${
+                        stepData.selectedBids?.includes("autobid")
+                          ? "bg-[#F9F9F9] border-[#D7D7D7]"
+                          : "border-[#D7D7D7]"
+                      }`}
+                      onClick={() => {
+                        updateStepData({
+                          selectedBids: stepData.selectedBids?.includes(
+                            "autobid"
+                          )
+                            ? stepData.selectedBids.filter(
+                                (bid) => bid !== "autobid"
+                              ) 
+                            : [...(stepData.selectedBids || []), "autobid"],
+                        });
+                      }}
+                      role="checkbox"
+                      aria-checked={stepData.selectedBids?.includes("autobid")}
+                      tabIndex={0}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={stepData.selectedBids?.includes("autobid")}
+                        readOnly
+                        className=""
+                      />
+                      <div>
+                      <span className="font-semibold text-sm text-[#212221]">
+                        Autobid (Recommended)
+                      </span>
+                      <p className="text-sm text-[#6A6B6A] whitespace-nowrap">
+                        Automatically maximize your results at the lowest price.
+                      </p>
+                      </div>
+                    </div>
+
+                    {/* Target Cost Option */}
+                    <div
+                      className={`p-5 border-[0.5px] rounded-[12px] flex items-start gap-4 cursor-pointer transition ${
+                        stepData.selectedBids?.includes("targetCost")
+                          ? "bg-[#F9F9F9] border-[#D7D7D7]"
+                          : "border-[#D7D7D7]"
+                      }`}
+                      onClick={() => {
+                        if (!stepData.selectedBids?.includes("targetCost")) {
+                          updateStepData({
+                            selectedBids: [
+                              ...(stepData.selectedBids || []),
+                              "targetCost",
+                            ],
+                          });
+                        }
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={stepData.selectedBids?.includes("targetCost")}
+                        readOnly
+                        className="mt-3"
+                      />
+                      <div>
+                      <span className="font-semibold text-sm text-[#212221]">Target Cost</span>
+                      <p className="text-sm text-[#6A6B6A]">
+                        Set a target cost for your impressions.
+                      </p>
+
+                      {/* Keep input always visible when selected */}
+                      {stepData.selectedBids?.includes("targetCost") && (
+                        <div
+                          className="mt-3"
+                          onClick={
+                            (e) =>
+                              e.stopPropagation()
+                          }
+                        >
+                          <div className="flex pl-3 items-center gap-3 bg-[#F2F2F2] border-[0.5px] border-[#D7D7D7] rounded-[6px] focus:ring-[0.5px] focus:ring-[#330065] focus:outline-none">
+                            <label className="text-sm text-[#999999]">USD</label>
+                          <input
+                            type="number"
+                            placeholder="0.00"
+                            value={stepData.targetCost || ""}
+                            onChange={(e) =>
+                              updateStepData({
+                                targetCost: e.target.value,
+                              })
+                            }
+                            className=" bg-white p-2 w-full rounded-r-[6px] focus:outline-none"
+                          />
+                          </div>
+                          <small className="text-xs text-[#7A4F07] bg-[#FCF4E7] py-1 px-3 rounded-[6px] block mt-1">
+                            Bid suggestion: $3.50 - $5.00
+                          </small>
+                        </div>
+                      )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* content 5 */}
               {stepData.currentStep === 5 && <h1>Step 5</h1>}

@@ -30,6 +30,8 @@ interface StepData {
   campaignGoal: string;
   selectedGender: string;
   ageRange: { min: number; max: number };
+  selectedBids: string[];
+  targetCost: string;
 }
 
 interface StepContextType {
@@ -58,6 +60,8 @@ export const StepProvider = ({ children }: { children: ReactNode }) => {
     activeComponent: Research,
     campaignGoal: "",
     selectedGender: "",
+    selectedBids: [],
+    targetCost: "",
     ageRange: { min: 0, max: 0 },
   });
 
