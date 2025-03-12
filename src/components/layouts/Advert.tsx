@@ -262,6 +262,21 @@ function Advert() {
                   </select>
                 </div>
               )}
+
+              {/* content 3 */}
+              {stepData.currentStep === 3 && (
+                <h1>Step 3</h1>
+              )}
+
+              {/* content 3 */}
+              {stepData.currentStep === 4 && (
+                <h1>Step 4</h1>
+              )}
+
+              {/* content 5 */}
+              {stepData.currentStep === 5 && (
+                <h1>Step 5</h1>
+              )}
             </div>
 
             {/* buttons */}
