@@ -28,6 +28,8 @@ interface StepData {
   samplePost: string;
   activeComponent?: ComponentType<any>;
   campaignGoal: string;
+  selectedGender: string;
+  ageRange: { min: number; max: number };
 }
 
 interface StepContextType {
@@ -55,6 +57,8 @@ export const StepProvider = ({ children }: { children: ReactNode }) => {
     currentStep: 1,
     activeComponent: Research,
     campaignGoal: "",
+    selectedGender: "",
+    ageRange: { min: 0, max: 0 },
   });
 
   const componentMap: Record<string, ComponentType<any>> = {

@@ -48,9 +48,13 @@ function Advert() {
       case 1:
         return !!stepData.socialMediaAccount;
       case 2:
-        return !!stepData.topic;
+        return !!stepData.campaignGoal;
       case 3:
-        return !!stepData.minFrequency && !!stepData.maxFrequency;
+        return (
+          !!stepData.selectedGender &&
+          !!stepData.ageRange.min &&
+          !!stepData.ageRange.max
+        );
       case 4:
         return !!stepData.duration;
       case 5:
@@ -83,6 +87,9 @@ function Advert() {
         commentStyle: "",
         samplePost: "",
         currentStep: 1,
+        campaignGoal: "",
+        selectedGender: "",
+        ageRange: { min: 0, max: 0 },
       });
 
       setShowFirstScreen(false);
@@ -104,6 +111,9 @@ function Advert() {
     setIsGenerateCompleted(true);
     setLoading(false);
   };
+
+  const genders = ["Male", "Female", "Both"];
+  const ages = Array.from({ length: 100 }, (_, i) => i);
 
   return (
     <div className="flex flex-col justify-center items-center gap-5">
@@ -253,7 +263,7 @@ function Advert() {
                     className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
                     value={stepData.campaignGoal}
                     onChange={(e) => {
-                      updateStepData({ topic: e.target.value });
+                      updateStepData({ campaignGoal: e.target.value });
                     }}
                   >
                     <option value="">Select a campaign goal</option>
@@ -265,18 +275,78 @@ function Advert() {
 
               {/* content 3 */}
               {stepData.currentStep === 3 && (
-                <h1>Step 3</h1>
+                <div className="bg-[#F9F9F9] p-5 flex flex-col gap-5 rounded-[12px] w-full mt-4">
+                  {/* Gender Selection */}
+                  <label className="text-[#212221] text-sm mb-2">Gender</label>
+                  <div className="flex space-x-2">
+                    {genders.map((gender) => (
+                      <button
+                        key={gender}
+                        onClick={() =>
+                          updateStepData({ selectedGender: gender })
+                        }
+                        className={`px-3 py-1 rounded-[28px] text-sm border ${
+                          stepData.selectedGender === gender
+                            ? "bg-[#EBE6F0] border-[#330065] text-[#330065]"
+                            : "border-[#D7D7D7] text-[#4D4E4D] bg-white"
+                        }`}
+                      >
+                        {gender}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Age Range Selection */}
+                  <label className="text-[#212221] text-sm mb-2">
+                    Age range
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <select
+                      className="w-[108px] text-sm text-[#6A6B6A] bg-white p-3 border-[0.5px] border-[#D7D7D7] rounded-[8px] focus:border-[#330065]"
+                      value={stepData.ageRange.min}
+                      onChange={(e) =>
+                        updateStepData({
+                          ageRange: {
+                            ...stepData.ageRange,
+                            min: Number(e.target.value),
+                          },
+                        })
+                      }
+                    >
+                      {ages.map((age) => (
+                        <option key={age} value={age}>
+                          {age}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="text-[#6A6B6A] text-sm">to</span>
+                    <select
+                      className="w-[108px] text-sm text-[#6A6B6A] bg-white p-3 border-[0.5px] border-[#D7D7D7] rounded-[8px] focus:border-[#330065]"
+                      value={stepData.ageRange.max}
+                      onChange={(e) =>
+                        updateStepData({
+                          ageRange: {
+                            ...stepData.ageRange,
+                            max: Number(e.target.value),
+                          },
+                        })
+                      }
+                    >
+                      {ages.map((age) => (
+                        <option key={age} value={age}>
+                          {age}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               )}
 
-              {/* content 3 */}
-              {stepData.currentStep === 4 && (
-                <h1>Step 4</h1>
-              )}
+              {/* content 4 */}
+              {stepData.currentStep === 4 && <h1>Step 4</h1>}
 
               {/* content 5 */}
-              {stepData.currentStep === 5 && (
-                <h1>Step 5</h1>
-              )}
+              {stepData.currentStep === 5 && <h1>Step 5</h1>}
             </div>
 
             {/* buttons */}
