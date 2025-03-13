@@ -19,6 +19,7 @@ interface StepData {
   };
   currentStep: number;
   topic: string;
+  secondTopic: string;
   minFrequency: number;
   maxFrequency: number;
   duration: number;
@@ -49,6 +50,7 @@ export const StepProvider = ({ children }: { children: ReactNode }) => {
       profilePicture: "",
     },
     topic: "",
+    secondTopic: "",
     minFrequency: 0,
     maxFrequency: 0,
     duration: 0,
