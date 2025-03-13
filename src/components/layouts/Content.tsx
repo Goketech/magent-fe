@@ -143,6 +143,7 @@ function Content() {
           },
           body: JSON.stringify({
             topic: stepData.topic,
+            secondTopic: stepData.secondTopic,
             firstStyle: stepData.postStyle,
             secondStyle: stepData.commentStyle,
           }),
@@ -180,7 +181,7 @@ function Content() {
     //   });
     //   return;
     // }
-   setIsPublishing(true)
+    setIsPublishing(true);
     const token = localStorage.getItem("twitter_access_token");
     if (!token) {
       toast({
@@ -220,6 +221,7 @@ function Content() {
           },
           body: JSON.stringify({
             topic: stepData.topic,
+            secondTopic: stepData.secondTopic,
             minInterval: stepData.minFrequency,
             maxInterval: stepData.maxFrequency,
             duration: stepData.duration,
@@ -271,9 +273,9 @@ function Content() {
   const isStepCompleted = (step: number) => {
     switch (step) {
       case 1:
-        return !!stepData.socialMediaAccount;
+        return !!stepData.socialMediaAccount.name;
       case 2:
-        return !!stepData.topic;
+        return !!stepData.topic && !!stepData.secondTopic;
       case 3:
         return !!stepData.minFrequency && !!stepData.maxFrequency;
       case 4:
@@ -414,6 +416,8 @@ function Content() {
                   ))}
                 </div>
               </div>
+
+              {/* content */}
               <div className="mt-6 w-full">
                 {/* content 1 */}
                 {stepData.currentStep === 1 && (
@@ -483,7 +487,7 @@ function Content() {
                 {stepData.currentStep === 2 && (
                   <div>
                     <h2 className="text-[20px] font-semibold">
-                      Choose a topic for your content
+                      Choose topics for your content
                     </h2>
                     <select
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
@@ -503,6 +507,79 @@ function Content() {
                       <option value="Brand strategy">Brand strategy</option>
                       <option value="Data analytics">Data analytics</option>
                       <option value="Growth hacking">Growth hacking</option>
+                      <option value="Crypto Trends">Crypto Trends</option>
+                      <option value="Solana">Solana</option>
+                      <option value="DeFI">DeFI</option>
+                      <option value="Superteam Nigeria">
+                        Superteam Nigeria
+                      </option>
+                      <option value="Web3 Community">Web3 Community</option>
+                      <option value="Seamless Crypto Transaction">
+                        Seamless Crypto Transaction
+                      </option>
+                      <option value="Digital and Utility Payments with Crypto">
+                        Digital and Utility Payments with Crypto
+                      </option>
+                      <option value="Earn Your Crypto don't Buy it">
+                        Earn Your Crypto don't Buy it
+                      </option>
+                      <option value="Fiat to Crypto routing">
+                        Fiat to Crypto routing
+                      </option>
+                      <option value="Crypto to Fiat routing">
+                        Crypto to Fiat routing
+                      </option>
+                      <option value="Secure Solana Onboarding">
+                        Secure Solana Onboarding
+                      </option>
+                      <option value="Web3 Marketing">Web3 Marketing</option>
+                      <option value="Solana RPCs">Solana RPCs</option>
+                    </select>
+                    <select
+                      className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
+                      value={stepData.secondTopic}
+                      onChange={(e) => {
+                        updateStepData({ secondTopic: e.target.value });
+                      }}
+                    >
+                      <option value="">Select a topic</option>
+                      <option value="Market research">Market research</option>
+                      <option value="Consumer psychology">
+                        Consumer psychology
+                      </option>
+                      <option value="Digital marketing">
+                        Digital marketing
+                      </option>
+                      <option value="Brand strategy">Brand strategy</option>
+                      <option value="Data analytics">Data analytics</option>
+                      <option value="Growth hacking">Growth hacking</option>
+                      <option value="Crypto Trends">Crypto Trends</option>
+                      <option value="Solana">Solana</option>
+                      <option value="DeFI">DeFI</option>
+                      <option value="Superteam Nigeria">
+                        Superteam Nigeria
+                      </option>
+                      <option value="Web3 Community">Web3 Community</option>
+                      <option value="Seamless Crypto Transaction">
+                        Seamless Crypto Transaction
+                      </option>
+                      <option value="Digital and Utility Payments with Crypto">
+                        Digital and Utility Payments with Crypto
+                      </option>
+                      <option value="Earn Your Crypto don't Buy it">
+                        Earn Your Crypto don't Buy it
+                      </option>
+                      <option value="Fiat to Crypto routing">
+                        Fiat to Crypto routing
+                      </option>
+                      <option value="Crypto to Fiat routing">
+                        Crypto to Fiat routing
+                      </option>
+                      <option value="Secure Solana Onboarding">
+                        Secure Solana Onboarding
+                      </option>
+                      <option value="Web3 Marketing">Web3 Marketing</option>
+                      <option value="Solana RPCs">Solana RPCs</option>
                     </select>
                   </div>
                 )}
@@ -602,6 +679,36 @@ function Content() {
                       <option value="Professional yet provocative">
                         Professional yet provocative
                       </option>
+                      <option value="Visual & interactive">
+                        Visual & interactive
+                      </option>
+                      <option value="Conversational & relatable">
+                        Conversational & relatable
+                      </option>
+                      <option value="Insightful threads">
+                        Insightful threads
+                      </option>
+                      <option value="Timely & Trending">
+                        Timely & Trending
+                      </option>
+                      <option value="Call-to-Action (CTA) focused">
+                        Call-to-Action (CTA) focused
+                      </option>
+                      <option value="Highlight specific features and use cases">
+                        Highlight specific features and use cases
+                      </option>
+                      <option value="Storytelling-infused, clear & concise">
+                        Storytelling-infused, clear & concise
+                      </option>
+                      <option value="Motivational & inspirational">
+                        Motivational & inspirational
+                      </option>
+                      <option value="Factual & credible">
+                        Factual & credible
+                      </option>
+                      <option value="Conversational & personalized">
+                        Conversational & personalized
+                      </option>
                     </select>
                     <select
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
@@ -613,6 +720,21 @@ function Content() {
                       <option value="">Select comment style</option>
                       <option value="Clarity and complexity">
                         Clarity and complexity
+                      </option>
+                      <option value="Data-backed statements">
+                        Data-backed statements
+                      </option>
+                      <option value="Forward-looking perspectives">
+                        Forward-looking perspectives
+                      </option>
+                      <option value="Professional yet provocative">
+                        Professional yet provocative
+                      </option>
+                      <option value="Visual & interactive">
+                        Visual & interactive
+                      </option>
+                      <option value="Conversational & relatable">
+                        Conversational & relatable
                       </option>
                     </select>
                   </div>
@@ -707,6 +829,7 @@ function Content() {
             </div>
           )}
         </div>
+
         <Preview
           handleRegenerate={handleGenerateClick}
           isStepCompleted={isStepCompleted}

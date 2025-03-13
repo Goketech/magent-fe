@@ -19,6 +19,7 @@ interface StepData {
   };
   currentStep: number;
   topic: string;
+  secondTopic: string;
   minFrequency: number;
   maxFrequency: number;
   duration: number;
@@ -27,6 +28,11 @@ interface StepData {
   active: string;
   samplePost: string;
   activeComponent?: ComponentType<any>;
+  campaignGoal: string;
+  selectedGender: string;
+  ageRange: { min: number; max: number };
+  selectedBids: string[];
+  targetCost: string;
 }
 
 interface StepContextType {
@@ -44,6 +50,7 @@ export const StepProvider = ({ children }: { children: ReactNode }) => {
       profilePicture: "",
     },
     topic: "",
+    secondTopic: "",
     minFrequency: 0,
     maxFrequency: 0,
     duration: 0,
@@ -53,6 +60,11 @@ export const StepProvider = ({ children }: { children: ReactNode }) => {
     samplePost: "",
     currentStep: 1,
     activeComponent: Research,
+    campaignGoal: "",
+    selectedGender: "",
+    selectedBids: [],
+    targetCost: "",
+    ageRange: { min: 0, max: 0 },
   });
 
   const componentMap: Record<string, ComponentType<any>> = {
