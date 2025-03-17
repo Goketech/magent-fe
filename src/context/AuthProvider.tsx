@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     try {
-      const response = await fetch("/api/auth/get-nonce", {
+      const response = await fetch("https://www.api.hellomagent.com/auth/get-nonce", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ publicKey: publicKey.toBase58() }),
@@ -41,11 +41,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const signedMessage = await signMessage(new TextEncoder().encode(nonce));
       const signature = bs58.encode(signedMessage);
 
-      const verifyRes = await fetch("/api/auth/verify-signature", {
+      const verifyRes = await fetch("https://www.api.hellomagent.com/auth/verify-signature", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ publicKey: publicKey.toBase58(), signature }),
       });
+
+      console.log("verifyRes", verifyRes);
 
       if (!verifyRes.ok) {
         throw new Error("Signature verification failed");
