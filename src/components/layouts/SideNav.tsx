@@ -6,6 +6,7 @@ import {
   MdBookmark,
   MdSettings,
   MdLogout,
+  MdMenu,
 } from "react-icons/md";
 import Image from "next/image";
 import { useState } from "react";
@@ -23,9 +24,13 @@ const customLabels = {
   "no-wallet": "Connect Wallet", // Changed from 'Select Wallet' to 'Connect Wallet'
 };
 
-const SideNav = () => {
-  // const [activeNav, setActiveNav] = useState("Research"); // Track the active nav item
-
+const SideNav = ({
+  isSidebarOpen,
+  toggleSidebar,
+}: {
+  isSidebarOpen: boolean;
+  toggleSidebar: () => void;
+}) => {
   const { stepData, updateStepData } = useStepContext();
 
   const navItems = [
@@ -36,8 +41,12 @@ const SideNav = () => {
   ];
 
   return (
-    <div className="fixed top-0 left-0 h-full w-[201px] px-[8px] py-[20px] bg-white shadow-lg overflow-y-auto flex flex-col">
-      <div className="mb-[40px] ml-[16px]">
+    <div
+      className={`fixed top-0 left-0 h-full w-[201px] px-[8px] py-[20px] bg-white shadow-lg z-10 overflow-y-auto flex flex-col transition-transform duration-300 ${
+        isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+      } md:translate-x-0 md:w-[201px]`}
+    >
+      <div className="flex items-center justify-between mb-[40px] ml-[16px]">
         <Image src="/magent.svg" alt="logo" width={19} height={20} />
       </div>
 
@@ -46,7 +55,10 @@ const SideNav = () => {
           {navItems.map((item) => (
             <div
               key={item.id}
-              onClick={() => updateStepData({ active: item.id })}
+              onClick={() =>{ 
+                updateStepData({ active: item.id });
+                toggleSidebar();
+              }}
               className={`flex items-center gap-2 p-[8px] rounded-[4px] text-[14px] leading-[21px] cursor-pointer ${
                 stepData.active === item.id
                   ? "bg-[#F2F2F2] text-[#330065]"

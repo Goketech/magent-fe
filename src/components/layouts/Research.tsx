@@ -131,7 +131,7 @@ const Research = () => {
     <div className="flex items-center justify-center">
       {!hasSubmitted ? (
         <div>
-          <p className="text-center mb-[24px] text-[24px] font-[500] leading-[36px] text-[#212221]">
+          <p className="text-center mb-[24px] text-xl md:text-[24px] font-[500] leading-[36px] text-[#212221] whitespace-nowrap">
             Need help with{" "}
             <span className="font-normal">
               <ReactTyped
@@ -169,7 +169,7 @@ const Research = () => {
           <p className="mx-auto lg:mx-0 mt-[24px] mb-[16px] text-[#6A6B6A]">
             Try searching for
           </p>
-          <div className="mx-auto lg:mx-0 flex flex-col lg:flex-row text-[#212221] gap-[8px] md:gap-[16px]">
+          <div className="mx-auto lg:mx-0 flex text-sm md:text-base flex-col lg:flex-row text-[#212221] gap-[8px] md:gap-[16px]">
             {[
               "Number of Facebook users in 2024",
               "How to increase Instagram followers",
@@ -184,7 +184,7 @@ const Research = () => {
               </p>
             ))}
           </div>
-          <div className="mt-[16px] mx-auto lg:mx-0 flex flex-col lg:flex-row text-[#212221] gap-[16px]">
+          <div className="mt-[16px] mx-auto lg:mx-0 text-sm md:text-base  flex flex-col lg:flex-row text-[#212221] gap-[16px]">
             {[
               "Solana adoption rate in 2024",
               "How to increase Twitter engagement",
