@@ -24,6 +24,7 @@ function Content() {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [isGenerateCompleted, setIsGenerateCompleted] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [showPreviewPopup, setShowPreviewPopup] = useState(false);
   const { stepData, updateStepData } = useStepContext();
 
   useEffect(() => {
@@ -273,7 +274,7 @@ function Content() {
   const isStepCompleted = (step: number) => {
     switch (step) {
       case 1:
-        return !!stepData.socialMediaAccount.name;
+        return !!stepData.socialMediaAccount;
       case 2:
         return !!stepData.topic && !!stepData.secondTopic;
       case 3:
@@ -343,13 +344,17 @@ function Content() {
     setShowSuccessPopup(false);
   };
 
+  const togglePreviewPopup = () => {
+    setShowPreviewPopup((prev) => !prev);
+  };
+
   return (
     <div className="relative">
       {showSuccessPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
       )}
-      <div className="flex justify-between gap-6 items-center h-full w-full">
-        <div className="flex flex-col gap-5">
+      <div className="flex flex-col md:flex-row justify-between gap-6 h-full w-full">
+        <div className="flex flex-col gap-5 w-full">
           <div>
             <h2 className="text-[20px] font-medium mb-4">Content</h2>
             <p className="text-base">
@@ -358,7 +363,7 @@ function Content() {
             </p>
           </div>
           {showFirstScreen ? (
-            <div className="border-[#F6F6F6] w-[450px] rounded-[12px] text-center border-2 flex flex-col gap-5 justify-center items-center p-8">
+            <div className="border-[#F6F6F6] w-full md:w-[450px] rounded-[12px] text-center border-2 flex flex-col gap-5 justify-center items-center p-6 md:p-8">
               <Image
                 src="/start image.svg"
                 alt="content"
@@ -383,7 +388,7 @@ function Content() {
             <div className="border-[#F6F6F6] w-full rounded-[12px] border-2 flex flex-col justify-between p-5">
               {/* Progress Bar */}
               <div className="flex justify-between w-full">
-                <p className="bg-[#EBE6F0] rounded-[8px] px-2 py-1 text-[#330065] text-xs">
+                <p className="bg-[#EBE6F0] rounded-[8px] px-2 py-1 text-[#330065] text-xs whitespace-nowrap mr-2 md:mr-0">
                   Social Media Accout
                 </p>
                 <div className="flex items-center justify-center">
@@ -542,7 +547,7 @@ function Content() {
                         updateStepData({ secondTopic: e.target.value });
                       }}
                     >
-                      <option value="">Select a topic</option>
+                      <option value="">Select second topic</option>
                       <option value="Market research">Market research</option>
                       <option value="Consumer psychology">
                         Consumer psychology
@@ -635,6 +640,7 @@ function Content() {
                         });
                       }}
                     >
+                      <option value="">Select maximum frequency</option>
                       <option value={1}>1 hour</option>
                       <option value={2}>2 hours</option>
                       <option value={3}>3 hours</option>
@@ -774,12 +780,12 @@ function Content() {
               </div>
 
               {/*  Buttons */}
-              <div className="flex justify-between items-center mt-24">
+              <div className="flex flex-col-reverse md:flex-row justify-between gap-4 md:gap-0 items-center mt-24">
                 {/* Try Again Button */}
                 {stepData.currentStep > 1 ? (
                   <button
                     onClick={handleTryAgain}
-                    className="border-none bg-transparent text-sm font-semibold text-[#330065] flex gap-2 items-center mt-2 hover:text-[#220044] transition"
+                    className="border-none bg-transparent text-sm font-semibold w-full text-[#330065] flex justify-center md:justify-normal  gap-2 items-center mt-2 hover:text-[#220044] transition"
                   >
                     {isLoading ? (
                       <>
@@ -808,13 +814,13 @@ function Content() {
                   <span />
                 )}
 
-                {/* next/generate Buttons */}
-                <div className="flex gap-3">
+                {/* Next/Generate Buttons */}
+                <div className="flex flex-col md:flex-row gap-4 md:gap-3 w-full justify-normal md:justify-end">
                   {/* Previous Button (Hidden on Step 1) */}
                   {stepData.currentStep > 1 && (
                     <button
                       onClick={handlePrevious}
-                      className="border border-[#330065] px-4 py-2 rounded-[32px] text-sm font-semibold text-[#330065] hover:bg-[#330065] hover:text-white transition"
+                      className="border border-[#330065] w-full md:w-[80px] px-4 py-2 rounded-[32px] text-sm font-semibold text-[#330065] hover:bg-[#330065] hover:text-white transition"
                     >
                       Previous
                     </button>
@@ -827,7 +833,7 @@ function Content() {
                       disabled={
                         !allStepsCompleted() || loading || isGenerateCompleted
                       }
-                      className={`rounded-[32px] px-4 py-2 text-sm font-semibold transition ${
+                      className={`rounded-[32px] w-full md:w-[80px] px-4 py-2 text-sm font-semibold transition ${
                         isStepCompleted(stepData.currentStep) &&
                         !isGenerateCompleted
                           ? "bg-[#330065] text-white hover:opacity-90"
@@ -847,7 +853,7 @@ function Content() {
                     <button
                       onClick={handleNext}
                       disabled={!isStepCompleted(stepData.currentStep)}
-                      className={`rounded-[32px] px-4 py-2 text-sm font-semibold transition ${
+                      className={`rounded-[32px] w-full md:w-[80px] px-4 py-2 text-sm font-semibold transition ${
                         isStepCompleted(stepData.currentStep)
                           ? "bg-[#330065] text-white hover:opacity-90"
                           : "bg-[#D7D7D7] text-white cursor-not-allowed"
@@ -862,14 +868,45 @@ function Content() {
           )}
         </div>
 
-        <Preview
-          handleRegenerate={handleGenerateClick}
-          isStepCompleted={isStepCompleted}
-          loading={loading}
-          buttonClicked={buttonClicked}
-          isPublishing={isPublishing}
-          handlePublish={handlePublish}
-        />
+        <div className="hidden md:block">
+          <Preview
+            handleRegenerate={handleGenerateClick}
+            isStepCompleted={isStepCompleted}
+            loading={loading}
+            buttonClicked={buttonClicked}
+            isPublishing={isPublishing}
+            handlePublish={handlePublish}
+          />
+        </div>
+
+        <p
+          className="md:hidden text-[#330065] text-left text-sm font-semibold cursor-pointer"
+          onClick={togglePreviewPopup}
+        >
+          Tap to show preview
+        </p>
+
+        {showPreviewPopup && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex h-full justify-center items-center z-50">
+            <div className="bg-white p-4 rounded-lg w-[90%] h-[93%] overflow-auto">
+              <button
+                onClick={togglePreviewPopup}
+                className="absolute top-4 right-6 text-xl text-gray-700"
+              >
+                ✕
+              </button>
+              <Preview
+                handleRegenerate={handleGenerateClick}
+                isStepCompleted={isStepCompleted}
+                loading={loading}
+                buttonClicked={buttonClicked}
+                isPublishing={isPublishing}
+                handlePublish={handlePublish}
+              />
+            </div>
+          </div>
+        )}
+
         {showSuccessPopup && (
           <PopUp closePopup={closePopup} handleTryAgain={handleTryAgain} />
         )}
