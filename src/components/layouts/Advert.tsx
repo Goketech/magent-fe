@@ -117,7 +117,7 @@ function Advert() {
 
   return (
     <div className="flex flex-col justify-center items-center gap-5">
-      <div className="flex flex-col justify-center items-start gap-5 w-[450px]">
+      <div className="flex flex-col justify-center items-start gap-5 w-full md:w-[450px]">
         <h1 className="text-[24px] font-medium text-[#212221] leading-[120%]">
           Advert
         </h1>
@@ -126,9 +126,9 @@ function Advert() {
           effectively with our agent
         </p>
       </div>
-      <div>
+      <div className="">
         {showFirstScreen ? (
-          <div className="border-[#F6F6F6] w-[450px] rounded-[12px] text-center border-2 flex flex-col gap-5 justify-center items-center p-8">
+          <div className="border-[#F6F6F6] w-full md:w-[450px] rounded-[12px] text-center border-2 flex flex-col gap-5 justify-center items-center p-6 md:p-8">
             <Image
               src="/start image.svg"
               alt="content"
@@ -150,10 +150,10 @@ function Advert() {
             </button>
           </div>
         ) : (
-          <div className="border-[#F6F6F6] w-[450px] rounded-[12px] border-2 flex flex-col justify-between p-5">
+          <div className="border-[#F6F6F6] w-full md:w-[450px] rounded-[12px] border-2 flex flex-col justify-between p-5">
             {/* Progress Bar */}
             <div className="flex justify-between w-full">
-              <p className="bg-[#EBE6F0] rounded-[8px] px-2 py-1 text-[#330065] text-xs">
+              <p className="bg-[#EBE6F0] rounded-[8px] px-2 py-1 text-[#330065] text-xs whitespace-nowrap mr-2 md:mr-0">
                 Social Media Accout
               </p>
               <div className="flex items-center justify-center">
@@ -370,7 +370,7 @@ function Advert() {
                           )
                             ? stepData.selectedBids.filter(
                                 (bid) => bid !== "autobid"
-                              ) 
+                              )
                             : [...(stepData.selectedBids || []), "autobid"],
                         });
                       }}
@@ -385,12 +385,13 @@ function Advert() {
                         className=""
                       />
                       <div>
-                      <span className="font-semibold text-sm text-[#212221]">
-                        Autobid (Recommended)
-                      </span>
-                      <p className="text-sm text-[#6A6B6A] whitespace-nowrap">
-                        Automatically maximize your results at the lowest price.
-                      </p>
+                        <span className="font-semibold text-sm text-[#212221]">
+                          Autobid (Recommended)
+                        </span>
+                        <p className="text-sm text-[#6A6B6A] whitespace-nowrap">
+                          Automatically maximize your results at the lowest
+                          price.
+                        </p>
                       </div>
                     </div>
 
@@ -419,39 +420,40 @@ function Advert() {
                         className="mt-3"
                       />
                       <div>
-                      <span className="font-semibold text-sm text-[#212221]">Target Cost</span>
-                      <p className="text-sm text-[#6A6B6A]">
-                        Set a target cost for your impressions.
-                      </p>
+                        <span className="font-semibold text-sm text-[#212221]">
+                          Target Cost
+                        </span>
+                        <p className="text-sm text-[#6A6B6A]">
+                          Set a target cost for your impressions.
+                        </p>
 
-                      {/* Keep input always visible when selected */}
-                      {stepData.selectedBids?.includes("targetCost") && (
-                        <div
-                          className="mt-3"
-                          onClick={
-                            (e) =>
-                              e.stopPropagation()
-                          }
-                        >
-                          <div className="flex pl-3 items-center gap-3 bg-[#F2F2F2] border-[0.5px] border-[#D7D7D7] rounded-[6px] focus:ring-[0.5px] focus:ring-[#330065] focus:outline-none">
-                            <label className="text-sm text-[#999999]">USD</label>
-                          <input
-                            type="number"
-                            placeholder="0.00"
-                            value={stepData.targetCost || ""}
-                            onChange={(e) =>
-                              updateStepData({
-                                targetCost: e.target.value,
-                              })
-                            }
-                            className=" bg-white p-2 w-full rounded-r-[6px] focus:outline-none"
-                          />
+                        {/* Keep input always visible when selected */}
+                        {stepData.selectedBids?.includes("targetCost") && (
+                          <div
+                            className="mt-3"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <div className="flex pl-3 items-center gap-3 bg-[#F2F2F2] border-[0.5px] border-[#D7D7D7] rounded-[6px] focus:ring-[0.5px] focus:ring-[#330065] focus:outline-none">
+                              <label className="text-sm text-[#999999]">
+                                USD
+                              </label>
+                              <input
+                                type="number"
+                                placeholder="0.00"
+                                value={stepData.targetCost || ""}
+                                onChange={(e) =>
+                                  updateStepData({
+                                    targetCost: e.target.value,
+                                  })
+                                }
+                                className=" bg-white p-2 w-full rounded-r-[6px] focus:outline-none"
+                              />
+                            </div>
+                            <small className="text-xs text-[#7A4F07] bg-[#FCF4E7] py-1 px-3 rounded-[6px] block mt-1">
+                              Bid suggestion: $3.50 - $5.00
+                            </small>
                           </div>
-                          <small className="text-xs text-[#7A4F07] bg-[#FCF4E7] py-1 px-3 rounded-[6px] block mt-1">
-                            Bid suggestion: $3.50 - $5.00
-                          </small>
-                        </div>
-                      )}
+                        )}
                       </div>
                     </div>
                   </div>
@@ -463,12 +465,12 @@ function Advert() {
             </div>
 
             {/* buttons */}
-            <div className="flex justify-between items-center mt-24">
+            <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-0 justify-between items-center mt-24 w-full">
               {/* Try Again Button */}
               {stepData.currentStep > 1 ? (
                 <button
                   onClick={handleTryAgain}
-                  className="border-none bg-transparent text-sm font-semibold text-[#330065] flex gap-2 items-center mt-2 hover:text-[#220044] transition"
+                  className="border-none bg-transparent w-full text-sm font-semibold text-[#330065] flex justify-center md:justify-normal gap-2 items-center mt-2 hover:text-[#220044] transition"
                 >
                   {isLoading ? (
                     <>
@@ -498,7 +500,7 @@ function Advert() {
               )}
 
               {/* next/generate Buttons */}
-              <div className="flex gap-3">
+              <div className="flex flex-col md:flex-row gap-4 md:gap-3 w-full justify-normal md:justify-end">
                 {/* Previous Button (Hidden on Step 1) */}
                 {stepData.currentStep > 1 && (
                   <button
@@ -516,7 +518,7 @@ function Advert() {
                     disabled={
                       !allStepsCompleted() || loading || isGenerateCompleted
                     }
-                    className={`rounded-[32px] px-4 py-2 text-sm font-semibold transition ${
+                    className={`rounded-[32px] px-4 py-2 text-sm  font-semibold transition ${
                       isStepCompleted(stepData.currentStep) &&
                       !isGenerateCompleted
                         ? "bg-[#330065] text-white hover:opacity-90"
@@ -536,7 +538,7 @@ function Advert() {
                   <button
                     onClick={handleNext}
                     disabled={!isStepCompleted(stepData.currentStep)}
-                    className={`rounded-[32px] px-4 py-2 text-sm font-semibold transition ${
+                    className={`rounded-[32px] px-4 py-2 w-full md:w-[80px] text-sm font-semibold transition ${
                       isStepCompleted(stepData.currentStep)
                         ? "bg-[#330065] text-white hover:opacity-90"
                         : "bg-[#D7D7D7] text-white cursor-not-allowed"

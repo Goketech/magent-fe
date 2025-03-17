@@ -45,9 +45,9 @@ const Preview: React.FC<PreviewProps> = ({
   const paragraphs = splitParagraph(stepData.samplePost || "");
 
   return (
-    <div className="w-[501px] h-full p-5 bg-[#F9F9F9]">
+    <div className=" w-full md:w-[501px] h-full p-5 bg-[#F9F9F9] mt-7 md:mt-0">
       <h1 className="text-[18px] text-[#212221] font-semibold">Preview</h1>
-      <div className="my-6 w-[435px] h-auto bg-white rounded-[6px] px-3 py-5 border flex gap-4 items-start">
+      <div className="my-6 w-full md:w-[435px] h-auto bg-white rounded-[6px] px-3 py-5 border flex gap-4 items-start">
         <div className="flex items-center justify-center w-full">
           {stepData.socialMediaAccount.profilePicture ? (
             <Image
@@ -80,10 +80,10 @@ const Preview: React.FC<PreviewProps> = ({
 
             {!buttonClicked || loading ? (
               <>
-                <div className="w-[271px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
-                <div className="w-[298px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
-                <div className="w-[324px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
-                <div className="w-[349px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
+                <div className="w-[135px] md:w-[271px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
+                <div className="w-[162px] md:w-[298px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
+                <div className="w-[200px] md:w-[324px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
+                <div className="w-[225px] md:w-[349px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
               </>
             ) : (
               isStepCompleted(5) && (
@@ -103,7 +103,7 @@ const Preview: React.FC<PreviewProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex justify-between items-center w-full">
+      <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-0 justify-between items-center w-full">
         <button
           onClick={handleRegenerate}
           disabled={!buttonClicked || loading}
@@ -120,7 +120,7 @@ const Preview: React.FC<PreviewProps> = ({
         <button
           onClick={handlePublish}
           disabled={!buttonClicked || loading}
-          className={`rounded-[32px] px-4 py-2 text-sm font-semibold ${
+          className={`rounded-[32px] w-full md:w-[80px] px-4 py-2 text-sm font-semibold ${
             !buttonClicked || loading
               ? "bg-[#D7D7D7] cursor-not-allowed"
               : "bg-[#330065] hover:opacity-90"
