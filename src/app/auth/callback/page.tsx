@@ -3,10 +3,28 @@ import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { useStepContext } from "@/context/StepContext";
+import Image from "next/image";
+import { motion } from "framer-motion";
 
 // Loading component
 function LoadingState() {
-  return <div>Processing authentication...</div>;
+  return (
+    <div className="flex w-full h-screen justify-center items-center m-auto bg-[#330065]">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.5, y: -50 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.5, y: 50 }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          repeatType: "reverse",
+          ease: "easeInOut",
+        }}
+      >
+        <Image src="/logo.jpg" alt="logo" width={100} height={100} />
+      </motion.div>
+    </div>
+  );
 }
 
 // Callback handler component
@@ -52,7 +70,11 @@ function CallbackHandler() {
         localStorage.removeItem("twitter_oauth_state");
         localStorage.removeItem("twitter_code_verifier");
 
-        updateStepData({currentStep: stepData.currentStep + 1, active: "Content"});
+        updateStepData({
+          currentStep: 2,
+          active: "Content",
+          showFirstScreen: false,
+        });
         router.push("/dashboard");
       } catch (error) {
         console.error("Auth error:", error);
