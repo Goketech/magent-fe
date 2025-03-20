@@ -17,7 +17,7 @@ interface TwitterProfile {
 function Content() {
   const { toast } = useToast();
   const { jwt, connected, authenticate } = useAuth();
-  const [showFirstScreen, setShowFirstScreen] = useState(true);
+  // const [showFirstScreen, setShowFirstScreen] = useState(true);
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
@@ -64,37 +64,37 @@ function Content() {
     }
   };
 
-  const handleDisconnectTwitter = async () => {
-    try {
-      // const accessToken = localStorage.getItem("twitter_access_token");
+  // const handleDisconnectTwitter = async () => {
+  //   try {
+  //     // const accessToken = localStorage.getItem("twitter_access_token");
 
-      // if (!accessToken) {
-      //   throw new Error("No access token found");
-      // }
+  //     // if (!accessToken) {
+  //     //   throw new Error("No access token found");
+  //     // }
 
-      // const response = await fetch("/api/auth/twitter/logout", {
-      //   method: "POST",
-      //   headers: {
-      //     Authorization: `Bearer ${accessToken}`,
-      //   },
-      // });
+  //     // const response = await fetch("/api/auth/twitter/logout", {
+  //     //   method: "POST",
+  //     //   headers: {
+  //     //     Authorization: `Bearer ${accessToken}`,
+  //     //   },
+  //     // });
 
-      // if (!response.ok) {
-      //   throw new Error("Failed to disconnect Twitter");
-      // }
+  //     // if (!response.ok) {
+  //     //   throw new Error("Failed to disconnect Twitter");
+  //     // }
 
-      localStorage.removeItem("twitter_access_token");
-      updateStepData({
-        socialMediaAccount: {
-          name: "",
-          userName: "",
-          profilePicture: "",
-        },
-      });
-    } catch (error) {
-      console.error("Error disconnecting Twitter:", error);
-    }
-  };
+  //     localStorage.removeItem("twitter_access_token");
+  //     updateStepData({
+  //       socialMediaAccount: {
+  //         name: "",
+  //         userName: "",
+  //         profilePicture: "",
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.error("Error disconnecting Twitter:", error);
+  //   }
+  // };
 
   async function fetchTwitterProfile(): Promise<TwitterProfile | null> {
     try {
@@ -262,7 +262,9 @@ function Content() {
   };
 
   const handleStartClick = () => {
-    setShowFirstScreen(false);
+    updateStepData({
+      showFirstScreen: false,
+    });
   };
 
   const handleNext = () => {
@@ -274,7 +276,7 @@ function Content() {
   const isStepCompleted = (step: number) => {
     switch (step) {
       case 1:
-        return !!stepData.socialMediaAccount;
+        return !!stepData.socialMediaAccount.name;
       case 2:
         return !!stepData.topic && !!stepData.secondTopic;
       case 3:
@@ -298,12 +300,8 @@ function Content() {
 
     setTimeout(() => {
       updateStepData({
-        socialMediaAccount: {
-          name: "",
-          userName: "",
-          profilePicture: "",
-        },
         topic: "",
+        secondTopic: "",
         minFrequency: 0,
         maxFrequency: 0,
         duration: 0,
@@ -311,9 +309,10 @@ function Content() {
         commentStyle: "",
         samplePost: "",
         currentStep: 1,
+        showFirstScreen: false,
       });
 
-      setShowFirstScreen(false);
+      // setShowFirstScreen(false);
       setButtonClicked(false);
       isStepCompleted(1);
       setIsLoading(false);
@@ -334,6 +333,9 @@ function Content() {
     console.log("THIS WAS CALLED");
     setIsGenerateCompleted(true);
     setLoading(false);
+    if (window.innerWidth <= 768) {
+      setShowPreviewPopup(true);
+    }
   };
 
   const handlePublish = async () => {
@@ -362,8 +364,8 @@ function Content() {
               agent in seconds.
             </p>
           </div>
-          {showFirstScreen ? (
-            <div className="border-[#F6F6F6] w-full md:w-[450px] rounded-[12px] text-center border-2 flex flex-col gap-5 justify-center items-center p-6 md:p-8">
+          {stepData.showFirstScreen ? (
+            <div className="border-[#F6F6F6] w-full md:w-[450px] overflow-x-hidden rounded-[12px] text-center border-2 flex flex-col gap-5 justify-center items-center p-6 md:p-8">
               <Image
                 src="/start image.svg"
                 alt="content"
@@ -385,11 +387,21 @@ function Content() {
               </button>
             </div>
           ) : (
-            <div className="border-[#F6F6F6] w-full rounded-[12px] border-2 flex flex-col justify-between p-5">
+            <div className="border-[#F6F6F6] bg-white w-full h-full rounded-[12px] border-2 flex flex-col justify-between p-5">
               {/* Progress Bar */}
               <div className="flex justify-between w-full">
                 <p className="bg-[#EBE6F0] rounded-[8px] px-2 py-1 text-[#330065] text-xs whitespace-nowrap mr-2 md:mr-0">
-                  Social Media Accout
+                  {(stepData.currentStep === 1 && (
+                    <span>Social Media Accout</span>
+                  )) ||
+                    (stepData.currentStep === 2 && (
+                      <span>Content topic</span>
+                    )) ||
+                    (stepData.currentStep === 3 && (
+                      <span>Post frequency</span>
+                    )) ||
+                    (stepData.currentStep === 4 && <span>Duration</span>) ||
+                    (stepData.currentStep === 5 && <span>Content style</span>)}
                 </p>
                 <div className="flex items-center justify-center">
                   {[1, 2, 3, 4, 5].map((step) => (
@@ -820,7 +832,7 @@ function Content() {
                   {stepData.currentStep > 1 && (
                     <button
                       onClick={handlePrevious}
-                      className="border border-[#330065] w-full md:w-[80px] px-4 py-2 rounded-[32px] text-sm font-semibold text-[#330065] hover:bg-[#330065] hover:text-white transition"
+                      className="border border-[#330065] w-full md:w-auto flex justify-center px-4 py-2 rounded-[32px] text-sm font-semibold text-[#330065] hover:bg-[#330065] hover:text-white transition"
                     >
                       Previous
                     </button>
@@ -833,7 +845,7 @@ function Content() {
                       disabled={
                         !allStepsCompleted() || loading || isGenerateCompleted
                       }
-                      className={`rounded-[32px] w-full md:w-[80px] px-4 py-2 text-sm font-semibold transition ${
+                      className={`rounded-[32px] w-full md:w-auto flex justify-center px-4 py-2 text-sm font-semibold transition ${
                         isStepCompleted(stepData.currentStep) &&
                         !isGenerateCompleted
                           ? "bg-[#330065] text-white hover:opacity-90"
@@ -853,7 +865,7 @@ function Content() {
                     <button
                       onClick={handleNext}
                       disabled={!isStepCompleted(stepData.currentStep)}
-                      className={`rounded-[32px] w-full md:w-[80px] px-4 py-2 text-sm font-semibold transition ${
+                      className={`rounded-[32px] w-full md:w-auto flex justify-center px-4 py-2 text-sm font-semibold transition ${
                         isStepCompleted(stepData.currentStep)
                           ? "bg-[#330065] text-white hover:opacity-90"
                           : "bg-[#D7D7D7] text-white cursor-not-allowed"
@@ -891,7 +903,7 @@ function Content() {
             <div className="bg-white p-4 rounded-lg w-[90%] h-[93%] overflow-auto">
               <button
                 onClick={togglePreviewPopup}
-                className="absolute top-4 right-6 text-xl text-gray-700"
+                className="fixed top-12 right-10 text-xl text-gray-700"
               >
                 ✕
               </button>

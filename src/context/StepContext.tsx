@@ -33,6 +33,7 @@ interface StepData {
   ageRange: { min: number; max: number };
   selectedBids: string[];
   targetCost: string;
+  showFirstScreen: boolean;
 }
 
 interface StepContextType {
@@ -44,6 +45,7 @@ const StepContext = createContext<StepContextType | undefined>(undefined);
 
 export const StepProvider = ({ children }: { children: ReactNode }) => {
   const [stepData, setStepData] = useState<StepData>({
+    showFirstScreen: true,
     socialMediaAccount: {
       name: "",
       userName: "",

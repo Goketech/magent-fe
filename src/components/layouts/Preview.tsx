@@ -113,8 +113,17 @@ const Preview: React.FC<PreviewProps> = ({
               : "text-[#330065] hover:text-[#220044]"
           }`}
         >
-          <Image src="/replay.png" alt="restart" width={20} height={20} />
-          Regenerate
+          {loading ? (
+            <div className="flex items-center gap-2">
+              <p className="text-[#330065]">Regenerating</p>
+              <Loading height="20" width="20" color="#330065" />
+            </div>
+          ) : (
+            <div className="flex gap-2 items-center">
+              <Image src="/replay.png" alt="restart" width={20} height={20} />
+              Regenerate
+            </div>
+          )}
         </button>
 
         <button
