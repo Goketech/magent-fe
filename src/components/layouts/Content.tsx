@@ -259,7 +259,7 @@ function Content() {
     }
 
     const updateResponse = await fetch(
-      "https://www.api.hellomagent.com/transactions/update-transaction",
+      "https://www.api.hellomagent.com/transactions/update-transaction-status",
       {
         method: "POST",
         headers: {
