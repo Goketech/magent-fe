@@ -10,6 +10,7 @@ import {
 } from "@solana/web3.js";
 import {
   createMint,
+  getMint,
   getOrCreateAssociatedTokenAccount,
   mintTo,
   createTransferInstruction,
@@ -61,12 +62,13 @@ export async function transferCoin(
     const toTokenAccount = await getTokenAccount(connection, to);
 
     console.log("To Token Account:", toTokenAccount?.toBase58());
+    let mintAccount = await getMint(connection, usdcTokenPublicKey);
 
     const instruction = createTransferInstruction(
       fromTokenAccount,
       toTokenAccount,
       from,
-      amount
+      amount * (10 ** mintAccount.decimals)
     );
     console.log("instruction", instruction);
 
@@ -88,7 +90,7 @@ export async function transferCoin(
     }
     return sendTransaction(transaction, connection);
   } catch (error) {
-    console.error("Transaction Error:", error);
+    console.log("Transaction Error:", error);
     throw new Error("Transaction Error");
   }
 }
