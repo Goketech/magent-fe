@@ -33,7 +33,9 @@ async function getTokenAccount(
     ownerPublicKey,
     { mint: usdcTokenPublicKey }
   );
-  console.log(tokenAccounts);
+
+  console.log("tokenAccounts", tokenAccounts);
+
   return tokenAccounts.value[0].pubkey;
 }
 
@@ -44,36 +46,51 @@ export async function transferCoin(
   amount: number,
   sendTransaction: WalletContextState["sendTransaction"]
 ) {
+  try {
+    console.log("From Public Key:", from.toBase58());
+    console.log("To Public Key:", to.toBase58());
+    console.log("amount", amount);
 
-  console.log("from", from);
-  console.log("to", to);
-  console.log("amount", amount);
-  const fromTokenAccount = await getTokenAccount(connection, from);
-  console.log("fromTokenAccount", fromTokenAccount);
-  if (!fromTokenAccount) {
-    throw new Error("Your account does not have a token account");
+    const fromTokenAccount = await getTokenAccount(connection, from);
+
+    console.log("From Token Account:", fromTokenAccount?.toBase58());
+
+    if (!fromTokenAccount) {
+      throw new Error("Your account does not have a token account");
+    }
+    const toTokenAccount = await getTokenAccount(connection, to);
+
+    console.log("To Token Account:", toTokenAccount?.toBase58());
+
+    const instruction = createTransferInstruction(
+      fromTokenAccount,
+      toTokenAccount,
+      from,
+      amount
+    );
+    console.log("instruction", instruction);
+
+    const balance = await connection.getTokenAccountBalance(fromTokenAccount);
+    console.log("Sender USDC Balance:", balance.value.uiAmount);
+    if (balance.value.uiAmount === null || balance.value.uiAmount < amount) {
+      throw new Error("Insufficient USDC balance");
+    }
+
+    if (!instruction) {
+      throw new Error("Wallet not connected");
+    }
+
+    const transaction = new Transaction().add(instruction);
+    console.log("transaction", transaction);
+
+    if (!transaction) {
+      throw new Error("Transaction not created. Please try again");
+    }
+    return sendTransaction(transaction, connection);
+  } catch (error) {
+    console.error("Transaction Error:", error);
+    throw new Error("Transaction Error");
   }
-  const toTokenAccount = await getTokenAccount(connection, to);
-  console.log("toTokenAccount", toTokenAccount);
-  const instruction = createTransferInstruction(
-    fromTokenAccount,
-    toTokenAccount,
-    from,
-    amount
-  );
-  console.log("instruction", instruction);
-
-  if (!instruction) {
-    throw new Error("Wallet not connected");
-  }
-
-  const transaction = new Transaction().add(instruction);
-  console.log("transaction", transaction);
-
-  if (!transaction) {
-    throw new Error("Transaction not created. Please try again");
-  }
-  return sendTransaction(transaction, connection);
 }
 
 export async function confirmTransaction(
