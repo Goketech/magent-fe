@@ -44,24 +44,31 @@ export async function transferCoin(
   amount: number,
   sendTransaction: WalletContextState["sendTransaction"]
 ) {
+
+  console.log("from", from);
+  console.log("to", to);
+  console.log("amount", amount);
   const fromTokenAccount = await getTokenAccount(connection, from);
+  console.log("fromTokenAccount", fromTokenAccount);
   if (!fromTokenAccount) {
     throw new Error("Your account does not have a token account");
   }
   const toTokenAccount = await getTokenAccount(connection, to);
-
+  console.log("toTokenAccount", toTokenAccount);
   const instruction = createTransferInstruction(
     fromTokenAccount,
     toTokenAccount,
     from,
     amount
   );
+  console.log("instruction", instruction);
 
   if (!instruction) {
     throw new Error("Wallet not connected");
   }
 
   const transaction = new Transaction().add(instruction);
+  console.log("transaction", transaction);
 
   if (!transaction) {
     throw new Error("Transaction not created. Please try again");
