@@ -29,11 +29,11 @@ export default function DashboardLayout({
     setSidebarOpen(!isSidebarOpen);
   };
 
-  useEffect(() => {
-    if (!jwt && connected) {
-      authenticate(); // Try to authenticate if connected but no JWT
-    }
-  }, [jwt, connected, authenticate]);
+  // useEffect(() => {
+  //   if (!jwt && connected) {
+  //     authenticate(); // Try to authenticate if connected but no JWT
+  //   }
+  // }, [jwt, connected, authenticate]);
 
   return (
     <div className={`${pulicSans.className} antialiased relative flex`}>

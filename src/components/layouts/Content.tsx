@@ -7,6 +7,12 @@ import { Loading } from "../ui/loading";
 import PopUp from "./PopUp";
 import { useAuth } from "@/context/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
+import {
+  transferCoin,
+  developerPublicKey,
+  confirmTransaction,
+} from "@/utils/transferCoin";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 
 interface TwitterProfile {
   profile_image_url: string;
@@ -17,6 +23,8 @@ interface TwitterProfile {
 function Content() {
   const { toast } = useToast();
   const { jwt, connected, authenticate } = useAuth();
+  const { publicKey, sendTransaction } = useWallet();
+  const { connection } = useConnection();
   // const [showFirstScreen, setShowFirstScreen] = useState(true);
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -64,37 +72,37 @@ function Content() {
     }
   };
 
-  // const handleDisconnectTwitter = async () => {
-  //   try {
-  //     // const accessToken = localStorage.getItem("twitter_access_token");
+  const handleDisconnectTwitter = async () => {
+    try {
+      // const accessToken = localStorage.getItem("twitter_access_token");
 
-  //     // if (!accessToken) {
-  //     //   throw new Error("No access token found");
-  //     // }
+      // if (!accessToken) {
+      //   throw new Error("No access token found");
+      // }
 
-  //     // const response = await fetch("/api/auth/twitter/logout", {
-  //     //   method: "POST",
-  //     //   headers: {
-  //     //     Authorization: `Bearer ${accessToken}`,
-  //     //   },
-  //     // });
+      // const response = await fetch("/api/auth/twitter/logout", {
+      //   method: "POST",
+      //   headers: {
+      //     Authorization: `Bearer ${accessToken}`,
+      //   },
+      // });
 
-  //     // if (!response.ok) {
-  //     //   throw new Error("Failed to disconnect Twitter");
-  //     // }
+      // if (!response.ok) {
+      //   throw new Error("Failed to disconnect Twitter");
+      // }
 
-  //     localStorage.removeItem("twitter_access_token");
-  //     updateStepData({
-  //       socialMediaAccount: {
-  //         name: "",
-  //         userName: "",
-  //         profilePicture: "",
-  //       },
-  //     });
-  //   } catch (error) {
-  //     console.error("Error disconnecting Twitter:", error);
-  //   }
-  // };
+      localStorage.removeItem("twitter_access_token");
+      updateStepData({
+        socialMediaAccount: {
+          name: "",
+          userName: "",
+          profilePicture: "",
+        },
+      });
+    } catch (error) {
+      console.error("Error disconnecting Twitter:", error);
+    }
+  };
 
   async function fetchTwitterProfile(): Promise<TwitterProfile | null> {
     try {
@@ -123,15 +131,11 @@ function Content() {
   }
 
   const generateSampleTweet = async () => {
-    // if (!jwt) {
-    //   toast({
-    //     variant: "destructive",
-    //     description: "Please connect your wallet",
-    //   });
-    //   return;
-    // }
-
-    console.log("Sample tweet called");
+    setIsPublishing(false);
+    if (!jwt) {
+      authenticate();
+      return;
+    }
 
     try {
       const response = await fetch(
@@ -175,20 +179,117 @@ function Content() {
   };
 
   const scheduleTweet = async () => {
-    // if (!jwt) {
-    //   toast({
-    //     variant: "destructive",
-    //     description: "Please connect your wallet",
-    //   });
-    //   return;
-    // }
+    if (!jwt) {
+      toast({
+        variant: "destructive",
+        description: "Please connect your wallet",
+      });
+      return;
+    }
     setIsPublishing(true);
+
+    if (!publicKey) {
+      toast({
+        variant: "destructive",
+        description: "Please connect your wallet",
+      });
+      setIsPublishing(false);
+      return;
+    }
+
+    const transactionResponse = await fetch(
+      "https://www.api.hellomagent.com/transactions/create-transaction",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          feature: "sample_tweet",
+          reference: `sample_${Date.now()}`,
+          amount: 1,
+        }),
+      }
+    );
+
+    if (!transactionResponse.ok) {
+      toast({
+        variant: "destructive",
+        description: "Failed to initiate transaction. Please try again.",
+      });
+      setIsPublishing(false);
+      return;
+    }
+
+    const transactionData = await transactionResponse.json();
+    const transactionId = transactionData.transactionId;
+
+    const signature = await transferCoin(
+      connection,
+      publicKey!,
+      developerPublicKey,
+      1,
+      sendTransaction
+    );
+    console.log("Signature", signature);
+
+    if (!signature) {
+      toast({
+        variant: "destructive",
+        description: "Failed to verify transaction. Please try again.",
+      });
+      setIsPublishing(false);
+      return;
+    }
+    const blockHash = await connection.getLatestBlockhash();
+
+    const transaction = await confirmTransaction(connection, {
+      signature,
+      ...blockHash,
+    });
+
+    if (transaction.value.err !== null) {
+      toast({
+        variant: "destructive",
+        description: "Failed to verify transaction. Please try again.",
+      });
+      setIsPublishing(false);
+      return;
+    }
+
+    const updateResponse = await fetch(
+      "https://www.api.hellomagent.com/transactions/update-transaction",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          transactionId,
+          status: "success",
+          signature,
+        }),
+      }
+    );
+
+    if (!updateResponse.ok) {
+      toast({
+        variant: "destructive",
+        description: "Failed to verify transaction. Please try again.",
+      });
+      setIsPublishing(false);
+      return;
+    }
+
     const token = localStorage.getItem("twitter_access_token");
-    if (!token) {
+    if (!token || !stepData.socialMediaAccount.name) {
       toast({
         variant: "destructive",
         description: "Please connect your twitter account",
       });
+      setIsPublishing(false);
       return;
     }
 
@@ -196,19 +297,18 @@ function Content() {
       const instantResponse = await fetch("/api/auth/twitter/post-tweet", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${jwt}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ token, text: stepData.samplePost }),
       });
-
-      console.log("Instant Response", instantResponse);
 
       if (!instantResponse.ok) {
         toast({
           variant: "destructive",
           description: "Failed to schedule tweets. Please try again.",
         });
+        setIsPublishing(false);
         return;
       }
 
@@ -229,17 +329,17 @@ function Content() {
             firstStyle: stepData.postStyle,
             secondStyle: stepData.commentStyle,
             accessToken: token,
+            transactionId,
           }),
         }
       );
-
-      console.log("Response", response);
 
       if (!response.ok) {
         toast({
           variant: "destructive",
           description: "Failed to schedule tweets. Please try again.",
         });
+        setIsPublishing(false);
         return;
       }
 
@@ -257,6 +357,7 @@ function Content() {
         variant: "destructive",
         description: "Failed to schedule tweets. Please try again.",
       });
+      setIsPublishing(false);
       console.error("Error fetching data:", error);
     }
   };
@@ -286,7 +387,7 @@ function Content() {
       case 5:
         return !!stepData.postStyle && !!stepData.commentStyle;
       default:
-        return true;
+        return false;
     }
   };
 
@@ -330,7 +431,6 @@ function Content() {
     if (!allStepsCompleted()) return;
     setLoading(true);
     await generateSampleTweet();
-    console.log("THIS WAS CALLED");
     setIsGenerateCompleted(true);
     setLoading(false);
     if (window.innerWidth <= 768) {
@@ -463,15 +563,7 @@ function Content() {
                           </div>
                           <button
                             className="text-red-500 hover:text-red-600 transition"
-                            onClick={() =>
-                              updateStepData({
-                                socialMediaAccount: {
-                                  name: "",
-                                  userName: "",
-                                  profilePicture: "",
-                                },
-                              })
-                            }
+                            onClick={handleDisconnectTwitter}
                           >
                             Disconnect
                           </button>
