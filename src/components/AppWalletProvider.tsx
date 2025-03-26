@@ -21,8 +21,8 @@ export default function AppWalletProvider({
   }: {
     children: React.ReactNode;
   }) {
-    const network = WalletAdapterNetwork.Devnet;
-    const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+    const network = WalletAdapterNetwork.Mainnet;
+    const endpoint = process.env.NEXT_PUBLIC_ENDPOINT!;
     const wallets = useMemo(
       () => [
         // manually add any legacy wallet adapters here

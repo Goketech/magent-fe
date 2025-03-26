@@ -15,7 +15,7 @@ type PreviewProps = {
 };
 
 const splitParagraph = (text: string, linesPerChunk: number = 5) => {
-  const sentences = text.split(". "); // Split by full stop
+  const sentences = text.split("."); // Split by full stop
   const chunks: string[] = [];
   let tempChunk = "";
 
@@ -29,6 +29,8 @@ const splitParagraph = (text: string, linesPerChunk: number = 5) => {
   });
 
   if (tempChunk) chunks.push(tempChunk.trim()); // Push remaining text
+
+  console.log(chunks);
 
   return chunks;
 };
@@ -78,22 +80,21 @@ const Preview: React.FC<PreviewProps> = ({
               <div className="w-[76px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
             )}
 
-            {!buttonClicked || loading ? (
+            {!buttonClicked || loading || paragraphs.length === 1  ? (
               <>
                 <div className="w-[135px] md:w-[271px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
                 <div className="w-[162px] md:w-[298px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
                 <div className="w-[200px] md:w-[324px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
                 <div className="w-[225px] md:w-[349px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
               </>
-            ) : (
-              isStepCompleted(5) && (
-                <div className="text-[#212221] text-sm flex flex-col gap-4">
-                  {paragraphs.map((para, index) => (
-                    <p key={index}>{para}</p>
-                  ))}
-                </div>
-              )
-            )}
+            ) : isStepCompleted(5) && paragraphs.length > 1 ? ( 
+
+              <div className="text-[#212221] text-sm flex flex-col gap-4">
+                {paragraphs.map((para, index) => (
+                  <p key={index}>{para}</p>
+                ))}
+              </div>
+            ) : null}
           </div>
           <div className="flex justify-between items-center mt-6">
             <MessageSquare className="text-[#A8A8A8]" />
@@ -113,21 +114,30 @@ const Preview: React.FC<PreviewProps> = ({
               : "text-[#330065] hover:text-[#220044]"
           }`}
         >
-          <Image src="/replay.png" alt="restart" width={20} height={20} />
-          Regenerate
+          {loading ? (
+            <div className="flex items-center gap-2">
+              <p className="text-[#330065]">Regenerating</p>
+              <Loading height="20" width="20" color="#330065" />
+            </div>
+          ) : (
+            <div className="flex gap-2 items-center">
+              <Image src="/replay.png" alt="restart" width={20} height={20} />
+              Regenerate
+            </div>
+          )}
         </button>
 
         <button
           onClick={handlePublish}
           disabled={!buttonClicked || loading}
-          className={`rounded-[32px] w-full md:w-[80px] px-4 py-2 text-sm font-semibold ${
+          className={`rounded-[32px] w-full md:w-[120px] px-4 py-2 text-sm font-semibold ${
             !buttonClicked || loading
               ? "bg-[#D7D7D7] cursor-not-allowed"
               : "bg-[#330065] hover:opacity-90"
           } text-white transition`}
         >
           {isPublishing ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 ">
               <p>Publishing</p>
               <Loading height="20" width="20" color="#FFF" />
             </div>
