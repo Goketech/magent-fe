@@ -7,6 +7,12 @@ import { Loading } from "../ui/loading";
 import PopUp from "./PopUp";
 import { useAuth } from "@/context/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
+import {
+  transferCoin,
+  developerPublicKey,
+  confirmTransaction,
+} from "@/utils/transferCoin";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 
 interface TwitterProfile {
   profile_image_url: string;
@@ -17,7 +23,9 @@ interface TwitterProfile {
 function Content() {
   const { toast } = useToast();
   const { jwt, connected, authenticate } = useAuth();
-  const [showFirstScreen, setShowFirstScreen] = useState(true);
+  const { publicKey, sendTransaction } = useWallet();
+  const { connection } = useConnection();
+  // const [showFirstScreen, setShowFirstScreen] = useState(true);
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [buttonClicked, setButtonClicked] = useState(false);
@@ -123,15 +131,11 @@ function Content() {
   }
 
   const generateSampleTweet = async () => {
-    // if (!jwt) {
-    //   toast({
-    //     variant: "destructive",
-    //     description: "Please connect your wallet",
-    //   });
-    //   return;
-    // }
-
-    console.log("Sample tweet called");
+    setIsPublishing(false);
+    if (!jwt) {
+      authenticate();
+      return;
+    }
 
     try {
       const response = await fetch(
@@ -175,20 +179,117 @@ function Content() {
   };
 
   const scheduleTweet = async () => {
-    // if (!jwt) {
-    //   toast({
-    //     variant: "destructive",
-    //     description: "Please connect your wallet",
-    //   });
-    //   return;
-    // }
+    if (!jwt) {
+      toast({
+        variant: "destructive",
+        description: "Please connect your wallet",
+      });
+      return;
+    }
     setIsPublishing(true);
+
+    if (!publicKey) {
+      toast({
+        variant: "destructive",
+        description: "Please connect your wallet",
+      });
+      setIsPublishing(false);
+      return;
+    }
+
+    const transactionResponse = await fetch(
+      "https://www.api.hellomagent.com/transactions/create-transaction",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          feature: "sample_tweet",
+          reference: `sample_${Date.now()}`,
+          amount: 1,
+        }),
+      }
+    );
+
+    if (!transactionResponse.ok) {
+      toast({
+        variant: "destructive",
+        description: "Failed to initiate transaction. Please try again.",
+      });
+      setIsPublishing(false);
+      return;
+    }
+
+    const transactionData = await transactionResponse.json();
+    const transactionId = transactionData.transactionId;
+
+    const signature = await transferCoin(
+      connection,
+      publicKey!,
+      developerPublicKey,
+      1,
+      sendTransaction
+    );
+    console.log("Signature", signature);
+
+    if (!signature) {
+      toast({
+        variant: "destructive",
+        description: "Failed to verify transaction. Please try again.",
+      });
+      setIsPublishing(false);
+      return;
+    }
+    const blockHash = await connection.getLatestBlockhash();
+
+    const transaction = await confirmTransaction(connection, {
+      signature,
+      ...blockHash,
+    });
+
+    if (transaction.value.err !== null) {
+      toast({
+        variant: "destructive",
+        description: "Failed to verify transaction. Please try again.",
+      });
+      setIsPublishing(false);
+      return;
+    }
+
+    const updateResponse = await fetch(
+      "https://www.api.hellomagent.com/transactions/update-transaction",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          transactionId,
+          status: "success",
+          signature,
+        }),
+      }
+    );
+
+    if (!updateResponse.ok) {
+      toast({
+        variant: "destructive",
+        description: "Failed to verify transaction. Please try again.",
+      });
+      setIsPublishing(false);
+      return;
+    }
+
     const token = localStorage.getItem("twitter_access_token");
-    if (!token) {
+    if (!token || !stepData.socialMediaAccount.name) {
       toast({
         variant: "destructive",
         description: "Please connect your twitter account",
       });
+      setIsPublishing(false);
       return;
     }
 
@@ -196,19 +297,18 @@ function Content() {
       const instantResponse = await fetch("/api/auth/twitter/post-tweet", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${jwt}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ token, text: stepData.samplePost }),
       });
-
-      console.log("Instant Response", instantResponse);
 
       if (!instantResponse.ok) {
         toast({
           variant: "destructive",
           description: "Failed to schedule tweets. Please try again.",
         });
+        setIsPublishing(false);
         return;
       }
 
@@ -229,17 +329,17 @@ function Content() {
             firstStyle: stepData.postStyle,
             secondStyle: stepData.commentStyle,
             accessToken: token,
+            transactionId,
           }),
         }
       );
-
-      console.log("Response", response);
 
       if (!response.ok) {
         toast({
           variant: "destructive",
           description: "Failed to schedule tweets. Please try again.",
         });
+        setIsPublishing(false);
         return;
       }
 
@@ -257,12 +357,15 @@ function Content() {
         variant: "destructive",
         description: "Failed to schedule tweets. Please try again.",
       });
+      setIsPublishing(false);
       console.error("Error fetching data:", error);
     }
   };
 
   const handleStartClick = () => {
-    setShowFirstScreen(false);
+    updateStepData({
+      showFirstScreen: false,
+    });
   };
 
   const handleNext = () => {
@@ -274,7 +377,7 @@ function Content() {
   const isStepCompleted = (step: number) => {
     switch (step) {
       case 1:
-        return !!stepData.socialMediaAccount;
+        return !!stepData.socialMediaAccount.name;
       case 2:
         return !!stepData.topic && !!stepData.secondTopic;
       case 3:
@@ -284,7 +387,7 @@ function Content() {
       case 5:
         return !!stepData.postStyle && !!stepData.commentStyle;
       default:
-        return true;
+        return false;
     }
   };
 
@@ -298,12 +401,8 @@ function Content() {
 
     setTimeout(() => {
       updateStepData({
-        socialMediaAccount: {
-          name: "",
-          userName: "",
-          profilePicture: "",
-        },
         topic: "",
+        secondTopic: "",
         minFrequency: 0,
         maxFrequency: 0,
         duration: 0,
@@ -311,9 +410,10 @@ function Content() {
         commentStyle: "",
         samplePost: "",
         currentStep: 1,
+        showFirstScreen: false,
       });
 
-      setShowFirstScreen(false);
+      // setShowFirstScreen(false);
       setButtonClicked(false);
       isStepCompleted(1);
       setIsLoading(false);
@@ -331,9 +431,11 @@ function Content() {
     if (!allStepsCompleted()) return;
     setLoading(true);
     await generateSampleTweet();
-    console.log("THIS WAS CALLED");
     setIsGenerateCompleted(true);
     setLoading(false);
+    if (window.innerWidth <= 768) {
+      setShowPreviewPopup(true);
+    }
   };
 
   const handlePublish = async () => {
@@ -362,8 +464,8 @@ function Content() {
               agent in seconds.
             </p>
           </div>
-          {showFirstScreen ? (
-            <div className="border-[#F6F6F6] w-full md:w-[450px] rounded-[12px] text-center border-2 flex flex-col gap-5 justify-center items-center p-6 md:p-8">
+          {stepData.showFirstScreen ? (
+            <div className="border-[#F6F6F6] w-full md:w-[450px] overflow-x-hidden rounded-[12px] text-center border-2 flex flex-col gap-5 justify-center items-center p-6 md:p-8">
               <Image
                 src="/start image.svg"
                 alt="content"
@@ -385,11 +487,21 @@ function Content() {
               </button>
             </div>
           ) : (
-            <div className="border-[#F6F6F6] w-full rounded-[12px] border-2 flex flex-col justify-between p-5">
+            <div className="border-[#F6F6F6] bg-white w-full h-full rounded-[12px] border-2 flex flex-col justify-between p-5">
               {/* Progress Bar */}
               <div className="flex justify-between w-full">
                 <p className="bg-[#EBE6F0] rounded-[8px] px-2 py-1 text-[#330065] text-xs whitespace-nowrap mr-2 md:mr-0">
-                  Social Media Accout
+                  {(stepData.currentStep === 1 && (
+                    <span>Social Media Accout</span>
+                  )) ||
+                    (stepData.currentStep === 2 && (
+                      <span>Content topic</span>
+                    )) ||
+                    (stepData.currentStep === 3 && (
+                      <span>Post frequency</span>
+                    )) ||
+                    (stepData.currentStep === 4 && <span>Duration</span>) ||
+                    (stepData.currentStep === 5 && <span>Content style</span>)}
                 </p>
                 <div className="flex items-center justify-center">
                   {[1, 2, 3, 4, 5].map((step) => (
@@ -451,15 +563,7 @@ function Content() {
                           </div>
                           <button
                             className="text-red-500 hover:text-red-600 transition"
-                            onClick={() =>
-                              updateStepData({
-                                socialMediaAccount: {
-                                  name: "",
-                                  userName: "",
-                                  profilePicture: "",
-                                },
-                              })
-                            }
+                            onClick={handleDisconnectTwitter}
                           >
                             Disconnect
                           </button>
@@ -820,7 +924,7 @@ function Content() {
                   {stepData.currentStep > 1 && (
                     <button
                       onClick={handlePrevious}
-                      className="border border-[#330065] w-full md:w-[80px] px-4 py-2 rounded-[32px] text-sm font-semibold text-[#330065] hover:bg-[#330065] hover:text-white transition"
+                      className="border border-[#330065] w-full md:w-auto flex justify-center px-4 py-2 rounded-[32px] text-sm font-semibold text-[#330065] hover:bg-[#330065] hover:text-white transition"
                     >
                       Previous
                     </button>
@@ -833,7 +937,7 @@ function Content() {
                       disabled={
                         !allStepsCompleted() || loading || isGenerateCompleted
                       }
-                      className={`rounded-[32px] w-full md:w-[80px] px-4 py-2 text-sm font-semibold transition ${
+                      className={`rounded-[32px] w-full md:w-auto flex justify-center px-4 py-2 text-sm font-semibold transition ${
                         isStepCompleted(stepData.currentStep) &&
                         !isGenerateCompleted
                           ? "bg-[#330065] text-white hover:opacity-90"
@@ -853,7 +957,7 @@ function Content() {
                     <button
                       onClick={handleNext}
                       disabled={!isStepCompleted(stepData.currentStep)}
-                      className={`rounded-[32px] w-full md:w-[80px] px-4 py-2 text-sm font-semibold transition ${
+                      className={`rounded-[32px] w-full md:w-auto flex justify-center px-4 py-2 text-sm font-semibold transition ${
                         isStepCompleted(stepData.currentStep)
                           ? "bg-[#330065] text-white hover:opacity-90"
                           : "bg-[#D7D7D7] text-white cursor-not-allowed"
@@ -891,7 +995,7 @@ function Content() {
             <div className="bg-white p-4 rounded-lg w-[90%] h-[93%] overflow-auto">
               <button
                 onClick={togglePreviewPopup}
-                className="absolute top-4 right-6 text-xl text-gray-700"
+                className="fixed top-12 right-10 text-xl text-gray-700"
               >
                 ✕
               </button>

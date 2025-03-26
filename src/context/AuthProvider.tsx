@@ -1,6 +1,13 @@
-"use client"
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+"use client";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { useToast } from "@/hooks/use-toast";
 import bs58 from "bs58";
 
 interface AuthContextType {
@@ -12,8 +19,9 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { publicKey, signMessage, connected } = useWallet();
+  const { publicKey, signMessage, connected, signIn, sendTransaction,  } = useWallet();
   const [jwt, setJwt] = useState<string | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     const storedToken = localStorage.getItem("auth_token");
@@ -22,18 +30,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const authenticate = async () => {
     if (!connected || !publicKey || !signMessage) {
-      alert("Please connect your wallet first!");
+      toast({
+        variant: "destructive",
+        description: "Please connect your wallet first",
+      });
       return;
     }
 
     try {
-      const response = await fetch("https://www.api.hellomagent.com/auth/get-nonce", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ publicKey: publicKey.toBase58() }),
-      });
+      const response = await fetch(
+        "https://www.api.hellomagent.com/auth/get-nonce",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ publicKey: publicKey.toBase58() }),
+        }
+      );
 
       if (!response.ok) {
+        toast({
+          variant: "destructive",
+          description: "Failed to connect wallet",
+        });
         throw new Error("Failed to get nonce");
       }
 
@@ -41,15 +59,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const signedMessage = await signMessage(new TextEncoder().encode(nonce));
       const signature = bs58.encode(signedMessage);
 
-      const verifyRes = await fetch("https://www.api.hellomagent.com/auth/verify-signature", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ publicKey: publicKey.toBase58(), signature }),
-      });
+      const verifyRes = await fetch(
+        "https://www.api.hellomagent.com/auth/verify-signature",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ publicKey: publicKey.toBase58(), signature }),
+        }
+      );
 
       console.log("verifyRes", verifyRes);
 
       if (!verifyRes.ok) {
+        toast({
+          variant: "destructive",
+          description: "Signature verification failed",
+        });
         throw new Error("Signature verification failed");
       }
 
