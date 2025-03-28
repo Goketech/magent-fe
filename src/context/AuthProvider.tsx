@@ -68,8 +68,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       );
 
-      console.log("verifyRes", verifyRes);
-
       if (!verifyRes.ok) {
         toast({
           variant: "destructive",
