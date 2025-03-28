@@ -17,9 +17,6 @@ import {
 } from "@solana/spl-token";
 import { WalletContextState } from "@solana/wallet-adapter-react";
 
-console.log(process.env.NEXT_PUBLIC_USDC_TOKEN_PUBLIC_KEY);
-console.log(process.env.NEXT_PUBLIC_DEVELOPER_PUBLIC_KEY);
-
 const publicKey = process.env.NEXT_PUBLIC_USDC_TOKEN_PUBLIC_KEY!;
 const devPublicKey = process.env.NEXT_PUBLIC_DEVELOPER_PUBLIC_KEY!;
 
@@ -35,8 +32,6 @@ async function getTokenAccount(
     { mint: usdcTokenPublicKey }
   );
 
-  console.log("tokenAccounts", tokenAccounts);
-
   return tokenAccounts.value[0].pubkey;
 }
 
@@ -48,20 +43,14 @@ export async function transferCoin(
   sendTransaction: WalletContextState["sendTransaction"]
 ) {
   try {
-    console.log("From Public Key:", from.toBase58());
-    console.log("To Public Key:", to.toBase58());
-    console.log("amount", amount);
 
     const fromTokenAccount = await getTokenAccount(connection, from);
-
-    console.log("From Token Account:", fromTokenAccount?.toBase58());
 
     if (!fromTokenAccount) {
       throw new Error("Your account does not have a token account");
     }
     const toTokenAccount = await getTokenAccount(connection, to);
 
-    console.log("To Token Account:", toTokenAccount?.toBase58());
     let mintAccount = await getMint(connection, usdcTokenPublicKey);
 
     const instruction = createTransferInstruction(
@@ -70,10 +59,8 @@ export async function transferCoin(
       from,
       amount * (10 ** mintAccount.decimals)
     );
-    console.log("instruction", instruction);
 
     const balance = await connection.getTokenAccountBalance(fromTokenAccount);
-    console.log("Sender USDC Balance:", balance.value.uiAmount);
     if (balance.value.uiAmount === null || balance.value.uiAmount < amount) {
       throw new Error("Insufficient USDC balance");
     }
@@ -83,7 +70,6 @@ export async function transferCoin(
     }
 
     const transaction = new Transaction().add(instruction);
-    console.log("transaction", transaction);
 
     if (!transaction) {
       throw new Error("Transaction not created. Please try again");

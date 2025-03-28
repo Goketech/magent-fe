@@ -30,8 +30,6 @@ const splitParagraph = (text: string, linesPerChunk: number = 5) => {
 
   if (tempChunk) chunks.push(tempChunk.trim()); // Push remaining text
 
-  console.log(chunks);
-
   return chunks;
 };
 

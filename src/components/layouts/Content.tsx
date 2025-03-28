@@ -133,7 +133,10 @@ function Content() {
   const generateSampleTweet = async () => {
     setIsPublishing(false);
     if (!jwt) {
-      authenticate();
+      toast({
+        variant: "destructive",
+        description: "Please connect your wallet",
+      });
       return;
     }
 
@@ -184,6 +187,7 @@ function Content() {
         variant: "destructive",
         description: "Please connect your wallet",
       });
+      setIsPublishing(false);
       return;
     }
     setIsPublishing(true);
@@ -232,7 +236,6 @@ function Content() {
       1,
       sendTransaction
     );
-    console.log("Signature", signature);
 
     if (!signature) {
       toast({
@@ -344,7 +347,6 @@ function Content() {
       }
 
       const data = await response.json();
-      console.log("Data", data);
       toast({
         variant: "success",
         description: "Tweet Scheduled successfully",
