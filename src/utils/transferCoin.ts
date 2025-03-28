@@ -77,7 +77,8 @@ export async function transferCoin(
     return sendTransaction(transaction, connection);
   } catch (error) {
     console.log("Transaction Error:", error);
-    throw new Error("Transaction Error");
+    throw new Error(`Transaction Error: ${error instanceof Error
+      ? error.message : 'Unknown error'}`);
   }
 }
 
