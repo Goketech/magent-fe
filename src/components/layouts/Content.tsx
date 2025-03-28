@@ -228,39 +228,52 @@ function Content() {
 
     const transactionData = await transactionResponse.json();
     const transactionId = transactionData.transactionId;
+    let signature = "";
 
-    const signature = await transferCoin(
-      connection,
-      publicKey!,
-      developerPublicKey,
-      1,
-      sendTransaction
-    );
+    try {
+      signature = await transferCoin(
+        connection,
+        publicKey!,
+        developerPublicKey,
+        1,
+        sendTransaction
+      );
 
-    if (!signature) {
+      if (!signature) {
+        toast({
+          variant: "destructive",
+          description: "Failed to verify transaction. Please try again.",
+        });
+        setIsPublishing(false);
+        return;
+      }
+      const blockHash = await connection.getLatestBlockhash();
+
+      const transaction = await confirmTransaction(connection, {
+        signature,
+        ...blockHash,
+      });
+
+      if (transaction.value.err !== null) {
+        toast({
+          variant: "destructive",
+          description: "Failed to verify transaction. Please try again.",
+        });
+        setIsPublishing(false);
+        return;
+      }
+    } catch (error) {
+      console.error("Transaction Error:", error);
       toast({
         variant: "destructive",
-        description: "Failed to verify transaction. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to complete transaction. Please try again.",
       });
       setIsPublishing(false);
       return;
     }
-    const blockHash = await connection.getLatestBlockhash();
-
-    const transaction = await confirmTransaction(connection, {
-      signature,
-      ...blockHash,
-    });
-
-    if (transaction.value.err !== null) {
-      toast({
-        variant: "destructive",
-        description: "Failed to verify transaction. Please try again.",
-      });
-      setIsPublishing(false);
-      return;
-    }
-
     const updateResponse = await fetch(
       "https://www.api.hellomagent.com/transactions/update-transaction-status",
       {
