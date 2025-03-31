@@ -102,7 +102,7 @@ const Preview: React.FC<PreviewProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-0 justify-between items-center w-full">
+      <div className="flex flex-col-reverse md:flex-row gap-4 md:gap-0 justify-between items-center w-full" style={{justifyContent: "space-around"}}>
         <button
           onClick={handleRegenerate}
           disabled={!buttonClicked || loading}
