@@ -97,3 +97,14 @@ body {
 .wallet-adapter-button:focus {
   outline: none !important;
 }
+
+select {
+  color: black;
+}
+
+select option:not(:checked) {
+  color: pink;
+}
+
+
+

@@ -3,6 +3,8 @@ import Image from "next/image";
 import { useStepContext } from "@/context/StepContext";
 import { Loading } from "../ui/loading";
 
+
+
 function Advert() {
   const [showFirstScreen, setShowFirstScreen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -10,6 +12,8 @@ function Advert() {
   const [loading, setLoading] = useState(false);
   const [isGenerateCompleted, setIsGenerateCompleted] = useState(false);
   const { stepData, updateStepData } = useStepContext();
+
+
 
   const handleTwitterLogin = async () => {
     try {
@@ -260,10 +264,10 @@ function Advert() {
                     What is your campaign goal
                   </h2>
                   <select
-                    className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
+                    className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065] "
                     value={stepData.campaignGoal}
-                    onChange={(e) => {
-                      updateStepData({ campaignGoal: e.target.value });
+                    onChange={(e) => {e.target.style.color = 'black'
+                      updateStepData({ campaignGoal: e.target.value })
                     }}
                   >
                     <option value="">Select a campaign goal</option>
