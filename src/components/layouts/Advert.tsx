@@ -262,7 +262,7 @@ function Advert() {
                   <select
                     className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
                     value={stepData.campaignGoal}
-                    onChange={(e) => {
+                    onChange={(e) => {e.target.style.color ='black'
                       updateStepData({ campaignGoal: e.target.value });
                     }}
                   >
