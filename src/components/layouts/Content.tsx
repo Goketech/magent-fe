@@ -123,7 +123,7 @@ function Content() {
       }
 
       const data = await response.json();
-      return data.data;
+      return data.data
     } catch (error) {
       console.error("Error fetching Twitter profile:", error);
       return null;
