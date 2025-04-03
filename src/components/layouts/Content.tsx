@@ -616,7 +616,7 @@ function Content() {
                     <select
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
                       value={stepData.topic}
-                      onChange={(e) => {
+                      onChange={(e) => {e.target.style.color ='black'
                         updateStepData({ topic: e.target.value });
                       }}
                     >
@@ -662,7 +662,7 @@ function Content() {
                     <select
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
                       value={stepData.secondTopic}
-                      onChange={(e) => {
+                      onChange={(e) => {e.target.style.color ='black'
                         updateStepData({ secondTopic: e.target.value });
                       }}
                     >
@@ -718,7 +718,7 @@ function Content() {
                     <select
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
                       value={stepData.minFrequency}
-                      onChange={(e) => {
+                      onChange={(e) => {e.target.style.color ='black'
                         updateStepData({
                           minFrequency: Number(e.target.value),
                         });
@@ -753,7 +753,7 @@ function Content() {
                     <select
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
                       value={stepData.maxFrequency}
-                      onChange={(e) => {
+                      onChange={(e) => {e.target.style.color ='black'
                         updateStepData({
                           maxFrequency: Number(e.target.value),
                         });
@@ -797,7 +797,7 @@ function Content() {
                     <select
                       value={stepData.duration}
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
-                      onChange={(e) => {
+                      onChange={(e) => {e.target.style.color ='black'
                         updateStepData({ duration: Number(e.target.value) });
                       }}
                     >
@@ -819,7 +819,7 @@ function Content() {
                     <select
                       value={stepData.postStyle}
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
-                      onChange={(e) => {
+                      onChange={(e) => {e.target.style.color ='black'
                         updateStepData({ postStyle: e.target.value });
                       }}
                     >
@@ -870,7 +870,7 @@ function Content() {
                     <select
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
                       value={stepData.commentStyle}
-                      onChange={(e) => {
+                      onChange={(e) => {e.target.style.color ='black'
                         updateStepData({ commentStyle: e.target.value });
                       }}
                     >
