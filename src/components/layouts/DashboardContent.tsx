@@ -6,7 +6,7 @@ const DashboardContent = () => {
   const { stepData } = useStepContext();
   const ActiveComponent = stepData.activeComponent || Research;
   return (
-      <div className="flex-1 px-5 py-10 md:px-6 md:py-6 h-full rounded-[6px] md:rounded-none ml-0 md:ml-[201px] flex mt-[20px] md:mt-[60px] justify-center mb-4 md:mb-0 mr-4 md:mr-0 bg-white">
+      <div className="flex flex-1 items-center px-5 py-10 md:px-8 md:py-8 h-full rounded-[6px] md:rounded-none justify-center md:mt-[60px] bg-white">
       <ActiveComponent />
     </div>
   );

@@ -9,6 +9,7 @@ import { MdMenu } from "react-icons/md";
 import Image from "next/image";
 import { X } from "lucide-react";
 import { useStepContext } from "@/context/StepContext";
+import MobileNav from "@/components/layouts/MobileNav";
 
 const pulicSans = Public_Sans({
   variable: "--font-public-sans",
@@ -36,12 +37,14 @@ export default function DashboardLayout({
   }, [jwt, connected, authenticate]);
 
   return (
-    <div className={`${pulicSans.className} antialiased relative flex`}>
-      <SideNav isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-
-      <div
+    <div
+      className={`${pulicSans.className} antialiased relative flex overflow-x-hidden`}
+    >
+      <aside className="w-[0] md:w-[210px]">
+        <SideNav isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        {/* <div
         className={`flex flex-col flex-1 transition-all duration-300 ${
-          isSidebarOpen ? "ml-0 md:ml-[201px]" : "ml-0"
+          isSidebarOpen ? "" : ""
         }`}
       >
         {isSidebarOpen ? (
@@ -64,10 +67,12 @@ export default function DashboardLayout({
             </p>
           </div>
         )}
-        <div className="flex-1 overflow-y-auto">
-          {children}
-          <Toaster />
-        </div>
+        </div> */}
+      </aside>
+      <div className="flex flex-col flex-1 overflow-y-auto">
+        <MobileNav />
+        <main className="p-2 mt-20 md:mt-0 md:p-0">{children}</main>
+        <Toaster />
       </div>
     </div>
   );

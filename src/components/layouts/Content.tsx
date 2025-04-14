@@ -123,7 +123,7 @@ function Content() {
       }
 
       const data = await response.json();
-      return data.data
+      return data.data;
     } catch (error) {
       console.error("Error fetching Twitter profile:", error);
       return null;
@@ -471,7 +471,7 @@ function Content() {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
       )}
       <div className="flex flex-col md:flex-row justify-between gap-6 h-full w-full">
-        <div className="flex flex-col gap-5 w-full">
+        <div className="flex flex-col gap-5 w-full h-full">
           <div>
             <h2 className="text-[20px] font-medium mb-4">Content</h2>
             <p className="text-base">
@@ -507,7 +507,7 @@ function Content() {
               <div className="flex justify-between w-full">
                 <p className="bg-[#EBE6F0] rounded-[8px] px-2 py-1 text-[#330065] text-xs whitespace-nowrap mr-2 md:mr-0">
                   {(stepData.currentStep === 1 && (
-                    <span>Social Media Accout</span>
+                    <span>Social Media Account</span>
                   )) ||
                     (stepData.currentStep === 2 && (
                       <span>Content topic</span>
@@ -1006,11 +1006,11 @@ function Content() {
         </p>
 
         {showPreviewPopup && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex h-full justify-center items-center z-50">
-            <div className="bg-white p-4 rounded-lg w-[90%] h-[93%] overflow-auto">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="relative bg-white p-4 rounded-lg w-full max-w-[400px] h-[80vh] overflow-auto">
               <button
                 onClick={togglePreviewPopup}
-                className="fixed top-12 right-10 text-xl text-gray-700"
+                className="absolute top-4 right-4 text-xl text-gray-700"
               >
                 ✕
               </button>
