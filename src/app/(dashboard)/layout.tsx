@@ -37,13 +37,12 @@ export default function DashboardLayout({
     // }, []);
   };
 
-  useEffect(() => {
-    console.log("JWT:", jwt);
-    if (!jwt && connected) {
-      authenticate(); // Try to authenticate if connected but no JWT
-      console.log("Connected but no JWT, trying to authenticate...");
-    }
-  }, [jwt, connected, authenticate]);
+  // useEffect(() => {
+  //   console.log("JWT:", jwt);
+  //   if (!jwt && connected) {
+  //     authenticate(); // Try to authenticate if connected but no JWT
+  //   }
+  // }, [jwt, connected, authenticate]);
 
   return (
     <div

@@ -25,7 +25,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
 
   const authenticate = async () => {
-    console.log("Authenticating...");
     if (!connected || !publicKey || !signMessage) {
       toast({
         variant: "destructive",
@@ -36,9 +35,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     try {
-      console.log("Public Key:", publicKey.toBase58());
-      console.log("Sign Message:", signMessage);
-      console.log("Connected:", connected);
       const response = await fetch(
         "https://www.api.hellomagent.com/auth/get-nonce",
         {
@@ -48,7 +44,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       );
 
-      console.log(response);
 
       if (!response.ok) {
         toast({
