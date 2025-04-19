@@ -28,21 +28,21 @@ export default function DashboardLayout({
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
+  };
 
-    // add a check for any 401 from our api requests, if there's a 401, clear the local storage
+      // add a check for any 401 from our api requests, if there's a 401, clear the local storage
 
     // useEffect(() => {
     //   const storedToken = localStorage.getItem("auth_token");
     //   authenticate()
     // }, []);
-  };
 
-  // useEffect(() => {
-  //   console.log("JWT:", jwt);
-  //   if (!jwt && connected) {
-  //     authenticate(); // Try to authenticate if connected but no JWT
-  //   }
-  // }, [jwt, connected, authenticate]);
+  useEffect(() => {
+    console.log("JWT:", jwt);
+    if (!jwt && connected) {
+      authenticate(); // Try to authenticate if connected but no JWT
+    }
+  }, [jwt, connected, authenticate]);
 
   return (
     <div
