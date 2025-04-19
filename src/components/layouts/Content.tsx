@@ -138,14 +138,16 @@ function Content() {
   const generateSampleTweet = async () => {
     setIsPublishing(false);
     if (!jwt) {
-      toast({
-        variant: "destructive",
-        description: "Please connect your wallet",
-      });
-      return;
+      authenticate()
+      // toast({
+      //   variant: "destructive",
+      //   description: "Please connect your wallet",
+      // });
+      // return;
     }
 
     try {
+      console.log(jwt)
       const response = await fetch(
         "https://www.api.hellomagent.com/twitter/sample-post",
         {
