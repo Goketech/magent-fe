@@ -33,7 +33,12 @@ function Content() {
   const [isGenerateCompleted, setIsGenerateCompleted] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [showPreviewPopup, setShowPreviewPopup] = useState(false);
+  const [inputMode, setInputMode] = useState<"type" | "select">("type");
+  const maxTopics = 2;
   const { stepData, updateStepData } = useStepContext();
+
+  const currentTopics =
+    inputMode === "type" ? stepData.typeTopics : stepData.selectTopics;
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -150,8 +155,10 @@ function Content() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            topic: stepData.topic,
-            secondTopic: stepData.secondTopic,
+            topic:
+              inputMode === "type"
+                ? stepData.typeTopics
+                : stepData.selectTopics,
             firstStyle: stepData.postStyle,
             secondStyle: stepData.commentStyle,
           }),
@@ -337,8 +344,10 @@ function Content() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            topic: stepData.topic,
-            secondTopic: stepData.secondTopic,
+            topic:
+              inputMode === "type"
+                ? stepData.typeTopics
+                : stepData.selectTopics,
             minInterval: stepData.minFrequency,
             maxInterval: stepData.maxFrequency,
             duration: stepData.duration,
@@ -394,7 +403,15 @@ function Content() {
       case 1:
         return !!stepData.socialMediaAccount.name;
       case 2:
-        return !!stepData.topic && !!stepData.secondTopic;
+        const topics =
+          inputMode === "type" ? stepData.typeTopics : stepData.selectTopics;
+        if (topics.length === 1) {
+          return topics[0].value.trim() !== "";
+        }
+        if (topics.length === 2) {
+          return topics.every((topic) => topic.value.trim() !== "");
+        }
+        return false;
       case 3:
         return !!stepData.minFrequency && !!stepData.maxFrequency;
       case 4:
@@ -416,8 +433,13 @@ function Content() {
 
     setTimeout(() => {
       updateStepData({
-        topic: "",
-        secondTopic: "",
+        typeTopics: [
+          {
+            mode: "type",
+            value: "",
+          },
+        ],
+        selectTopics: [],
         minFrequency: 0,
         maxFrequency: 0,
         duration: 0,
@@ -465,13 +487,36 @@ function Content() {
     setShowPreviewPopup((prev) => !prev);
   };
 
+  const handleTopicChange = (value: string, index: number) => {
+    const updatedTopics = [...currentTopics];
+    updatedTopics[index].value = value;
+
+    if (inputMode === "type") {
+      updateStepData({ typeTopics: updatedTopics });
+    } else {
+      updateStepData({ selectTopics: updatedTopics });
+    }
+  };
+
+  const handleAddTopic = () => {
+    if (currentTopics.length < maxTopics) {
+      const updatedTopics = [...currentTopics, { mode: inputMode, value: "" }];
+
+      if (inputMode === "type") {
+        updateStepData({ typeTopics: updatedTopics });
+      } else {
+        updateStepData({ selectTopics: updatedTopics });
+      }
+    }
+  };
+
   return (
     <div className="relative">
       {showSuccessPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
       )}
       <div className="flex flex-col md:flex-row justify-between gap-6 h-full w-full">
-        <div className="flex flex-col gap-5 w-full">
+        <div className="flex flex-col gap-5 w-full h-full">
           <div>
             <h2 className="text-[20px] font-medium mb-4">Content</h2>
             <p className="text-base">
@@ -507,7 +552,7 @@ function Content() {
               <div className="flex justify-between w-full">
                 <p className="bg-[#EBE6F0] rounded-[8px] px-2 py-1 text-[#330065] text-xs whitespace-nowrap mr-2 md:mr-0">
                   {(stepData.currentStep === 1 && (
-                    <span>Social Media Accout</span>
+                    <span>Social Media Account</span>
                   )) ||
                     (stepData.currentStep === 2 && (
                       <span>Content topic</span>
@@ -613,98 +658,128 @@ function Content() {
                     <h2 className="text-[20px] font-semibold">
                       Choose topics for your content
                     </h2>
-                    <select
-                      className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
-                      value={stepData.topic}
-                      onChange={(e) => {e.target.style.color ='black'
-                        updateStepData({ topic: e.target.value });
-                      }}
-                    >
-                      <option value="">Select a topic</option>
-                      <option value="Market research">Market research</option>
-                      <option value="Consumer psychology">
-                        Consumer psychology
-                      </option>
-                      <option value="Digital marketing">
-                        Digital marketing
-                      </option>
-                      <option value="Brand strategy">Brand strategy</option>
-                      <option value="Data analytics">Data analytics</option>
-                      <option value="Growth hacking">Growth hacking</option>
-                      <option value="Crypto Trends">Crypto Trends</option>
-                      <option value="Solana">Solana</option>
-                      <option value="DeFI">DeFI</option>
-                      <option value="Superteam Nigeria">
-                        Superteam Nigeria
-                      </option>
-                      <option value="Web3 Community">Web3 Community</option>
-                      <option value="Seamless Crypto Transaction">
-                        Seamless Crypto Transaction
-                      </option>
-                      <option value="Digital and Utility Payments with Crypto">
-                        Digital and Utility Payments with Crypto
-                      </option>
-                      <option value="Earn Your Crypto don't Buy it">
-                        Earn Your Crypto don't Buy it
-                      </option>
-                      <option value="Fiat to Crypto routing">
-                        Fiat to Crypto routing
-                      </option>
-                      <option value="Crypto to Fiat routing">
-                        Crypto to Fiat routing
-                      </option>
-                      <option value="Secure Solana Onboarding">
-                        Secure Solana Onboarding
-                      </option>
-                      <option value="Web3 Marketing">Web3 Marketing</option>
-                      <option value="Solana RPCs">Solana RPCs</option>
-                    </select>
-                    <select
-                      className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
-                      value={stepData.secondTopic}
-                      onChange={(e) => {e.target.style.color ='black'
-                        updateStepData({ secondTopic: e.target.value });
-                      }}
-                    >
-                      <option value="">Select second topic</option>
-                      <option value="Market research">Market research</option>
-                      <option value="Consumer psychology">
-                        Consumer psychology
-                      </option>
-                      <option value="Digital marketing">
-                        Digital marketing
-                      </option>
-                      <option value="Brand strategy">Brand strategy</option>
-                      <option value="Data analytics">Data analytics</option>
-                      <option value="Growth hacking">Growth hacking</option>
-                      <option value="Crypto Trends">Crypto Trends</option>
-                      <option value="Solana">Solana</option>
-                      <option value="DeFI">DeFI</option>
-                      <option value="Superteam Nigeria">
-                        Superteam Nigeria
-                      </option>
-                      <option value="Web3 Community">Web3 Community</option>
-                      <option value="Seamless Crypto Transaction">
-                        Seamless Crypto Transaction
-                      </option>
-                      <option value="Digital and Utility Payments with Crypto">
-                        Digital and Utility Payments with Crypto
-                      </option>
-                      <option value="Earn Your Crypto don't Buy it">
-                        Earn Your Crypto don't Buy it
-                      </option>
-                      <option value="Fiat to Crypto routing">
-                        Fiat to Crypto routing
-                      </option>
-                      <option value="Crypto to Fiat routing">
-                        Crypto to Fiat routing
-                      </option>
-                      <option value="Secure Solana Onboarding">
-                        Secure Solana Onboarding
-                      </option>
-                      <option value="Web3 Marketing">Web3 Marketing</option>
-                      <option value="Solana RPCs">Solana RPCs</option>
-                    </select>
+                    <div className="flex items-center gap-4 mb-4">
+                      <label className="flex items-center gap-1">
+                        <input
+                          type="radio"
+                          name="mode"
+                          value="type"
+                          checked={inputMode === "type"}
+                          onChange={() => {
+                            setInputMode("type");
+                            if (stepData.typeTopics.length === 0) {
+                              updateStepData({
+                                typeTopics: [{ mode: "type", value: "" }],
+                              });
+                            }
+                          }}
+                          className="accent-[#330065] text-[#212221] text-sm"
+                        />
+                        Type
+                      </label>
+                      <label className="flex items-center gap-1">
+                        <input
+                          type="radio"
+                          name="mode"
+                          value="select"
+                          checked={inputMode === "select"}
+                          onChange={() => {
+                            setInputMode("select");
+                            if (stepData.selectTopics.length === 0) {
+                              updateStepData({
+                                selectTopics: [{ mode: "select", value: "" }],
+                              });
+                            }
+                          }}
+                          className="accent-[#330065] text-[#212221] text-sm"
+                        />
+                        Select
+                      </label>
+                    </div>
+
+                    {currentTopics.map((topic, index) => (
+                      <div key={index}>
+                        {inputMode === "type" ? (
+                          <input
+                            type="text"
+                            placeholder="Enter topic"
+                            value={topic.value}
+                            onChange={(e) =>
+                              handleTopicChange(e.target.value, index)
+                            }
+                            className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
+                          />
+                        ) : (
+                          <select
+                            value={topic.value}
+                            onChange={(e) =>
+                              handleTopicChange(e.target.value, index)
+                            }
+                            className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
+                          >
+                            <option value="">Select a topic</option>
+                            <option value="Market research">
+                              Market research
+                            </option>
+                            <option value="Consumer psychology">
+                              Consumer psychology
+                            </option>
+                            <option value="Digital marketing">
+                              Digital marketing
+                            </option>
+                            <option value="Brand strategy">
+                              Brand strategy
+                            </option>
+                            <option value="Data analytics">
+                              Data analytics
+                            </option>
+                            <option value="Growth hacking">
+                              Growth hacking
+                            </option>
+                            <option value="Crypto Trends">Crypto Trends</option>
+                            <option value="Solana">Solana</option>
+                            <option value="DeFI">DeFI</option>
+                            <option value="Superteam Nigeria">
+                              Superteam Nigeria
+                            </option>
+                            <option value="Web3 Community">
+                              Web3 Community
+                            </option>
+                            <option value="Seamless Crypto Transaction">
+                              Seamless Crypto Transaction
+                            </option>
+                            <option value="Digital and Utility Payments with Crypto">
+                              Digital and Utility Payments with Crypto
+                            </option>
+                            <option value="Earn Your Crypto don't Buy it">
+                              Earn Your Crypto don't Buy it
+                            </option>
+                            <option value="Fiat to Crypto routing">
+                              Fiat to Crypto routing
+                            </option>
+                            <option value="Crypto to Fiat routing">
+                              Crypto to Fiat routing
+                            </option>
+                            <option value="Secure Solana Onboarding">
+                              Secure Solana Onboarding
+                            </option>
+                            <option value="Web3 Marketing">
+                              Web3 Marketing
+                            </option>
+                            <option value="Solana RPCs">Solana RPCs</option>
+                          </select>
+                        )}
+                      </div>
+                    ))}
+
+                    {currentTopics.length < maxTopics && (
+                      <button
+                        onClick={handleAddTopic}
+                        className="text-[#330065] text-sm mt-6"
+                      >
+                        Add another topic
+                      </button>
+                    )}
                   </div>
                 )}
 
@@ -718,7 +793,8 @@ function Content() {
                     <select
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
                       value={stepData.minFrequency}
-                      onChange={(e) => {e.target.style.color ='black'
+                      onChange={(e) => {
+                        e.target.style.color = "black";
                         updateStepData({
                           minFrequency: Number(e.target.value),
                         });
@@ -797,7 +873,8 @@ function Content() {
                     <select
                       value={stepData.duration}
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
-                      onChange={(e) => {e.target.style.color ='black'
+                      onChange={(e) => {
+                        e.target.style.color = "black";
                         updateStepData({ duration: Number(e.target.value) });
                       }}
                     >
@@ -819,7 +896,8 @@ function Content() {
                     <select
                       value={stepData.postStyle}
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
-                      onChange={(e) => {e.target.style.color ='black'
+                      onChange={(e) => {
+                        e.target.style.color = "black";
                         updateStepData({ postStyle: e.target.value });
                       }}
                     >
@@ -870,7 +948,8 @@ function Content() {
                     <select
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
                       value={stepData.commentStyle}
-                      onChange={(e) => {e.target.style.color ='black'
+                      onChange={(e) => {
+                        e.target.style.color = "black";
                         updateStepData({ commentStyle: e.target.value });
                       }}
                     >
@@ -1006,11 +1085,11 @@ function Content() {
         </p>
 
         {showPreviewPopup && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex h-full justify-center items-center z-50">
-            <div className="bg-white p-4 rounded-lg w-[90%] h-[93%] overflow-auto">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="relative bg-white p-4 rounded-lg w-full max-w-[400px] h-[80vh] overflow-auto">
               <button
                 onClick={togglePreviewPopup}
-                className="fixed top-12 right-10 text-xl text-gray-700"
+                className="absolute top-4 right-4 text-xl text-gray-700"
               >
                 ✕
               </button>

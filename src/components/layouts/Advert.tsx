@@ -79,7 +79,6 @@ function Advert() {
           userName: "",
           profilePicture: "",
         },
-        topic: "",
         minFrequency: 0,
         maxFrequency: 0,
         duration: 0,
