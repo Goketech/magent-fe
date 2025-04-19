@@ -138,11 +138,11 @@ function Content() {
   const generateSampleTweet = async () => {
     setIsPublishing(false);
     if (!jwt) {
-      authenticate();
-      // toast({
-      //   variant: "destructive",
-      //   description: "Please connect your wallet",
-      // });
+      // authenticate();
+      toast({
+        variant: "destructive",
+        description: "Please connect your wallet",
+      });
       return;
     }
 
