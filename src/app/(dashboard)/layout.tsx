@@ -28,11 +28,20 @@ export default function DashboardLayout({
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
+
+    // add a check for any 401 from our api requests, if there's a 401, clear the local storage
+
+    // useEffect(() => {
+    //   const storedToken = localStorage.getItem("auth_token");
+    //   authenticate()
+    // }, []);
   };
 
   useEffect(() => {
+    console.log("JWT:", jwt);
     if (!jwt && connected) {
       authenticate(); // Try to authenticate if connected but no JWT
+      console.log("Connected but no JWT, trying to authenticate...");
     }
   }, [jwt, connected, authenticate]);
 
@@ -42,32 +51,6 @@ export default function DashboardLayout({
     >
       <aside className="w-[0] md:w-[210px]">
         <SideNav isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        {/* <div
-        className={`flex flex-col flex-1 transition-all duration-300 ${
-          isSidebarOpen ? "" : ""
-        }`}
-      >
-        {isSidebarOpen ? (
-          <button
-            className="md:hidden fixed top-5 left-40 z-40 text-6xl"
-            onClick={toggleSidebar}
-          >
-            <X />{" "}
-          </button>
-        ) : (
-          <div className="bg-white">
-            <button
-              className="md:hidden fixed top-4 left-6 text-3xl"
-              onClick={toggleSidebar}
-            >
-              <MdMenu />
-            </button>
-            <p className="block md:hidden fixed top-4 left-20 text-xl">
-              {stepData.active}
-            </p>
-          </div>
-        )}
-        </div> */}
       </aside>
       <div className="flex flex-col flex-1 overflow-y-auto">
         <MobileNav />

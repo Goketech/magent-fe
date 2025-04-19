@@ -19,25 +19,26 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { publicKey, signMessage, connected, signIn, sendTransaction,  } = useWallet();
+  const { publicKey, signMessage, connected, signIn, sendTransaction } =
+    useWallet();
   const [jwt, setJwt] = useState<string | null>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem("auth_token");
-    if (storedToken) setJwt(storedToken);
-  }, []);
-
   const authenticate = async () => {
+    console.log("Authenticating...");
     if (!connected || !publicKey || !signMessage) {
       toast({
         variant: "destructive",
         description: "Please connect your wallet first",
       });
+
       return;
     }
 
     try {
+      console.log("Public Key:", publicKey.toBase58());
+      console.log("Sign Message:", signMessage);
+      console.log("Connected:", connected);
       const response = await fetch(
         "https://www.api.hellomagent.com/auth/get-nonce",
         {
@@ -46,6 +47,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           body: JSON.stringify({ publicKey: publicKey.toBase58() }),
         }
       );
+
+      console.log(response);
 
       if (!response.ok) {
         toast({
