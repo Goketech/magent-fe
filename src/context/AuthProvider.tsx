@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const { token } = await verifyRes.json();
-      setJwt(token);
+      setJwt(token);-
       localStorage.setItem("auth_token", token);
     } catch (error) {
       console.error("Authentication failed:", error);
