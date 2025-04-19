@@ -138,16 +138,15 @@ function Content() {
   const generateSampleTweet = async () => {
     setIsPublishing(false);
     if (!jwt) {
-      authenticate()
+      authenticate();
       // toast({
       //   variant: "destructive",
       //   description: "Please connect your wallet",
       // });
-      // return;
+      return;
     }
 
     try {
-      console.log(jwt)
       const response = await fetch(
         "https://www.api.hellomagent.com/twitter/sample-post",
         {
@@ -831,7 +830,8 @@ function Content() {
                     <select
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
                       value={stepData.maxFrequency}
-                      onChange={(e) => {e.target.style.color ='black'
+                      onChange={(e) => {
+                        e.target.style.color = "black";
                         updateStepData({
                           maxFrequency: Number(e.target.value),
                         });
