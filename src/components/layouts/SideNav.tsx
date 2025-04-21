@@ -43,15 +43,15 @@ const SideNav = ({
   return (
     <>
       {/* Backdrop for mobile screens */}
-      {isSidebarOpen && (
+      {/* {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"
           onClick={toggleSidebar}
         />
-      )}
+      )} */}
 
       <div
-        className={`fixed top-0 left-0 h-full w-[250px] px-[8px] py-[20px] bg-white shadow-lg z-20 overflow-y-auto flex flex-col transition-all duration-300 
+        className={`hidden md:flex fixed top-0 left-0 h-full w-[250px] px-[8px] py-[20px] bg-white shadow-lg z-20 overflow-y-auto flex-col transition-all duration-300 
         ${isSidebarOpen ? "left-0" : "left-[-100%]"} md:left-0 md:w-[201px]`}
       >
         <div className="flex items-center justify-between mb-[40px] ml-[16px]">

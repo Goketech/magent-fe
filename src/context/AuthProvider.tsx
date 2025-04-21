@@ -19,14 +19,10 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { publicKey, signMessage, connected, signIn, sendTransaction,  } = useWallet();
+  const { publicKey, signMessage, connected, signIn, sendTransaction } =
+    useWallet();
   const [jwt, setJwt] = useState<string | null>(null);
   const { toast } = useToast();
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem("auth_token");
-    if (storedToken) setJwt(storedToken);
-  }, []);
 
   const authenticate = async () => {
     if (!connected || !publicKey || !signMessage) {
@@ -34,6 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         variant: "destructive",
         description: "Please connect your wallet first",
       });
+
       return;
     }
 
@@ -46,6 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           body: JSON.stringify({ publicKey: publicKey.toBase58() }),
         }
       );
+
 
       if (!response.ok) {
         toast({
@@ -77,7 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const { token } = await verifyRes.json();
-      setJwt(token);
+      setJwt(token);-
       localStorage.setItem("auth_token", token);
     } catch (error) {
       console.error("Authentication failed:", error);

@@ -11,6 +11,12 @@ import Research from "@/components/layouts/Research";
 import Library from "@/components/layouts/Library";
 import Advert from "@/components/layouts/Advert";
 
+
+interface Topic {
+  mode: "type" | "select";
+  value: string;
+}
+
 interface StepData {
   socialMediaAccount: {
     name: string;
@@ -18,8 +24,8 @@ interface StepData {
     profilePicture: string;
   };
   currentStep: number;
-  topic: string;
-  secondTopic: string;
+  typeTopics: Topic[];
+  selectTopics: Topic[];
   minFrequency: number;
   maxFrequency: number;
   duration: number;
@@ -51,8 +57,13 @@ export const StepProvider = ({ children }: { children: ReactNode }) => {
       userName: "",
       profilePicture: "",
     },
-    topic: "",
-    secondTopic: "",
+    typeTopics: [
+      {
+        mode: "type",
+        value: "",
+      },
+    ],
+    selectTopics: [],  
     minFrequency: 0,
     maxFrequency: 0,
     duration: 0,
