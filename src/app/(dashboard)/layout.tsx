@@ -37,6 +37,13 @@ export default function DashboardLayout({
     //   authenticate()
     // }, []);
 
+    // useEffect(() =>{
+    //   const storedToken = localStorage.getItem("auth_token");
+    //   if (storedToken) {
+    //     setJwt(storedToken);
+    //   }
+    // })
+
   useEffect(() => {
     console.log("JWT:", jwt);
     if (!jwt && connected) {

@@ -34,6 +34,7 @@ function Content() {
   const [isPublishing, setIsPublishing] = useState(false);
   const [showPreviewPopup, setShowPreviewPopup] = useState(false);
   const [inputMode, setInputMode] = useState<"type" | "select">("type");
+  // const [isRegenerating, setIsRegenerating] = useState(false);
   const maxTopics = 2;
   const { stepData, updateStepData } = useStepContext();
 
