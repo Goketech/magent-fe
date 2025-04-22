@@ -9,20 +9,8 @@ import {
   MdMenu,
 } from "react-icons/md";
 import Image from "next/image";
-import { useState } from "react";
-import { Button } from "../ui/button";
 import { CustomWalletButton } from "../CustomWalletButton";
 import { useStepContext } from "@/context/StepContext";
-
-const customLabels = {
-  "change-wallet": "Change wallet",
-  connecting: "Connecting ...",
-  "copy-address": "Copy address",
-  copied: "Copied",
-  disconnect: "Disconnect",
-  "has-wallet": "Connect",
-  "no-wallet": "Connect Wallet", // Changed from 'Select Wallet' to 'Connect Wallet'
-};
 
 const SideNav = ({
   isSidebarOpen,
