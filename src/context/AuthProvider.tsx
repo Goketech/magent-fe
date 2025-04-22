@@ -14,15 +14,31 @@ interface AuthContextType {
   jwt: string | null;
   authenticate: () => Promise<void>;
   connected: boolean;
+  isAuthenticating: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { publicKey, signMessage, connected, signIn, sendTransaction } =
-    useWallet();
+  const { publicKey, signMessage, connected } = useWallet();
   const [jwt, setJwt] = useState<string | null>(null);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("auth_token");
+    if (storedToken) {
+      setJwt(storedToken);
+    }
+  }, []);
+
+  // Watch for wallet disconnection to clear JWT
+  useEffect(() => {
+    if (!connected) {
+      setJwt(null);
+      localStorage.removeItem("auth_token");
+    }
+  }, [connected]);
 
   const authenticate = async () => {
     if (!connected || !publicKey || !signMessage) {
@@ -35,6 +51,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     try {
+      setIsAuthenticating(true);
       const response = await fetch(
         "https://www.api.hellomagent.com/auth/get-nonce",
         {
@@ -43,7 +60,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           body: JSON.stringify({ publicKey: publicKey.toBase58() }),
         }
       );
-
 
       if (!response.ok) {
         toast({
@@ -75,15 +91,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const { token } = await verifyRes.json();
-      setJwt(token);-
+      setJwt(token);
       localStorage.setItem("auth_token", token);
+
+      toast({
+        variant: "success",
+        description: "Wallet connected and authenticated successfully!",
+      });
     } catch (error) {
       console.error("Authentication failed:", error);
+      toast({
+        variant: "destructive",
+        description:
+          error instanceof Error ? error.message : "Authentication failed",
+      });
+    } finally {
+      setIsAuthenticating(false);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ jwt, authenticate, connected }}>
+    <AuthContext.Provider
+      value={{ jwt, authenticate, connected, isAuthenticating }}
+    >
       {children}
     </AuthContext.Provider>
   );

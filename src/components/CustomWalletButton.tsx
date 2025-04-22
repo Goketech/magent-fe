@@ -1,19 +1,72 @@
 "use client";
 
-import React from "react";
-import { BaseWalletMultiButton } from "@solana/wallet-adapter-react-ui";
-
-// Override labels
-const CUSTOM_LABELS = {
-  "change-wallet": "Change Wallet",
-  connecting: "Connecting...",
-  "copy-address": "Copy Address",
-  copied: "Copied!",
-  disconnect: "Disconnect",
-  "has-wallet": "Connect", // If the wallet is connected
-  "no-wallet": "Connect Wallet", // Change this from "Select Wallet"
-} as const;
+import React, { useEffect, useState, useCallback } from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { useAuth } from "@/context/AuthProvider";
+import { Button } from "@/components/ui/button";
+import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 
 export function CustomWalletButton(props: any) {
-  return <BaseWalletMultiButton {...props} labels={CUSTOM_LABELS} />;
+  const { publicKey, connected, connecting, disconnect } = useWallet();
+  const { jwt, authenticate, isAuthenticating } = useAuth();
+  const { setVisible } = useWalletModal();
+  const [authPending, setAuthPending] = useState(false);
+
+  // Handle authentication after wallet connection
+  // useEffect(() => {
+  //   if (connected && !jwt && !authPending && !isAuthenticating) {
+  //     handleAuthenticate();
+  //   }
+  // }, [connected, jwt, isAuthenticating]);
+
+  const handleAuthenticate = useCallback(async () => {
+    if (connected && !jwt) {
+      setAuthPending(true);
+      try {
+        await authenticate();
+      } finally {
+        setAuthPending(false);
+      }
+    }
+  }, [connected, jwt, authenticate]);
+
+  const handleClick = useCallback(() => {
+    if (!connected) {
+      // Open wallet modal if not connected
+      setVisible(true);
+    } else if (!jwt) {
+      // If connected but not authenticated, try authenticate
+      handleAuthenticate();
+    } else {
+      // If already authenticated, disconnect wallet
+      disconnect();
+    }
+  }, [connected, jwt, setVisible, handleAuthenticate, disconnect]);
+
+  // Show appropriate button text based on state
+  const getButtonText = useCallback(() => {
+    if (connecting || isAuthenticating) return "Connecting...";
+    if (connected && !jwt) return "Sign Message";
+    if (connected && jwt) {
+      const shortenedAddress = publicKey
+        ? `${publicKey.toString().slice(0, 4)}...${publicKey
+            .toString()
+            .slice(-4)}`
+        : "";
+      return shortenedAddress;
+    }
+    return "Connect Wallet";
+  }, [connecting, isAuthenticating, connected, jwt, publicKey]);
+
+  return (
+    <Button
+      onClick={handleClick}
+      disabled={connecting || isAuthenticating}
+      className="md:w-full bg-[#330065] hover:bg-[#5C3384] text-white hover:text-white font-medium py-[8px] px-[20px] rounded-[32px]"
+      {...props}
+    >
+      {getButtonText()}
+    </Button>
+  );
 }
