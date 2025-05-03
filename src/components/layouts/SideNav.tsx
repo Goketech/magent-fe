@@ -14,6 +14,7 @@ import { CustomWalletButton } from "../CustomWalletButton";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useStepContext } from "@/context/StepContext";
 
+
 const SideNav = ({
   isSidebarOpen,
   toggleSidebar,
