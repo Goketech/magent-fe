@@ -8,9 +8,20 @@ import {
   MdLogout,
   MdMenu,
 } from "react-icons/md";
+import React from "react";
 import Image from "next/image";
 import { CustomWalletButton } from "../CustomWalletButton";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useStepContext } from "@/context/StepContext";
+
+export const handleWalletConnect = (e: React.MouseEvent<HTMLButtonElement>) => {
+  e.preventDefault();
+  // Trigger WalletMultiButton functionality
+  const button = document.querySelector(".wallet-adapter-button") as HTMLButtonElement;
+  if (button) {
+    button.click();
+  }
+}
 
 const SideNav = ({
   isSidebarOpen,
@@ -20,6 +31,8 @@ const SideNav = ({
   toggleSidebar: () => void;
 }) => {
   const { stepData, updateStepData } = useStepContext();
+
+
 
   const navItems = [
     { id: "Research", label: "Research", icon: <MdManageSearch size={20} /> },
@@ -96,7 +109,8 @@ const SideNav = ({
 
         {/* Wallet Button */}
         <div className="mt-auto">
-          <CustomWalletButton />
+          {/* <CustomWalletButton /> */}
+          <WalletMultiButton style={{ display: "none" }} />
         </div>
       </div>
     </>
