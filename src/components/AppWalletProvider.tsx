@@ -27,8 +27,8 @@ export default function AppWalletProvider({
   const wallets = useMemo(
     () => [
       // manually add any legacy wallet adapters here
-      new PhantomWalletAdapter(),
-      new SolflareWalletAdapter(),
+      // new PhantomWalletAdapter(),
+      // new SolflareWalletAdapter(),
       // new UnsafeBurnerWalletAdapter(),
     ],
     [network]
