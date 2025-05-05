@@ -37,7 +37,7 @@ const MobileNav = () => {
           <MdMenu size={24} onClick={handleToggleNav} className="cursor-pointer" />
           <span className="font-medium text-sm">{activeItem?.label || "Menu"}</span>
         </div>
-        <CustomWalletButton />
+        {/* <CustomWalletButton /> */}
         <WalletMultiButton style={{ display: "none" }} />
       </div>
 
