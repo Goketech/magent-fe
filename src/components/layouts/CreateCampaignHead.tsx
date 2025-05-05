@@ -1,5 +1,6 @@
 import { CreateCampaignProps } from "./CreateCampaign";
-import { ArrowLeft } from "lucide-react";
+import { MdArrowBackIos } from "react-icons/md";
+
 
 const CreateCampaignHead: React.FC<CreateCampaignProps> = ({ handleGoBack }) => {
     return (
@@ -8,7 +9,7 @@ const CreateCampaignHead: React.FC<CreateCampaignProps> = ({ handleGoBack }) => 
           onClick={handleGoBack}
           className="flex items-center text-gray-600 hover:text-gray-900 text-sm"
         >
-          <ArrowLeft size={16} className="mr-1" />
+          <MdArrowBackIos size={16} className="mr-1" />
           Back
         </button>
   

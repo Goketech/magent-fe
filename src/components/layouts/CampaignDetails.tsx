@@ -1,6 +1,4 @@
-// CampaignDetails.tsx
-import React from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { MdArrowBackIos } from "react-icons/md";
 import { Campaign } from '../../lib/types';
 
 interface CampaignDetailsProps {
@@ -17,7 +15,7 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({ campaign, onBack, onA
           onClick={onBack}
           className="flex items-center text-gray-600 hover:text-gray-900 text-sm"
         >
-          <ArrowLeft size={16} className="mr-1" />
+          <MdArrowBackIos size={16} className="mr-1" />
           Back
         </button>
       </div>

@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { useFormik } from "formik";
 import { basicInfoSchema } from "../../lib/validation";
+// react-icons/md/MdExpandMore
 
 export interface CampaignBasicInfoProps {
   onSubmit: (values: any) => void;
@@ -66,7 +66,7 @@ const CampaignFormBasic: React.FC<CampaignBasicInfoProps> = ({
             value={formik.values.campaignGoals}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full p-2 border border-[#D7D7D7] rounded"
+            className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
           >
             <option value="">Select goal</option>
             <option value="Engagement">Engagement</option>
@@ -88,7 +88,7 @@ const CampaignFormBasic: React.FC<CampaignBasicInfoProps> = ({
             value={formik.values.campaignKPIs}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full p-2 border border-[#D7D7D7] rounded"
+            className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
           >
             <option value="">Select KPI</option>
             <option value="Likes">Likes</option>
@@ -111,7 +111,7 @@ const CampaignFormBasic: React.FC<CampaignBasicInfoProps> = ({
             value={formik.values.targetNumber}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full p-2 border border-[#D7D7D7] rounded"
+            className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
             placeholder="120"
           />
           {formik.touched.targetNumber && formik.errors.targetNumber && (
@@ -132,7 +132,7 @@ const CampaignFormBasic: React.FC<CampaignBasicInfoProps> = ({
             value={formik.values.targetAudience}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full p-2 border border-[#D7D7D7] rounded"
+            className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
           >
             <option value="">Select audience</option>
             <option value="Others">Others</option>
@@ -153,7 +153,7 @@ const CampaignFormBasic: React.FC<CampaignBasicInfoProps> = ({
             value={formik.values.industry}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full p-2 border border-[#D7D7D7] rounded"
+            className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
           >
             <option value="">Select industry</option>
             <option value="DAOs">DAOs</option>
@@ -178,7 +178,7 @@ const CampaignFormBasic: React.FC<CampaignBasicInfoProps> = ({
               value={formik.values.valuePerUser}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="w-full p-2 border border-[#D7D7D7] rounded"
+              className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
             >
               <option value="">Select your VPU</option>
               <option value="0.01">0.01</option>
@@ -203,7 +203,7 @@ const CampaignFormBasic: React.FC<CampaignBasicInfoProps> = ({
               value={formik.values.amount}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className="w-full p-2 border border-[#D7D7D7] rounded"
+              className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
               placeholder="0.00"
             />
             <span className="absolute right-3 text-gray-500">USDC</span>
@@ -227,7 +227,7 @@ const CampaignFormBasic: React.FC<CampaignBasicInfoProps> = ({
             value={formik.values.totalLiquidity}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full p-2 border border-[#D7D7D7] rounded"
+            className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
             placeholder="0.00"
           />
           <span className="absolute right-3 text-gray-500">USDC</span>
@@ -250,7 +250,7 @@ const CampaignFormBasic: React.FC<CampaignBasicInfoProps> = ({
             value={formik.values.startDate}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full p-2 border border-[#D7D7D7] rounded"
+            className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
           />
           {formik.touched.startDate && formik.errors.startDate && (
             <div className="text-red-500 text-xs mt-1">{formik.errors.startDate as string}</div>
@@ -268,7 +268,7 @@ const CampaignFormBasic: React.FC<CampaignBasicInfoProps> = ({
             value={formik.values.endDate}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            className="w-full p-2 border border-[#D7D7D7] rounded"
+            className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
           />
           {formik.touched.endDate && formik.errors.endDate && (
             <div className="text-red-500 text-xs mt-1">{formik.errors.endDate as string}</div>
