@@ -42,18 +42,18 @@ export function CustomWalletButton(props: any) {
     }
   };
 
-  const handleClick = useCallback(() => {
-    if (!connected) {
-      // Open wallet modal if not connected
-      setVisible(true);
-    } else if (!jwt) {
-      // If connected but not authenticated, try authenticate
-      handleAuthenticate();
-    } else {
-      // If already authenticated, disconnect wallet
-      disconnect();
-    }
-  }, [connected, jwt, setVisible, handleAuthenticate, disconnect]);
+  // const handleClick = useCallback(() => {
+  //   if (!connected) {
+  //     // Open wallet modal if not connected
+  //     setVisible(true);
+  //   } else if (!jwt) {
+  //     // If connected but not authenticated, try authenticate
+  //     handleAuthenticate();
+  //   } else {
+  //     // If already authenticated, disconnect wallet
+  //     disconnect();
+  //   }
+  // }, [connected, jwt, setVisible, handleAuthenticate, disconnect]);
 
   // Show appropriate button text based on state
   const getButtonText = useCallback(() => {
