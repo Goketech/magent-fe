@@ -8,9 +8,12 @@ import {
   MdLogout,
   MdMenu,
 } from "react-icons/md";
+import React from "react";
 import Image from "next/image";
 import { CustomWalletButton } from "../CustomWalletButton";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useStepContext } from "@/context/StepContext";
+
 
 const SideNav = ({
   isSidebarOpen,
@@ -20,6 +23,8 @@ const SideNav = ({
   toggleSidebar: () => void;
 }) => {
   const { stepData, updateStepData } = useStepContext();
+
+
 
   const navItems = [
     { id: "Research", label: "Research", icon: <MdManageSearch size={20} /> },

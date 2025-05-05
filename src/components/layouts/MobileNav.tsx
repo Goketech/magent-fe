@@ -10,6 +10,7 @@ import {
 } from "react-icons/md";
 import { useState } from "react";
 import { CustomWalletButton } from "../CustomWalletButton";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useStepContext } from "@/context/StepContext";
 
 const MobileNav = () => {
