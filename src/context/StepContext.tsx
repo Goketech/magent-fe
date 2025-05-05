@@ -10,6 +10,7 @@ import Content from "@/components/layouts/Content";
 import Research from "@/components/layouts/Research";
 import Library from "@/components/layouts/Library";
 import Advert from "@/components/layouts/Advert";
+import Campaign from "@/components/layouts/Campaign"
 
 
 interface Topic {
@@ -85,6 +86,7 @@ export const StepProvider = ({ children }: { children: ReactNode }) => {
     Content,
     Library,
     Advert,
+    Campaign,
   };
 
   const updateStepData = (newData: Partial<StepData>) => {
