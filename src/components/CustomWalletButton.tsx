@@ -31,29 +31,29 @@ export function CustomWalletButton(props: any) {
     }
   }, [connected, jwt, authenticate]);
 
-  const handleWalletConnect = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    // Trigger WalletMultiButton functionality
-    const button = document.querySelector(
-      ".wallet-adapter-button"
-    ) as HTMLButtonElement;
-    if (button) {
-      button.click();
-    }
-  };
-
-  // const handleClick = useCallback(() => {
-  //   if (!connected) {
-  //     // Open wallet modal if not connected
-  //     setVisible(true);
-  //   } else if (!jwt) {
-  //     // If connected but not authenticated, try authenticate
-  //     handleAuthenticate();
-  //   } else {
-  //     // If already authenticated, disconnect wallet
-  //     disconnect();
+  // const handleWalletConnect = (e: React.MouseEvent<HTMLButtonElement>) => {
+  //   e.preventDefault();
+  //   // Trigger WalletMultiButton functionality
+  //   const button = document.querySelector(
+  //     ".wallet-adapter-button"
+  //   ) as HTMLButtonElement;
+  //   if (button) {
+  //     button.click();
   //   }
-  // }, [connected, jwt, setVisible, handleAuthenticate, disconnect]);
+  // };
+
+  const handleClick = useCallback(() => {
+    if (!connected) {
+      // Open wallet modal if not connected
+      setVisible(true);
+    } else if (!jwt) {
+      // If connected but not authenticated, try authenticate
+      handleAuthenticate();
+    } else {
+      // If already authenticated, disconnect wallet
+      disconnect();
+    }
+  }, [connected, jwt, setVisible, handleAuthenticate, disconnect]);
 
   // Show appropriate button text based on state
   const getButtonText = useCallback(() => {
@@ -72,7 +72,7 @@ export function CustomWalletButton(props: any) {
 
   return (
     <Button
-      onClick={handleWalletConnect}
+      onClick={handleClick}
       // disabled={connecting || isAuthenticating}
       className="md:w-full bg-[#330065] hover:bg-[#5C3384] text-white hover:text-white font-medium py-[8px] px-[20px] rounded-[32px]"
       {...props}

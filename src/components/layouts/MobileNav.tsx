@@ -38,7 +38,6 @@ const MobileNav = () => {
           <span className="font-medium text-sm">{activeItem?.label || "Menu"}</span>
         </div>
         <CustomWalletButton />
-        <WalletMultiButton style={{ display: "none" }} />
       </div>
 
       {showNavItems && (
