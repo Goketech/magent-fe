@@ -102,7 +102,6 @@ const SideNav = ({
         {/* Wallet Button */}
         <div className="mt-auto">
           <CustomWalletButton />
-          <WalletMultiButton style={{ display: "none" }} />
         </div>
       </div>
     </>
