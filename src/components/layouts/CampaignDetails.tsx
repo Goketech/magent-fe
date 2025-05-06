@@ -20,7 +20,15 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({ campaign, onBack, onA
         </button>
       </div>
 
-      <div className="bg-[#330065] rounded-lg p-4 mb-6 text-white relative overflow-hidden">
+      <div
+  className="rounded-lg p-4 mb-6 text-white relative overflow-hidden"
+  style={{
+    backgroundImage: "url('/details.png'), linear-gradient(#330065, #330065)",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    backgroundBlendMode: "overlay",
+  }}
+>
         <div className="flex justify-between items-center  ">
           <div>
             <h2 className="text-xl font-semibold mb-1">{campaign.advertiser}</h2>
