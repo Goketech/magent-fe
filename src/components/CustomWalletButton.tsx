@@ -31,21 +31,21 @@ export function CustomWalletButton(props: any) {
     }
   }, [connected, jwt, authenticate]);
 
-  // const handleWalletConnect = (e: React.MouseEvent<HTMLButtonElement>) => {
-  //   e.preventDefault();
-  //   // Trigger WalletMultiButton functionality
-  //   const button = document.querySelector(
-  //     ".wallet-adapter-button"
-  //   ) as HTMLButtonElement;
-  //   if (button) {
-  //     button.click();
-  //   }
-  // };
+  const handleWalletConnect = () => {
+    // Trigger WalletMultiButton functionality
+    const button = document.querySelector(
+      ".wallet-adapter-button"
+    ) as HTMLButtonElement;
+    if (button) {
+      button.click();
+    }
+  };
 
   const handleClick = useCallback(() => {
     if (!connected) {
       // Open wallet modal if not connected
-      setVisible(true);
+      // setVisible(true);
+      handleWalletConnect();
     } else if (!jwt) {
       // If connected but not authenticated, try authenticate
       handleAuthenticate();
@@ -71,13 +71,16 @@ export function CustomWalletButton(props: any) {
   }, [connecting, isAuthenticating, connected, jwt, publicKey]);
 
   return (
-    <Button
-      onClick={handleClick}
-      disabled={connecting || isAuthenticating}
-      className="md:w-full bg-[#330065] hover:bg-[#5C3384] text-white hover:text-white font-medium py-[8px] px-[20px] rounded-[32px]"
-      {...props}
-    >
-      {getButtonText()}
-    </Button>
+    <>
+      <Button
+        onClick={handleClick}
+        disabled={connecting || isAuthenticating}
+        className="md:w-full bg-[#330065] hover:bg-[#5C3384] text-white hover:text-white font-medium py-[8px] px-[20px] rounded-[32px]"
+        {...props}
+      >
+        {getButtonText()}
+      </Button>
+      <WalletMultiButton style={{ display: "none" }} />
+    </>
   );
 }
