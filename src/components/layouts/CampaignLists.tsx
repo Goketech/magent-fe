@@ -34,6 +34,9 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
   const [totalPages, setTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
+  const [selectedCampaignId, setSelectedCampaignId] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   
   // Filter campaigns based on activeFilters
   const filteredCampaigns = useMemo(() => {
@@ -232,13 +235,15 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
     console.log(`Accepted campaign ${id}`);
     //API request in the nearest future
     
-    setAllCampaigns(prev => 
-      prev.map(campaign => 
-        campaign.id === id 
-          ? { ...campaign, status: 'Completed' as 'Completed' } 
-          : campaign
-      )
-    );
+    // setAllCampaigns(prev => 
+    //   prev.map(campaign => 
+    //     campaign.id === id 
+    //       ? { ...campaign, status: 'Completed' as 'Completed' } 
+    //       : campaign
+    //   )
+    // );
+    setIsModalOpen(true);
+    setSelectedCampaignId(null);
   };
 
   const handleSort = (key: string) => {
