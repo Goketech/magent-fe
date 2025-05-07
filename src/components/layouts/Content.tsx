@@ -210,6 +210,10 @@ function Content() {
       return;
     }
 
+    const dailyPrice = 0.125;
+    const days = stepData.duration;
+    const amountToSend = Number((days * dailyPrice).toFixed(3));
+
     const transactionResponse = await fetch(
       "https://www.api.hellomagent.com/transactions/create-transaction",
       {
@@ -221,7 +225,7 @@ function Content() {
         body: JSON.stringify({
           feature: "sample_tweet",
           reference: `sample_${Date.now()}`,
-          amount: 1,
+          amount: amountToSend,
         }),
       }
     );
@@ -850,7 +854,7 @@ function Content() {
                       <option value="">Select duration</option>
                       <option value="1">1 day - $0.125</option>
                       <option value="2">2 days - $0.25</option>
-                      <option value="3">3 days - $0.5</option>
+                      <option value="3">3 days - $0.375</option>
                     </select>
                   </div>
                 )}
