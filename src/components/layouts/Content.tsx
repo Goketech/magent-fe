@@ -520,7 +520,9 @@ function Content() {
       <div className="flex flex-col md:flex-row justify-between gap-6 h-full w-full">
         <div className="flex flex-col gap-5 w-full h-full">
           <div>
-            <h2 className="text-[20px] font-medium mb-4">Content</h2>
+            <h2 className="text-[20px] font-medium mb-4">
+              Social media management
+            </h2>
             <p className="text-base">
               Effortlessly create tailored, high-quality content with our AI
               agent in seconds.
@@ -803,30 +805,12 @@ function Content() {
                       }}
                     >
                       <option value="">Select minimum frequency</option>
-                      <option value={1}>1 hour</option>
-                      <option value={2}>2 hours</option>
-                      <option value={3}>3 hours</option>
-                      <option value={4}>4 hours</option>
-                      <option value={5}>5 hours</option>
-                      <option value={6}>6 hours</option>
-                      <option value={7}>7 hours</option>
-                      <option value={8}>8 hours</option>
-                      <option value={9}>9 hours</option>
-                      <option value={10}>10 hours</option>
-                      <option value={11}>11 hours</option>
-                      <option value={12}>12 hours</option>
-                      <option value={13}>13 hours</option>
-                      <option value={14}>14 hours</option>
-                      <option value={15}>15 hours</option>
-                      <option value={16}>16 hours</option>
-                      <option value={17}>17 hours</option>
-                      <option value={18}>18 hours</option>
-                      <option value={19}>19 hours</option>
-                      <option value={20}>20 hours</option>
-                      <option value={21}>21 hours</option>
-                      <option value={22}>22 hours</option>
-                      <option value={23}>23 hours</option>
-                      <option value={24}>24 hours</option>
+                      <option value={1}>0 - 10 hour</option>
+                      <option value={2}>10 - 20 hours</option>
+                      <option value={3}>20 - 30 hours</option>
+                      <option value={4}>30 - 40 hours</option>
+                      <option value={5}>40 - 50 hours</option>
+                      <option value={6}>50 - 60 hours</option>
                     </select>
                     <select
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
@@ -839,30 +823,12 @@ function Content() {
                       }}
                     >
                       <option value="">Select maximum frequency</option>
-                      <option value={1}>1 hour</option>
-                      <option value={2}>2 hours</option>
-                      <option value={3}>3 hours</option>
-                      <option value={4}>4 hours</option>
-                      <option value={5}>5 hours</option>
-                      <option value={6}>6 hours</option>
-                      <option value={7}>7 hours</option>
-                      <option value={8}>8 hours</option>
-                      <option value={9}>9 hours</option>
-                      <option value={10}>10 hours</option>
-                      <option value={11}>11 hours</option>
-                      <option value={12}>12 hours</option>
-                      <option value={13}>13 hours</option>
-                      <option value={14}>14 hours</option>
-                      <option value={15}>15 hours</option>
-                      <option value={16}>16 hours</option>
-                      <option value={17}>17 hours</option>
-                      <option value={18}>18 hours</option>
-                      <option value={19}>19 hours</option>
-                      <option value={20}>20 hours</option>
-                      <option value={21}>21 hours</option>
-                      <option value={22}>22 hours</option>
-                      <option value={23}>23 hours</option>
-                      <option value={24}>24 hours</option>
+                      <option value={1}>0 - 10 hour</option>
+                      <option value={2}>10 - 20 hours</option>
+                      <option value={3}>20 - 30 hours</option>
+                      <option value={4}>30 - 40 hours</option>
+                      <option value={5}>40 - 50 hours</option>
+                      <option value={6}>50 - 60 hours</option>
                     </select>
                   </div>
                 )}
@@ -882,9 +848,9 @@ function Content() {
                       }}
                     >
                       <option value="">Select duration</option>
-                      <option value={1}>1 day</option>
-                      <option value={2}>2 days</option>
-                      <option value={3}>3 days</option>
+                      <option value="1">1 day - $0.125</option>
+                      <option value="2">2 days - $0.25</option>
+                      <option value="3">3 days - $0.5</option>
                     </select>
                   </div>
                 )}
@@ -974,6 +940,30 @@ function Content() {
                       </option>
                       <option value="Conversational & relatable">
                         Conversational & relatable
+                      </option>
+                      <option value="Insightful threads">
+                        Insightful threads
+                      </option>
+                      <option value="Timely & Trending">
+                        Timely & Trending
+                      </option>
+                      <option value="Call-to-Action (CTA) focused">
+                        Call-to-Action (CTA) focused
+                      </option>
+                      <option value="Highlight specific features and use cases">
+                        Highlight specific features and use cases
+                      </option>
+                      <option value="Storytelling-infused, clear & concise">
+                        Storytelling-infused, clear & concise
+                      </option>
+                      <option value="Motivational & inspirational">
+                        Motivational & inspirational
+                      </option>
+                      <option value="Factual & credible">
+                        Factual & credible
+                      </option>
+                      <option value="Conversational & personalized">
+                        Conversational & personalized
                       </option>
                     </select>
                   </div>
