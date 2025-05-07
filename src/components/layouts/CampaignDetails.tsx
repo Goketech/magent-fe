@@ -20,21 +20,29 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({ campaign, onBack, onA
         </button>
       </div>
 
-      <div className="bg-[#330065] rounded-lg p-4 mb-6 text-white relative overflow-hidden">
+      <div
+  className="rounded-lg p-4 mb-6 text-white relative overflow-hidden"
+  style={{
+    backgroundImage: "url('/details.png'), linear-gradient(#330065, #330065)",
+    backgroundSize: "contain",
+    backgroundRepeat: "repeat",
+    backgroundBlendMode: "overlay",
+  }}
+>
         <div className="flex justify-between items-center  ">
           <div>
             <h2 className="text-xl font-semibold mb-1">{campaign.advertiser}</h2>
             <div className="grid grid-cols-3 gap-10 mt-2">
               <div>
-                <p className="text-xs opacity-70">Campaign Goal</p>
+                <p className="text-xs opacity-70 py-2">Campaign Goal</p>
                 <p className="text-sm">{campaign.goals}</p>
               </div>
               <div>
-                <p className="text-xs opacity-70">Campaign KPIs</p>
+                <p className="text-xs opacity-70 py-2">Campaign KPIs</p>
                 <p className="text-sm">{campaign.kpis}</p>
               </div>
               <div>
-                <p className="text-xs opacity-70">Total Publishers</p>
+                <p className="text-xs opacity-70 py-2">Total Publishers</p>
                 <p className="text-sm">{campaign.totalPublishers || 12}</p>
               </div>
             </div>

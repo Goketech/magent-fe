@@ -31,6 +31,22 @@ const CampaignFormBasic: React.FC<CampaignBasicInfoProps> = ({
       onSubmit(values);
     }
   });
+  const getVpuLabel = (goal: string) => {
+    switch (goal) {
+      case "Engagement":
+        return "Cost Per Engagement (CPE)";
+      case "App Installs":
+        return "Cost Per Install (CPI)";
+      case "Followers":
+      case "Signups":
+      case "Feedback":
+      case "Waitlist Signups":
+        return "Cost Per Action (CPA)";
+      default:
+        return "Value Per User (VPU)";
+    }
+  };
+  
 
   return (
     <div className="space-y-6">
@@ -70,36 +86,42 @@ const CampaignFormBasic: React.FC<CampaignBasicInfoProps> = ({
           >
             <option value="">Select goal</option>
             <option value="Engagement">Engagement</option>
-            <option value="Awareness">Awareness</option>
-            <option value="Conversion">Conversion</option>
+            <option value="Waitlist Signups">Waitlist Signups</option>
+            <option value="Feedback">Feedback</option>
+            <option value="Followers">Followers</option>
+            <option value="App Installs">App Installs</option>
+            <option value="Signups">Signups</option>
           </select>
           {formik.touched.campaignGoals && formik.errors.campaignGoals && (
             <div className="text-red-500 text-xs mt-1">{formik.errors.campaignGoals as string}</div>
           )}
         </div>
 
-        <div>
-          <label htmlFor="campaignKPIs" className="block font-medium text-[#212221] mb-1">
-            Campaign KPIs <span className="text-red-500">*</span>
-          </label>
-          <select
-            id="campaignKPIs"
-            name="campaignKPIs"
-            value={formik.values.campaignKPIs}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
-          >
-            <option value="">Select KPI</option>
-            <option value="Likes">Likes</option>
-            <option value="Comments">Comments</option>
-            <option value="Shares">Shares</option>
-          </select>
-          {formik.touched.campaignKPIs && formik.errors.campaignKPIs && (
-            <div className="text-red-500 text-xs mt-1">{formik.errors.campaignKPIs as string}</div>
-          )}
+        {formik.values.campaignGoals === "Engagement" && (
+    <div>
+      <label htmlFor="campaignKPIs" className="block font-medium text-[#212221] mb-1">
+        Campaign KPIs <span className="text-red-500">*</span>
+      </label>
+      <select
+        id="campaignKPIs"
+        name="campaignKPIs"
+        value={formik.values.campaignKPIs}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
+      >
+        <option value="">Select KPI</option>
+        <option value="Likes">Likes</option>
+        <option value="Comments">Comments</option>
+        <option value="Shares">Shares</option>
+      </select>
+      {formik.touched.campaignKPIs && formik.errors.campaignKPIs && (
+        <div className="text-red-500 text-xs mt-1">
+          {formik.errors.campaignKPIs as string}
         </div>
-
+      )}
+    </div>
+  )}
         <div>
           <label htmlFor="targetNumber" className="block font-medium text-[#212221] mb-1">
             Target number <span className="text-red-500">*</span>
@@ -120,28 +142,57 @@ const CampaignFormBasic: React.FC<CampaignBasicInfoProps> = ({
         </div>
       </div>
 
-      {/* Target Audience and Industry */}
+      {/* Target Audience */}
       <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="targetAudience" className="block font-medium text-[#212221] mb-1">
-            Target audience <span className="text-red-500">*</span>
-          </label>
-          <select
-            id="targetAudience"
-            name="targetAudience"
-            value={formik.values.targetAudience}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
-          >
-            <option value="">Select audience</option>
-            <option value="Others">Others</option>
-            <option value="AI">AI</option>
-          </select>
-          {formik.touched.targetAudience && formik.errors.targetAudience && (
-            <div className="text-red-500 text-xs mt-1">{formik.errors.targetAudience as string}</div>
-          )}
-        </div>
+  <div className="col-span-2">
+    <label className="block font-medium text-[#212221] mb-1">
+      Target audience <span className="text-red-500">*</span>
+    </label>
+  </div>
+
+  <div>
+    {/* <label htmlFor="age" className="block font-medium text-[#212221] mb-1">
+      Age <span className="text-red-500">*</span>
+    </label> */}
+    <input
+      type="number"
+      id="age"
+      name="age"
+      placeholder="Age"
+      value={formik.values.age}
+      onChange={formik.handleChange}
+      onBlur={formik.handleBlur}
+      min={13}
+      max={120}
+      className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
+    />
+    {formik.touched.age && formik.errors.age && (
+      <div className="text-red-500 text-xs mt-1">{formik.errors.age as string}</div>
+    )}
+  </div>
+
+  <div>
+    {/* <label htmlFor="gender" className="block font-medium text-[#212221] mb-1">
+      Gender <span className="text-red-500">*</span>
+    </label> */}
+    <select
+      id="gender"
+      name="gender"
+      value={formik.values.gender}
+      onChange={formik.handleChange}
+      onBlur={formik.handleBlur}
+      className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
+    >
+      <option value="">Gender</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+      <option value="Other">Other</option>
+    </select>
+    {formik.touched.gender && formik.errors.gender && (
+      <div className="text-red-500 text-xs mt-1">{formik.errors.gender as string}</div>
+    )}
+  </div>
+</div>
 
         <div>
           <label htmlFor="industry" className="block font-medium text-[#212221] mb-1">
@@ -156,20 +207,24 @@ const CampaignFormBasic: React.FC<CampaignBasicInfoProps> = ({
             className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
           >
             <option value="">Select industry</option>
-            <option value="DAOs">DAOs</option>
-            <option value="NFTs">NFTs</option>
             <option value="DeFi">DeFi</option>
+            <option value="Infrastructure">Infrastructure</option>
+            <option value="DePIN">DePIN</option>
+            <option value="Consumer dApps">Consumer dApps</option>
+            <option value="Payments">Payments</option>
+            <option value="NFTs">Gaming</option>
+            <option value="AI">AI</option>
+            <option value="DAOs">DAOs</option>
           </select>
           {formik.touched.industry && formik.errors.industry && (
             <div className="text-red-500 text-xs mt-1">{formik.errors.industry as string}</div>
           )}
         </div>
-      </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label htmlFor="valuePerUser" className="block font-medium text-[#212221] mb-1">
-            Value Per User (VPU) <span className="text-red-500">*</span>
+          {getVpuLabel(formik.values.campaignGoals)} <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <select
@@ -180,7 +235,7 @@ const CampaignFormBasic: React.FC<CampaignBasicInfoProps> = ({
               onBlur={formik.handleBlur}
               className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
             >
-              <option value="">Select your VPU</option>
+              <option value="">{`Select your ${getVpuLabel(formik.values.campaignGoals)}`}</option>
               <option value="0.01">0.01</option>
               <option value="0.05">0.05</option>
               <option value="0.10">0.10</option>

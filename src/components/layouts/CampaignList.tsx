@@ -1,6 +1,9 @@
+// "use client"
+
 import { useState } from 'react';
 import { MoreVertical } from 'lucide-react';
 import { MdOutlineCheckCircle } from 'react-icons/md';
+import AcceptModal from '../ui/AcceptModal';
 
 export interface Campaign {
   id: number;
@@ -21,6 +24,7 @@ interface CampaignListProps {
 
 const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewDetails }) => {
   const [showOptions, setShowOptions] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   const getStatusBadgeClass = (status: string) => {
     switch(status) {
@@ -37,6 +41,10 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
 
   const handleAccept = () => {
     onAccept(campaign.id);
+    setIsModalOpen(true)
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   const toggleOptions = () => {
@@ -48,6 +56,7 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
   };
 
   return (
+    <>
     <tr className="border-b border-gray-200 hover:bg-gray-50">
       <td className="py-3 px-4 text-xs">{campaign.advertiser}</td>
       <td className="py-3 px-4 text-xs">{campaign.campaignName}</td>
@@ -102,6 +111,8 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
         </div>
       </td>
     </tr>
+    <AcceptModal isOpen={isModalOpen} onClose={handleCloseModal} campaign={campaign}/>
+    </>
   );
 };
 
