@@ -740,6 +740,37 @@ function Content() {
                             <option value="Growth hacking">
                               Growth hacking
                             </option>
+                            <option value="Crypto Trends">Crypto Trends</option>
+                            <option value="Solana">Solana</option>
+                            <option value="DeFI">DeFI</option>
+                            <option value="Superteam Nigeria">
+                              Superteam Nigeria
+                            </option>
+                            <option value="Web3 Community">
+                              Web3 Community
+                            </option>
+                            <option value="Seamless Crypto Transaction">
+                              Seamless Crypto Transaction
+                            </option>
+                            <option value="Digital and Utility Payments with Crypto">
+                              Digital and Utility Payments with Crypto
+                            </option>
+                            <option value="Earn Your Crypto don't Buy it">
+                              Earn Your Crypto don't Buy it
+                            </option>
+                            <option value="Fiat to Crypto routing">
+                              Fiat to Crypto routing
+                            </option>
+                            <option value="Crypto to Fiat routing">
+                              Crypto to Fiat routing
+                            </option>
+                            <option value="Secure Solana Onboarding">
+                              Secure Solana Onboarding
+                            </option>
+                            <option value="Web3 Marketing">
+                              Web3 Marketing
+                            </option>
+                            <option value="Solana RPCs">Solana RPCs</option>
                           </select>
                         )}
                       </div>
@@ -852,6 +883,36 @@ function Content() {
                       <option value="Professional yet provocative">
                         Professional yet provocative
                       </option>
+                      <option value="Visual & interactive">
+                        Visual & interactive
+                      </option>
+                      <option value="Conversational & relatable">
+                        Conversational & relatable
+                      </option>
+                      <option value="Insightful threads">
+                        Insightful threads
+                      </option>
+                      <option value="Timely & Trending">
+                        Timely & Trending
+                      </option>
+                      <option value="Call-to-Action (CTA) focused">
+                        Call-to-Action (CTA) focused
+                      </option>
+                      <option value="Highlight specific features and use cases">
+                        Highlight specific features and use cases
+                      </option>
+                      <option value="Storytelling-infused, clear & concise">
+                        Storytelling-infused, clear & concise
+                      </option>
+                      <option value="Motivational & inspirational">
+                        Motivational & inspirational
+                      </option>
+                      <option value="Factual & credible">
+                        Factual & credible
+                      </option>
+                      <option value="Conversational & personalized">
+                        Conversational & personalized
+                      </option>
                     </select>
                     <select
                       className="border-[0.5px] border-[#D7D7D7] p-3 rounded-[8px] w-full mt-4 text-sm text-[#6A6B6A] bg-white focus:outline-none focus:border-[#330065]"
@@ -873,6 +934,36 @@ function Content() {
                       </option>
                       <option value="Professional yet provocative">
                         Professional yet provocative
+                      </option>
+                      <option value="Visual & interactive">
+                        Visual & interactive
+                      </option>
+                      <option value="Conversational & relatable">
+                        Conversational & relatable
+                      </option>
+                      <option value="Insightful threads">
+                        Insightful threads
+                      </option>
+                      <option value="Timely & Trending">
+                        Timely & Trending
+                      </option>
+                      <option value="Call-to-Action (CTA) focused">
+                        Call-to-Action (CTA) focused
+                      </option>
+                      <option value="Highlight specific features and use cases">
+                        Highlight specific features and use cases
+                      </option>
+                      <option value="Storytelling-infused, clear & concise">
+                        Storytelling-infused, clear & concise
+                      </option>
+                      <option value="Motivational & inspirational">
+                        Motivational & inspirational
+                      </option>
+                      <option value="Factual & credible">
+                        Factual & credible
+                      </option>
+                      <option value="Conversational & personalized">
+                        Conversational & personalized
                       </option>
                     </select>
                   </div>
