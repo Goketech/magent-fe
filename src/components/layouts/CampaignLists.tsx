@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import CampaignList, { Campaign } from './CampaignList';
 import { FilterState } from './CampaignFilter';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import AcceptModal from '../ui/AcceptModal';
+
 
 interface TableHeader {
   id: string;
@@ -36,6 +38,8 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
   const [selectedCampaignId, setSelectedCampaignId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
+
 
   
   // Filter campaigns based on activeFilters
@@ -231,20 +235,12 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
     }, 300);
   };
 
-  const handleAcceptCampaign = (id: number) => {
-    console.log(`Accepted campaign ${id}`);
-    //API request in the nearest future
-    
-    // setAllCampaigns(prev => 
-    //   prev.map(campaign => 
-    //     campaign.id === id 
-    //       ? { ...campaign, status: 'Completed' as 'Completed' } 
-    //       : campaign
-    //   )
-    // );
+  const handleAcceptCampaign = (campaign: Campaign) => {
+    setSelectedCampaign(campaign);
     setIsModalOpen(true);
-    setSelectedCampaignId(null);
+    setSelectedCampaignId(null)
   };
+  
 
   const handleSort = (key: string) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -423,13 +419,20 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
                 <CampaignList 
                   key={campaign.id} 
                   campaign={campaign} 
-                  onAccept={handleAcceptCampaign}
-                  onViewDetails={onViewDetails}
+                  onAccept={() => handleAcceptCampaign(campaign)} // pass full object
+                    onViewDetails={onViewDetails}
                 />
               ))}
             </tbody>
           </table>
         )}
+        {selectedCampaign && (
+  <AcceptModal
+    isOpen={isModalOpen}
+    onClose={() => setIsModalOpen(false)}
+    campaign={selectedCampaign}
+  />
+)}
       </div>
       
       <div className="flex justify-center mt-6 space-x-2">

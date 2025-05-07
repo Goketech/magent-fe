@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { MoreVertical } from 'lucide-react';
 import { MdOutlineCheckCircle } from 'react-icons/md';
-import AcceptModal from '../ui/AcceptModal';
 
 export interface Campaign {
   id: number;
@@ -111,7 +110,6 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
         </div>
       </td>
     </tr>
-    <AcceptModal isOpen={isModalOpen} onClose={handleCloseModal} campaign={campaign}/>
     </>
   );
 };
