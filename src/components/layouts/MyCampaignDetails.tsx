@@ -47,8 +47,8 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({ campaign, onBack 
             </div>
           </div>
           <div className='absolute top-0 right-0'>
-            <span className="bg-[#E6F4EB] text-[#009137] text-xs px-6 py-2 rounded-bl-md">
-              {campaign.status || 'Active'}
+            <span className="bg-[#FCF4E7] text-[#DD900D] text-xs px-6 py-2 rounded-bl-md">
+              {campaign.status || 'Pending'}
             </span>
           </div>
         </div>
