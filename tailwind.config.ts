@@ -59,6 +59,9 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      screens: {
+        'xs': {'max': '400px'},
+      }
     },
   },
   plugins: [require("tailwindcss-animate")],
