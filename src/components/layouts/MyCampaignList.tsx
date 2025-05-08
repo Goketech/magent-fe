@@ -1,27 +1,30 @@
-import React, { useState } from 'react';
-import { MoreVertical } from 'lucide-react';
-import { MyCampaign as MyCampaignType } from '@/lib/types';
+import React, { useState } from "react";
+import { MoreVertical } from "lucide-react";
+import { MyCampaign as MyCampaignType } from "@/lib/types";
 
 interface MyCampaignListProps {
   campaign: MyCampaignType;
   onViewDetails: (campaign: MyCampaignType) => void;
 }
 
-const MyCampaignList: React.FC<MyCampaignListProps> = ({ campaign, onViewDetails }) => {
+const MyCampaignList: React.FC<MyCampaignListProps> = ({
+  campaign,
+  onViewDetails,
+}) => {
   const [showOptions, setShowOptions] = useState<boolean>(false);
-  
+
   const getStatusBadgeClass = (status: string) => {
-    switch(status) {
-      case 'Active':
-        return 'bg-[#E6F4EB] text-[#009137]';
-      case 'Completed':
-        return 'bg-[#EBE6F0] text-[#330065]';
-      case 'Pending':
-        return 'bg-yellow-100 text-yellow-600';
-      case 'Inactive':
-        return 'bg-gray-100 text-gray-600';
+    switch (status) {
+      case "Active":
+        return "bg-[#E6F4EB] text-[#009137]";
+      case "Completed":
+        return "bg-[#EBE6F0] text-[#330065]";
+      case "Pending":
+        return "bg-yellow-100 text-yellow-600";
+      case "Inactive":
+        return "bg-gray-100 text-gray-600";
       default:
-        return 'bg-gray-100 text-gray-600';
+        return "bg-gray-100 text-gray-600";
     }
   };
 
@@ -39,51 +42,62 @@ const MyCampaignList: React.FC<MyCampaignListProps> = ({ campaign, onViewDetails
       {/* <td className="py-3 px-4 text-xs">{campaign.advertiser}</td> */}
       <td className="py-3 px-4 text-xs">{campaign.campaignName}</td>
       <td className="py-3 px-4 text-xs">{campaign.campaignGoals}</td>
-      <td className="py-3 px-4 text-xs">{campaign.valuePerUser}</td>
+      <td className="py-3 px-4 text-xs flex gap-2">
+        <span className="text-[#330065] bg-[#EBE6F0] py-[4px] px-[10px] rounded-md">
+          {campaign.valuePerUser}
+        </span>
+        <span className="bg-[#E6F4EB] text-[#009137] py-[4px] px-[10px] rounded-md">
+          ${campaign.amount}
+        </span>
+      </td>
       <td className="py-3 px-4 text-xs">${campaign.totalLiquidity} USDC</td>
-      <td className="py-3 px-4 text-xs">$ 480</td>
-      <td className="py-3 px-4 text-xs">$ 520</td>
+      <td className="py-3 px-4 text-xs">$ 0</td>
+      <td className="py-3 px-4 text-xs">$ 0</td>
       <td className="py-3 px-4 text-xs">
-      {campaign.startDate && campaign.endDate ? (
-  <>
-    {new Date(campaign.startDate).toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
-    })} - {new Date(campaign.endDate).toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
-    })}
-  </>
-) : (
-  'N/A'
-)}
+        {campaign.startDate && campaign.endDate ? (
+          <>
+            {new Date(campaign.startDate).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            })}{" "}
+            -{" "}
+            {new Date(campaign.endDate).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            })}
+          </>
+        ) : (
+          "N/A"
+        )}
       </td>
       <td className="py-3 px-4 text-xs">12</td>
       <td className="py-3 px-4 text-xs">
-  <span className={`px-[10px] py-2 rounded-md bg-[#E6F4EB] text-[#009137] `}>
-    Active
-  </span>
-</td>
+        <span
+          className={`px-[10px] py-2 rounded-md bg-[#FCF4E7] text-[#DD900D] `}
+        >
+          Pending
+        </span>
+      </td>
       <td className="py-3 px-4 text-xs">
         <div className="flex items-center gap-2">
           <div className="relative">
-            <button 
+            <button
               className="text-gray-500 hover:bg-gray-100 p-1 rounded-full"
               onClick={toggleOptions}
             >
               <MoreVertical size={16} />
             </button>
-            
+
             {showOptions && (
               <div className="absolute right-0 mt-1 w-32 bg-white border border-gray-200 rounded-md shadow-lg z-10">
                 <div className="py-1">
-                  <button 
+                  <button
                     className="block w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-100"
                     onClick={handleViewDetails}
                   >
                     View details
                   </button>
-                  <button 
+                  <button
                     className="block w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-100"
                     onClick={() => {
                       console.log(`Edit campaign ${campaign.id}`);
