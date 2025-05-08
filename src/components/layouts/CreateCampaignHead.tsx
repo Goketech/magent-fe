@@ -1,5 +1,8 @@
-import { CreateCampaignProps } from "./CreateCampaign";
 import { MdArrowBackIos } from "react-icons/md";
+
+interface CreateCampaignProps {
+  handleGoBack: () => void;
+}
 
 
 const CreateCampaignHead: React.FC<CreateCampaignProps> = ({ handleGoBack }) => {
