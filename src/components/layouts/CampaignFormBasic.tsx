@@ -15,14 +15,14 @@ const CampaignFormBasic: React.FC<CampaignFormBasicProps> = ({ formik }) => {
   const getAutoValuePerUser = (goal: string) => {
     switch (goal) {
       case "Engagement":
-        return "Cost Per Engagement (CPE)";
+        return "CPE";
       case "App Installs":
-        return "Cost Per Install (CPI)";
+        return "CPI";
       case "Followers":
       case "Signups":
       case "Feedback":
       case "Waitlist Signups":
-        return "Cost Per Action (CPA)";
+        return "CPA";
       default:
         return "";
     }
