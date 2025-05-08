@@ -3,7 +3,7 @@ import DashboardContent from "@/components/layouts/DashboardContent";
 
 const Page = () => {
   return (
-    <div className="bg-[#F2F2F2] md:bg-white p-2 md:p-0">
+    <div className="bg-[#F2F2F2] md:bg-white">
       <DashboardContent />
     </div>
   );
