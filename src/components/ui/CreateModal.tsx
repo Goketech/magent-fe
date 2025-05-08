@@ -24,7 +24,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ isOpen, onClose, campaign, on
 
         <h2 className="text-lg font-semibold mb-2">Confirm campaign launch</h2>
         <p className="text-sm text-gray-700 mb-4">
-          You&apos;re about to lock <strong>${campaign.amount} USDC</strong> into Magent&apos;s liquidity vault to fund your campaign.
+          You&apos;re about to lock <strong>${campaign.totalLiquidity} USDC</strong> into Magent&apos;s liquidity vault to fund your campaign.
           This amount will be used to reward publishers based on verified results. <br />
           <br />
           Are you sure you want to proceed?
