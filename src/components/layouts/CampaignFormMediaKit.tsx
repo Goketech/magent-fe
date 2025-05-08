@@ -6,27 +6,12 @@ export interface CampaignMediaKitProps {
   initialValues?: any;
 }
 
-const CampaignFormMediaKit: React.FC<CampaignMediaKitProps> = ({ 
-  onSubmit, 
-  initialValues = {
-    website: "",
-    twitter: "",
-    youtube: "",
-    instagram: "",
-    telegram: "",
-    discord: "",
-    otherResources: "",
-    otherInformation: ""
-  }
-}) => {
+interface CampaignFormBasicProps {
+  formik: any; // Or use proper Formik types
+}
+
+const CampaignFormMediaKit: React.FC<CampaignFormBasicProps> = ({ formik}) => {
   
-  const formik = useFormik({
-    initialValues,
-    validationSchema: mediaKitSchema,
-    onSubmit: (values) => {
-      onSubmit(values);
-    }
-  });
 
   return (
     <div className="space-y-4">
