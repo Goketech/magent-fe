@@ -32,7 +32,7 @@ async function getTokenAccount(
     { mint: usdcTokenPublicKey }
   );
 
-  return tokenAccounts.value[0].pubkey;
+  return tokenAccounts.value[0]?.pubkey;
 }
 
 export async function transferCoin(
@@ -44,14 +44,15 @@ export async function transferCoin(
 ) {
   try {
 
+    let mintAccount = await getMint(connection, usdcTokenPublicKey);
+
     const fromTokenAccount = await getTokenAccount(connection, from);
 
     if (!fromTokenAccount) {
       throw new Error("Your account does not have a token account");
     }
-    const toTokenAccount = await getTokenAccount(connection, to);
 
-    let mintAccount = await getMint(connection, usdcTokenPublicKey);
+    const toTokenAccount = await getTokenAccount(connection, to);
 
     const instruction = createTransferInstruction(
       fromTokenAccount,

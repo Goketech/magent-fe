@@ -248,7 +248,7 @@ function Content() {
         connection,
         publicKey!,
         developerPublicKey,
-        1,
+        amountToSend,
         sendTransaction
       );
 
