@@ -4,11 +4,12 @@ import * as Yup from "yup";
 import Modal from "./Modal";
 import { Campaign } from "../layouts/CampaignList";
 import { acceptSchema } from "../../lib/validation";
+import { MyCampaign } from "@/lib/types";
 
 interface AcceptModalProps {
   isOpen: boolean;
   onClose: () => void;
-  campaign: Campaign;
+  campaign: Campaign | MyCampaign;
 }
 
 const AcceptModal: React.FC<AcceptModalProps> = ({ isOpen, onClose, campaign }) => {

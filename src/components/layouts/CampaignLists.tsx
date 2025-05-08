@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import CampaignList, { Campaign } from './CampaignList';
+import { MyCampaign as MyCampaignType } from '@/lib/types';
 import { FilterState } from './CampaignFilter';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import AcceptModal from '../ui/AcceptModal';
+import MyCampaignUnderMarketPlace from './MyCampaignUnderMarketPlace';
 
 
 interface TableHeader {
@@ -15,13 +17,15 @@ interface CampaignListsProps {
   initialCampaigns?: Campaign[];
   itemsPerPage?: number;
   activeFilters?: FilterState;
-  onViewDetails: (campaign: Campaign) => void;
+  onViewDetails: (campaign: Campaign | MyCampaignType) => void;
+  campaigns: MyCampaignType[]
 }
 const EMPTY_ARRAY: Campaign[] = [];
 const CampaignLists: React.FC<CampaignListsProps> = ({ 
   initialCampaigns = EMPTY_ARRAY, 
   itemsPerPage = 10,
   onViewDetails,
+  campaigns,
   activeFilters = {
     industry: '',
     status: '',
@@ -38,7 +42,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
   const [selectedCampaignId, setSelectedCampaignId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
+  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | MyCampaignType | null>(null);
 
 
   
@@ -117,7 +121,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
       kpis: "Likes",
       duration: "Apr 15 - Apr 25",
       industry: "DAOs",
-      status: "Active"
+      status: "Pending"
     },
     {
       id: 2,
@@ -127,7 +131,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
       kpis: "Likes",
       duration: "Apr 15 - Apr 25",
       industry: "DAOs",
-      status: "Active"
+      status: "Pending"
     },
     {
       id: 3,
@@ -137,7 +141,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
       kpis: "Likes",
       duration: "Apr 15 - Apr 25",
       industry: "DAOs",
-      status: "Completed"
+      status: "Pending"
     },
     {
       id: 4,
@@ -147,7 +151,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
       kpis: "Likes",
       duration: "Apr 15 - Apr 25",
       industry: "DAOs",
-      status: "Active"
+      status: "Pending"
     },
     {
       id: 5,
@@ -157,7 +161,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
       kpis: "Likes",
       duration: "Apr 15 - Apr 25",
       industry: "DAOs",
-      status: "Completed"
+      status: "Pending"
     },
     {
       id: 6,
@@ -167,7 +171,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
       kpis: "Likes",
       duration: "Apr 15 - Apr 25",
       industry: "DAOs",
-      status: "Active"
+      status: "Pending"
     },
     {
       id: 7,
@@ -177,37 +181,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
       kpis: "Likes",
       duration: "Apr 15 - Apr 25",
       industry: "DAOs",
-      status: "Completed"
-    },
-    {
-      id: 8,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Completed"
-    },
-    {
-      id: 9,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Active"
-    },
-    {
-      id: 10,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Completed"
+      status: "Pending"
     }
   ];
 
@@ -235,7 +209,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
     }, 300);
   };
 
-  const handleAcceptCampaign = (campaign: Campaign) => {
+  const handleAcceptCampaign = (campaign: Campaign | MyCampaignType) => {
     setSelectedCampaign(campaign);
     setIsModalOpen(true);
     setSelectedCampaignId(null)
@@ -423,6 +397,16 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
                     onViewDetails={onViewDetails}
                 />
               ))}
+              {campaigns.map((campaign) => (
+                <MyCampaignUnderMarketPlace
+                  key={campaign.id} 
+                  campaign={campaign} 
+                  onAccept={() => handleAcceptCampaign(campaign)} // pass full object
+                  onViewDetails={onViewDetails}
+                />
+              ))
+
+              }
             </tbody>
           </table>
         )}

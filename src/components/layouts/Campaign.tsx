@@ -1,5 +1,5 @@
 // Campaign.tsx - Main component
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import CampaignHead from './CampaignHead';
 import CampaignFilter, { FilterState } from './CampaignFilter';
 import CampaignLists from './CampaignLists';
@@ -26,6 +26,30 @@ const Campaign: React.FC = () => {
 
   const filters = useMemo(() => rawFilters, [rawFilters]);
 
+  // Load campaigns from localStorage on component mount
+  useEffect(() => {
+    const savedCampaigns = localStorage.getItem('userCampaigns');
+    console.log('Loading from localStorage:', savedCampaigns);
+    if (savedCampaigns) {
+      try {
+        const parsedCampaigns = JSON.parse(savedCampaigns);
+        console.log('Parsed campaigns:', parsedCampaigns);
+        setUserCampaigns(parsedCampaigns);
+      } catch (error) {
+        console.error('Failed to parse saved campaigns:', error);
+      }
+    }
+  }, []);
+
+  // Save campaigns to localStorage whenever they change
+  useEffect(() => {
+    // Only save if we have campaigns to save
+    if (userCampaigns.length > 0) {
+      console.log('Saving to localStorage:', userCampaigns);
+      localStorage.setItem('userCampaigns', JSON.stringify(userCampaigns));
+    }
+  }, [userCampaigns]);
+
   const handleFilterChange = (newFilters: FilterState) => {
     setRawFilters(newFilters);
   };
@@ -50,42 +74,55 @@ const Campaign: React.FC = () => {
     console.log(`Accepting campaign ${id}`);
     // accept logic
   };
-  // Add this function in Campaign.tsx
-const handleAddCampaign = (campaignData: any) => {
-  // Create a new campaign object with an ID and other needed properties
-  const newCampaign: MyCampaignType = {
-    id: userCampaigns.length + 1, // Simple ID generation
-    ...campaignData,
-    status: 'Active', // Default status
-    createdAt: new Date().toISOString(),
-    // Add any other required fields for CampaignType
+
+  const handleAddCampaign = (campaignData: any) => {
+    // Create a new campaign object with an ID and other needed properties
+    const newCampaign: MyCampaignType = {
+      id: userCampaigns.length + 1, // Simple ID generation
+      ...campaignData,
+      status: 'Active', // Default status
+      createdAt: new Date().toISOString(),
+      // Add any other required fields for CampaignType
+    };
+    
+    // Add to campaigns array
+    const updatedCampaigns = [...userCampaigns, newCampaign];
+    
+    // Update state
+    setUserCampaigns(updatedCampaigns);
+    
+    // Explicitly save to localStorage immediately
+    try {
+      localStorage.setItem('userCampaigns', JSON.stringify(updatedCampaigns));
+      // console.log('Saved campaign directly:', updatedCampaigns);
+    } catch (error) {
+      // console.error('Failed to save campaigns:', error);
+    }
+    
+    // Exit create campaign view
+    setCreateCampaign(false);
   };
-  
-  // Add to campaigns array
-  setUserCampaigns(prevCampaigns => [...prevCampaigns, newCampaign]);
-  
-  // Exit create campaign view
-  setCreateCampaign(false);
-};
 
   return (
     <div className="container mx-auto px-2 mt-[-2.5rem]">
       {selectedCampaign ? (
         'advertiser' in selectedCampaign ? (
-    <CampaignDetails 
-      campaign={selectedCampaign} 
-      onBack={handleBack} 
-      onAccept={handleAccept}
-    />
-  ) : (
-    <MyCampaignDetails 
-      campaign={selectedCampaign} 
-      onBack={handleBack}
-    />
-  )
+          <CampaignDetails 
+            campaign={selectedCampaign} 
+            onBack={handleBack} 
+            onAccept={handleAccept}
+          />
+        ) : (
+          <MyCampaignDetails 
+            campaign={selectedCampaign} 
+            onBack={handleBack}
+          />
+        )
       ) : createCampaign ? (
-        <CreateCampaign handleGoBack={handleCreateBack}
-        onCampaignCreate={handleAddCampaign}  />
+        <CreateCampaign 
+          handleGoBack={handleCreateBack}
+          onCampaignCreate={handleAddCampaign} 
+        />
       ) : (
         <>
           <CampaignHead 
@@ -98,13 +135,14 @@ const handleAddCampaign = (campaignData: any) => {
             <CampaignLists 
               activeFilters={filters} 
               onViewDetails={handleViewDetails}
+              campaigns={userCampaigns}
             />
           ) : (
             <MyCampaignLists 
-  activeFilters={filters}
-  onViewDetails={handleViewDetails}
-  campaigns={userCampaigns} // Pass the campaigns
-/>
+              activeFilters={filters}
+              onViewDetails={handleViewDetails}
+              campaigns={userCampaigns}
+            />
           )}
         </>
       )}
