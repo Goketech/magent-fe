@@ -523,8 +523,8 @@ function Content() {
       )}
       <div className="flex flex-col md:flex-row justify-between gap-6 h-full w-full">
       <div className="flex flex-col gap-5 w-full h-full">
-          <div className="">
-            <h2 className="text-sm md:text-[20px] font-medium mb-4 xs:text-left">
+          <div>
+            <h2 className="text-sm md:text-[20px] font-medium mb-4">
               Social media management
             </h2>
             <p className="text-base">
@@ -558,7 +558,7 @@ function Content() {
             <div className="border-[#F6F6F6] bg-white w-full h-full rounded-[12px] border-2 flex flex-col justify-between p-5">
               {/* Progress Bar */}
               <div className="flex flex-row xs:flex-col xs:gap-5 justify-between w-full">
-                <p className="bg-[#EBE6F0] rounded-[8px] px-2 py-1 text-[#330065] text-xs whitespace-nowrap mr-2 md:mr-0 w-auto">
+                <p className="bg-[#EBE6F0] rounded-[8px] px-2 py-1 text-[#330065] text-xs whitespace-nowrap mr-2 md:mr-0">
                   {(stepData.currentStep === 1 && (
                     <span>Social Media Account</span>
                   )) ||
