@@ -1,4 +1,7 @@
 // types.ts
+export type CampaignStatus = "Active" | "Completed" | "Pending" | "Inactive";
+
+
 export interface Campaign {
     id: number;
     advertiser: string;
@@ -7,8 +10,8 @@ export interface Campaign {
     kpis: string;
     duration: string;
     industry: string;
-    status: 'Active' | 'Completed';
     
+    status: CampaignStatus;
     targetNumber?: number;
     targetAudience?: string;
     ageRange?: string;
@@ -18,7 +21,6 @@ export interface Campaign {
     mediaImage?: string;
   }
 
-  export type CampaignStatus = 'Active' | 'Completed' | 'Pending' | 'Inactive';
 
   export interface MyCampaign {
     id: number;

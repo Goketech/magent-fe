@@ -3,38 +3,41 @@
 import { useState } from 'react';
 import { MoreVertical } from 'lucide-react';
 import { MdOutlineCheckCircle } from 'react-icons/md';
+import { MyCampaign, CampaignStatus  } from '@/lib/types';
 
-export interface Campaign {
-  id: number;
-  advertiser: string;
-  campaignName: string;
-  goals: string;
-  kpis: string;
-  duration: string;
-  industry: string;
-  status: 'Active' | 'Completed' | 'Pending' | "Inactive";
-}
+// export interface Campaign {
+//   id: number;
+//   advertiser: string;
+//   campaignName: string;
+//   goals: string;
+//   kpis: string;
+//   duration: string;
+//   industry: string;
+//   status: 'Active' | 'Completed';
+// }
 
 interface CampaignListProps {
-  campaign: Campaign;
+  campaign: MyCampaign;
   onAccept: (id: number) => void;
-  onViewDetails: (campaign: Campaign) => void;
+  onViewDetails: (campaign: MyCampaign) => void;
 }
 
-const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewDetails }) => {
+const MyCampaignUnderMarketPlace: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewDetails }) => {
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  const getStatusBadgeClass = (status: string) => {
-    switch(status) {
-      case 'Active':
-        return 'bg-[#E6F4EB] text-[#009137]';
-      case 'Completed':
-        return 'bg-[#EBE6F0] text-[#330065]';
-      case 'Pending':
+  const getStatusBadgeClass = (status: CampaignStatus | any) => {
+    switch (status) {
+      case "Active":
+        return "bg-[#E6F4EB] text-[#009137]";
+      case "Completed":
+        return "bg-[#EBE6F0] text-[#330065]";
+      case "Pending":
         return "bg-[#FCF4E7] text-[#DD900D]";
+      case "Inactive":
+        return "bg-gray-100 text-gray-600";
       default:
-        return 'bg-gray-100 text-gray-600';
+        return "bg-gray-100 text-gray-600";
     }
   };
 
@@ -57,15 +60,33 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
   return (
     <>
     <tr className="border-b border-gray-200 hover:bg-gray-50">
-      <td className="py-3 px-4 text-xs">{campaign.advertiser}</td>
       <td className="py-3 px-4 text-xs">{campaign.campaignName}</td>
-      <td className="py-3 px-4 text-xs">{campaign.goals}</td>
-      <td className="py-3 px-4 text-xs">{campaign.kpis}</td>
-      <td className="py-3 px-4 text-xs">{campaign.duration}</td>
+      <td className="py-3 px-4 text-xs">{campaign.campaignName}</td>
+      <td className="py-3 px-4 text-xs">{campaign.campaignGoals}</td>
+      <td className="py-3 px-4 text-xs">{campaign.campaignKPIs ? "" : "-----" }</td>
+      <td className="py-3 px-4 text-xs">
+        {campaign.startDate && campaign.endDate ? (
+          <>
+            {new Date(campaign.startDate).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            })}{" "}
+            -{" "}
+            {new Date(campaign.endDate).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            })}
+          </>
+        ) : (
+          "N/A"
+        )}
+      </td>
       <td className="py-3 px-4 text-xs">{campaign.industry}</td>
       <td className="py-3 px-4 text-xs">
-        <span className={`px-[10px] py-2 rounded-md ${getStatusBadgeClass(campaign.status)}`}>
-          {campaign.status}
+      <span
+          className={`px-[10px] py-2 rounded-md bg-[#FCF4E7] text-[#DD900D] `}
+        >
+          Pending
         </span>
       </td>
       <td className="py-3 px-4 text-xs">
@@ -114,4 +135,4 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
   );
 };
 
-export default CampaignList;
+export default MyCampaignUnderMarketPlace;
