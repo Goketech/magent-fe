@@ -128,7 +128,7 @@ const CampaignFormMediaUpload: React.FC<CampaignMediaUploadProps> = ({ onUpload 
             Select image to upload<br/>
             <span className="text-xs text-gray-500">Supported format: JPG, PNG, GIF, WebP (1MB max)</span>
           </p>
-          <button className="mt-4 bg-white border border-gray-300 rounded px-4 py-2 text-sm">
+          <button type="button" className="mt-4 bg-white border border-gray-300 rounded px-4 py-2 text-sm">
             Select file
           </button>
         </div>

@@ -80,7 +80,7 @@ const MyCampaignList: React.FC<MyCampaignListProps> = ({
       </td>
       <td className="py-3 px-4 text-xs">
         <div className="flex items-center gap-2">
-          <div className="relative">
+          <div className="relative z-50">
             <button
               className="text-gray-500 hover:bg-gray-100 p-1 rounded-full"
               onClick={toggleOptions}
@@ -89,7 +89,7 @@ const MyCampaignList: React.FC<MyCampaignListProps> = ({
             </button>
 
             {showOptions && (
-              <div className="absolute right-0 mt-1 w-32 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+              <div className="absolute right-4 z-[9999] top-[-2rem] mt-1 w-32 bg-white border border-gray-200 rounded-md shadow-lg ">
                 <div className="py-1">
                   <button
                     className="block w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-100"

@@ -247,7 +247,8 @@ const CampaignFormBasic: React.FC<CampaignFormBasicProps> = ({ formik }) => {
               name="valuePerUser"
               value={formik.values.valuePerUser}
               readOnly
-              className="w-full p-2 border hover:cursor-none focus:cursor-none outline-none border-[#D7D7D7] rounded text-[#999999] bg-gray-100"
+              disabled
+              className="w-full p-2 border outline-none border-[#D7D7D7] rounded text-[#999999] bg-gray-100"
             />
           </div>
           {formik.touched.valuePerUser && formik.errors.valuePerUser && (
