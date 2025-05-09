@@ -10,6 +10,7 @@ interface ModalProps {
   className?: string;
   hasDarkHeader?: boolean;
   width?: string;
+  rounded? : boolean
 }
 
 const Modal: FC<ModalProps> = ({
@@ -18,6 +19,7 @@ const Modal: FC<ModalProps> = ({
   children,
   className = '',
   header,
+  rounded,
   hasDarkHeader = false,
   width = '40rem',
 }) => {
@@ -41,7 +43,7 @@ const Modal: FC<ModalProps> = ({
       onClick={onClose}
     >
       <span
-        className={`bg-white  shadow-lg w-full overflow-hidden`}
+        className={`bg-white  shadow-lg w-full overflow-hidden ${rounded ? "rounded-3xl" : "rounded-none"}`}
         style={{ maxWidth: width }}
         onClick={(e) => e.stopPropagation()}
       >

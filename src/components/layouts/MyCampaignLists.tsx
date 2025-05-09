@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import CampaignList, { Campaign } from './CampaignList';
-import { MyCampaign as MyCampaignType } from '@/lib/types';
+import MyCampaignList from './MyCampaignList';
 import { FilterState } from './CampaignFilter';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import AcceptModal from '../ui/AcceptModal';
-import MyCampaignUnderMarketPlace from './MyCampaignUnderMarketPlace';
-
+import { MyCampaign as MyCampaignType } from '@/lib/types';
 
 interface TableHeader {
   id: string;
@@ -14,18 +11,21 @@ interface TableHeader {
 }
 
 interface CampaignListsProps {
-  initialCampaigns?: Campaign[];
+  initialCampaigns?: MyCampaignType[];
   itemsPerPage?: number;
   activeFilters?: FilterState;
-  onViewDetails: (campaign: Campaign | MyCampaignType) => void;
+  onViewDetails: (campaign: MyCampaignType) => void;
   campaigns: MyCampaignType[]
 }
-const EMPTY_ARRAY: Campaign[] = [];
-const CampaignLists: React.FC<CampaignListsProps> = ({ 
-  initialCampaigns = EMPTY_ARRAY, 
+
+// const EMPTY_ARRAY: MyCampaignType[] = [];
+
+const MyCampaignLists: React.FC<CampaignListsProps> = ({
+//   initialCampaigns = EMPTY_ARRAY,
   itemsPerPage = 10,
-  onViewDetails,
   campaigns,
+
+  onViewDetails,
   activeFilters = {
     industry: '',
     status: '',
@@ -35,22 +35,16 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
     searchQuery: ''
   }
 }) => {
-  const [allCampaigns, setAllCampaigns] = useState<Campaign[]>([]);
+  const [allCampaigns, setAllCampaigns] = useState<MyCampaignType[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
-  const [selectedCampaignId, setSelectedCampaignId] = useState<number | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | MyCampaignType | null>(null);
 
-
-  
   // Filter campaigns based on activeFilters
   const filteredCampaigns = useMemo(() => {
     let result = [...allCampaigns];
-    
-    
+
     if (activeFilters) { // Apply filters only if they are not empty
       // Filter by industry
       if (activeFilters.industry) {
@@ -59,30 +53,38 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
         );
       }
       
-      
-      if (activeFilters.status) {// Filter by status
-        result = result.filter(campaign => 
-          campaign.status.toLowerCase() === activeFilters.status.toLowerCase()
-        );
-      }
+    //   if (activeFilters.status) {// Filter by status
+    //     result = result.filter(campaign => 
+    //       campaign.status.toLowerCase() === activeFilters.status.toLowerCase()
+    //     );
+    //   }
       
       // Filter by goals
       if (activeFilters.goals) {
         result = result.filter(campaign => 
-          campaign.goals.toLowerCase() === activeFilters.goals.toLowerCase()
+          campaign.campaignGoals.toLowerCase() === activeFilters.goals.toLowerCase()
         );
       }
       
       // Filter by date range
       if (activeFilters.startDate && activeFilters.endDate) {
-        // For demonstration, we'll just check if the campaign duration mentions the months
-        // In a real app, you'd want to parse actual dates and compare them
+        // Filter campaigns based on start and end dates
         result = result.filter(campaign => {
-          const [startMonth, endMonth] = campaign.duration.split('-').map(d => d.trim().split(' ')[0]);
-          const filterStartMonth = new Date(activeFilters.startDate).toLocaleString('default', { month: 'short' });
-          const filterEndMonth = new Date(activeFilters.endDate).toLocaleString('default', { month: 'short' });
+          // If we have startDate and endDate directly on the campaign object
+          if (campaign.startDate && campaign.endDate) {
+            const campaignStartDate = new Date(campaign.startDate);
+            const campaignEndDate = new Date(campaign.endDate);
+            const filterStartDate = new Date(activeFilters.startDate);
+            const filterEndDate = new Date(activeFilters.endDate);
+            
+            // Check if date ranges overlap
+            return (
+              (campaignStartDate <= filterEndDate) && 
+              (campaignEndDate >= filterStartDate)
+            );
+          }
           
-          return startMonth.includes(filterStartMonth) || endMonth.includes(filterEndMonth);
+          return true; // If no date info, include it
         });
       }
       
@@ -90,108 +92,36 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
       if (activeFilters.searchQuery) {
         const query = activeFilters.searchQuery.toLowerCase();
         result = result.filter(campaign => 
-          campaign.advertiser.toLowerCase().includes(query) ||
           campaign.campaignName.toLowerCase().includes(query) ||
-          campaign.industry.toLowerCase().includes(query) ||
-          campaign.goals.toLowerCase().includes(query)
+          campaign.campaignGoals.toLowerCase().includes(query) 
         );
       }
     }
-    
+
     return result;
   }, [allCampaigns, activeFilters]);
 
   const headers: TableHeader[] = [
-    { id: "advertisers", label: "ADVERTISERS", sortable: true },
+    // { id: "advertisers", label: "ADVERTISERS", sortable: true },
     { id: "campaign-name", label: "CAMPAIGN NAME", sortable: true },
     { id: "campaign-goals", label: "CAMPAIGN GOALS", sortable: true },
-    { id: "campaign-kpis", label: "CAMPAIGN KPIs", sortable: true },
-    { id: "duration", label: "DURATION", sortable: true },
-    { id: "industry", label: "INDUSTRY", sortable: true },
-    { id: "status", label: "STATUS", sortable: true },
+    {id: "value-peruser", label : "VALUE PER USER", sortable: false},
+    { id: "totalLiquidity", label: "TOTAL LIQUIDITY", sortable: true },
+    { id: "spent", label: "SPENT", sortable: true },
+    { id: "remaining", label: "REMAINING", sortable: true },
+    { id: "date-range", label: "DURATION", sortable: true },
+    { id: "publisher", label: "PUBLISHERS", sortable: true },
+    { id: "status", label: "STATUS", sortable: false },
     { id: "actions", label: "" }
-  ];
-
-  const sampleData: Campaign[] = [
-    {
-      id: 1,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Pending"
-    },
-    {
-      id: 2,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Pending"
-    },
-    {
-      id: 3,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Pending"
-    },
-    {
-      id: 4,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Pending"
-    },
-    {
-      id: 5,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Pending"
-    },
-    {
-      id: 6,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Pending"
-    },
-    {
-      id: 7,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Pending"
-    }
   ];
 
   // Initialize with sample data or use provided initialCampaigns
   useEffect(() => {
-    const data = initialCampaigns.length > 0 ? initialCampaigns : sampleData;
+    const data = campaigns.length > 0 ? campaigns : [];
     setAllCampaigns(data);
     setTotalPages(Math.ceil(data.length / itemsPerPage));
-  }, [initialCampaigns, itemsPerPage]);
-  
+  }, [campaigns, itemsPerPage]);
+
   // Update totalPages when filtered results change
   useEffect(() => {
     setTotalPages(Math.ceil(filteredCampaigns.length / itemsPerPage));
@@ -202,55 +132,61 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
     setCurrentPage(page);
     // In a real app, this would fetch data for the specific page
     setLoading(true);
-    
+
     // Simulating API call
     setTimeout(() => {
       setLoading(false);
     }, 300);
   };
 
-  const handleAcceptCampaign = (campaign: Campaign | MyCampaignType) => {
-    setSelectedCampaign(campaign);
-    setIsModalOpen(true);
-    setSelectedCampaignId(null)
-  };
-  
-
   const handleSort = (key: string) => {
     let direction: 'asc' | 'desc' = 'asc';
-    
+
     if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
     }
-    
+
     setSortConfig({ key, direction });
-    
+
     // Sort the campaigns based on the selected column
     const sortedCampaigns = [...allCampaigns].sort((a, b) => {
       // Map header id to campaign property
-      const propMap: Record<string, keyof Campaign> = {
-        'advertisers': 'advertiser',
+      const propMap: Record<string, keyof MyCampaignType> = {
+        // 'advertisers': 'advertiser',
         'campaign-name': 'campaignName',
-        'campaign-goals': 'goals',
-        'campaign-kpis': 'kpis',
-        'duration': 'duration',
-        'industry': 'industry',
-        'status': 'status'
+        'campaign-goals': 'campaignGoals',
+        // 'campaign-kpis': 'campaignKPIs',
+        'industry': 'industry'
+        // 'status': 'status'
       };
       
-      const prop = propMap[key] as keyof Campaign;
+      // Special case for date range sorting
+      if (key === 'date-range') {
+        const aStartDate = a.startDate ? new Date(a.startDate) : new Date(0);
+        const bStartDate = b.startDate ? new Date(b.startDate) : new Date(0);
+        
+        if (aStartDate < bStartDate) {
+          return direction === 'asc' ? -1 : 1;
+        }
+        if (aStartDate > bStartDate) {
+          return direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      }
+      
+      const prop = propMap[key] as keyof MyCampaignType;
       
       if (!prop) return 0;
       
-      if (a[prop] < b[prop]) {
-        return direction === 'asc' ? -1 : 1;
-      }
-      if (a[prop] > b[prop]) {
-        return direction === 'asc' ? 1 : -1;
-      }
+    //   if (a[prop] < b[prop]) {
+    //     return direction === 'asc' ? -1 : 1;
+    //   }
+    //   if (a[prop] > b[prop]) {
+    //     return direction === 'asc' ? 1 : -1;
+    //   }
       return 0;
     });
-    
+
     setAllCampaigns(sortedCampaigns);
   };
 
@@ -258,17 +194,17 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
     if (!sortConfig || sortConfig.key !== headerId) {
       return null;
     }
-    
+
     return (
       <span className="ml-1">
         {sortConfig.direction === 'asc' ? '▲' : '▼'}
       </span>
     );
   };
-  
+
   const renderPagination = () => {
     const pages = [];
-    
+
     pages.push(
       <button 
         key="prev" 
@@ -279,7 +215,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
         <ChevronLeft size={16} className="text-gray-600" />
       </button>
     );
-    
+
     // Current page button
     pages.push(
       <button 
@@ -291,11 +227,11 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
         1
       </button>
     );
-    
+
     // Add more pages
     let startPage = Math.max(2, currentPage - 1);
     let endPage = Math.min(totalPages - 1, currentPage + 1);
-    
+
     // Add ellipsis before middle pages if needed
     if (startPage > 2) {
       pages.push(
@@ -304,7 +240,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
         </span>
       );
     }
-    
+
     // Middle pages
     for (let i = startPage; i <= endPage; i++) {
       if (i <= totalPages && i >= 2) {
@@ -320,7 +256,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
         );
       }
     }
-    
+
     // Add ellipsis after middle pages if needed
     if (endPage < totalPages - 1) {
       pages.push(
@@ -329,7 +265,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
         </span>
       );
     }
-    
+
     // Add last page if it's not already included
     if (totalPages > 1 && endPage < totalPages) {
       pages.push(
@@ -343,7 +279,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
         </button>
       );
     }
-    
+
     pages.push(
       <button 
         key="next" 
@@ -354,7 +290,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
         <ChevronRight size={16} className="text-gray-600" />
       </button>
     );
-    
+
     return pages;
   };
 
@@ -362,7 +298,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const displayedCampaigns = filteredCampaigns.slice(startIndex, endIndex);
-  
+
   return (
     <div className="w-full">
       <div className="overflow-x-auto">
@@ -375,8 +311,8 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
             <thead>
               <tr className="border-b border-gray-200">
                 {headers.map((header) => (
-                  <th 
-                    key={header.id} 
+                  <th
+                    key={header.id}
                     className={`py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${header.sortable ? 'cursor-pointer hover:bg-gray-50' : ''}`}
                     onClick={() => header.sortable && handleSort(header.id)}
                   >
@@ -390,35 +326,17 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
             </thead>
             <tbody>
               {displayedCampaigns.map((campaign) => (
-                <CampaignList 
-                  key={campaign.id} 
-                  campaign={campaign} 
-                  onAccept={() => handleAcceptCampaign(campaign)} // pass full object
-                    onViewDetails={onViewDetails}
+                <MyCampaignList
+                  key={campaign.id}
+                  campaign={campaign}
+                  onViewDetails={() => onViewDetails(campaign)}
                 />
               ))}
-              {campaigns.map((campaign) => (
-                <MyCampaignUnderMarketPlace
-                  key={campaign.id} 
-                  campaign={campaign} 
-                  onAccept={() => handleAcceptCampaign(campaign)} // pass full object
-                  onViewDetails={onViewDetails}
-                />
-              ))
-
-              }
             </tbody>
           </table>
         )}
-        {selectedCampaign && (
-  <AcceptModal
-    isOpen={isModalOpen}
-    onClose={() => setIsModalOpen(false)}
-    campaign={selectedCampaign}
-  />
-)}
       </div>
-      
+
       <div className="flex justify-center mt-6 space-x-2">
         {renderPagination()}
       </div>
@@ -426,4 +344,4 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
   );
 };
 
-export default CampaignLists;
+export default MyCampaignLists;
