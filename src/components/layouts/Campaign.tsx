@@ -7,6 +7,7 @@ import CampaignDetails from './CampaignDetails';
 import MyCampaignLists from './MyCampaignLists';
 import CreateCampaign from './CreateCampaign'
 import MyCampaignDetails from './MyCampaignDetails';
+import EmptyState from './EmptyState';
 import { Campaign as CampaignType, MyCampaign as MyCampaignType } from '../../lib/types';
 
 const Campaign: React.FC = () => {
@@ -74,6 +75,10 @@ const Campaign: React.FC = () => {
     console.log(`Accepting campaign ${id}`);
     // accept logic
   };
+  // function resetCampaignData() {
+  //   localStorage.removeItem('userCampaigns');
+  //   console.log('Campaign data has been reset. Reload the page to see the effect.');
+  // }
 
   const handleAddCampaign = (campaignData: any) => {
     // Create a new campaign object with an ID and other needed properties
@@ -85,6 +90,7 @@ const Campaign: React.FC = () => {
       // Add any other required fields for CampaignType
     };
     
+    
     // Add to campaigns array
     const updatedCampaigns = [...userCampaigns, newCampaign];
     
@@ -94,6 +100,7 @@ const Campaign: React.FC = () => {
     // Explicitly save to localStorage immediately
     try {
       localStorage.setItem('userCampaigns', JSON.stringify(updatedCampaigns));
+      
       // console.log('Saved campaign directly:', updatedCampaigns);
     } catch (error) {
       // console.error('Failed to save campaigns:', error);
@@ -102,6 +109,8 @@ const Campaign: React.FC = () => {
     // Exit create campaign view
     setCreateCampaign(false);
   };
+
+  
 
   return (
     <div className="container mx-auto px-2 mt-[-2.5rem]">
@@ -130,7 +139,7 @@ const Campaign: React.FC = () => {
             activeView={activeView}
             setActiveView={setActiveView}
           />
-          <CampaignFilter onFilterChange={handleFilterChange} />
+        {userCampaigns.length === 0 ? "" : (<CampaignFilter onFilterChange={handleFilterChange} />) }
           {activeView === 'marketplace' ? (
             <CampaignLists 
               activeFilters={filters} 
@@ -138,11 +147,15 @@ const Campaign: React.FC = () => {
               campaigns={userCampaigns}
             />
           ) : (
-            <MyCampaignLists 
-              activeFilters={filters}
-              onViewDetails={handleViewDetails}
-              campaigns={userCampaigns}
-            />
+            userCampaigns.length === 0 ? (
+              <EmptyState onCreateCampaign={handleCreateCampaign} />
+            ) : (
+              <MyCampaignLists 
+                activeFilters={filters}
+                onViewDetails={handleViewDetails}
+                campaigns={userCampaigns}
+              />
+            )
           )}
         </>
       )}

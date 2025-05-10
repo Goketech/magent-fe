@@ -63,7 +63,7 @@ const MyCampaignUnderMarketPlace: React.FC<CampaignListProps> = ({ campaign, onA
       <td className="py-3 px-4 text-xs">{campaign.campaignName}</td>
       <td className="py-3 px-4 text-xs">{campaign.campaignName}</td>
       <td className="py-3 px-4 text-xs">{campaign.campaignGoals}</td>
-      <td className="py-3 px-4 text-xs">{campaign.campaignKPIs ? "" : "-----" }</td>
+      <td className="py-3 px-4 text-xs">{campaign.campaignKPIs == "" ? "-----" : campaign.campaignKPIs }</td>
       <td className="py-3 px-4 text-xs">
         {campaign.startDate && campaign.endDate ? (
           <>
