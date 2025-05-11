@@ -307,7 +307,7 @@ const MyCampaignLists: React.FC<CampaignListsProps> = ({
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-900"></div>
           </div>
         ) : (
-          <table className="min-w-full">
+          <table className="min-w-full mb-4">
             <thead>
               <tr className="border-b border-gray-200">
                 {headers.map((header) => (
@@ -324,7 +324,7 @@ const MyCampaignLists: React.FC<CampaignListsProps> = ({
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className=''>
               {displayedCampaigns.map((campaign) => (
                 <MyCampaignList
                   key={campaign.id}
