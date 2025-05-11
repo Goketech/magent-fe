@@ -1,42 +1,75 @@
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { Upload } from "lucide-react";
 
 export interface CampaignMediaUploadProps {
   onUpload: (files: File[]) => void;
 }
 
-const CampaignFormMediaUpload: React.FC<CampaignMediaUploadProps> = ({ onUpload }) => {
+const CampaignFormMediaUpload: React.FC<CampaignMediaUploadProps> = ({
+  onUpload,
+}) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [activeTab, setActiveTab] = useState<"image" | "video">("image");
   const [isUploading, setIsUploading] = useState(false);
+  const { toast } = useToast();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const fileArray = Array.from(e.target.files);
-      
-      if (selectedFiles.length + fileArray.length > 5 ) {
-        alert("You can upload at most 5 files");
+
+      if (selectedFiles.length + fileArray.length > 5) {
+        toast({
+          variant: "destructive",
+          description: "You can upload at most 5 files",
+        });
+        return;
+      }
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      const oversizedFiles = fileArray.filter((file) => file.size > maxSize);
+
+      if (oversizedFiles.length > 0) {
+        toast({
+          variant: "destructive",
+          description:
+            "Some files exceed the 5MB size limit. Please select smaller files.",
+        });
         return;
       }
 
       if (activeTab === "image") {
-        const validImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-        const allValid = fileArray.every(file => validImageTypes.includes(file.type));
+        const validImageTypes = [
+          "image/jpeg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+        ];
+        const allValid = fileArray.every((file) =>
+          validImageTypes.includes(file.type)
+        );
         if (!allValid) {
-          alert("Please upload only image files (JPG, PNG, GIF, WebP)");
+          toast({
+            variant: "destructive",
+            description: "Please upload only image files (JPG, PNG, GIF, WebP)"
+          });
           return;
         }
       } else {
         const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
-        const allValid = fileArray.every(file => validVideoTypes.includes(file.type));
+        const allValid = fileArray.every((file) =>
+          validVideoTypes.includes(file.type)
+        );
         if (!allValid) {
-          alert("Please upload only video files (MP4, WebM, OGG)");
+          toast({
+            variant : "destructive",
+            description : "Please upload only video files (MP4, WebM, OGG)"
+          });
           return;
         }
       }
 
       setSelectedFiles([...selectedFiles, ...fileArray]);
-    onUpload([...selectedFiles, ...fileArray]);
+      onUpload([...selectedFiles, ...fileArray]);
     }
   };
 
@@ -48,35 +81,63 @@ const CampaignFormMediaUpload: React.FC<CampaignMediaUploadProps> = ({ onUpload 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (e.dataTransfer.files) {
       const fileArray = Array.from(e.dataTransfer.files);
-      
+
       // Validate file count
-      if (selectedFiles.length + fileArray.length > 5) {
-        alert("You can upload at most 5 files");
+      if (selectedFiles.length + fileArray.length > 5 ) {
+        toast({
+          variant: "destructive",
+          description: "You can upload at most 5 files",
+        })
         return;
       }
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    const oversizedFiles = fileArray.filter(file => file.size > maxSize);
+    
+    if (oversizedFiles.length > 0) {
+      toast({
+        variant: "destructive",
+        description: "Some files exceed the 5MB size limit. Please select smaller files."
+      });
+      return;
+    }
 
       // Validate file types based on active tab
       if (activeTab === "image") {
-        const validImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-        const allValid = fileArray.every(file => validImageTypes.includes(file.type));
+        const validImageTypes = [
+          "image/jpeg",
+          "image/png",
+          "image/gif",
+          "image/webp",
+        ];
+        const allValid = fileArray.every((file) =>
+          validImageTypes.includes(file.type)
+        );
         if (!allValid) {
-          alert("Please upload only image files (JPG, PNG, GIF, WebP)");
+          toast({
+            variant: "destructive",
+            description: "Please upload only image files (JPG, PNG, GIF, WebP)"
+          });
           return;
         }
       } else {
         const validVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
-        const allValid = fileArray.every(file => validVideoTypes.includes(file.type));
+        const allValid = fileArray.every((file) =>
+          validVideoTypes.includes(file.type)
+        );
         if (!allValid) {
-          alert("Please upload only video files (MP4, WebM, OGG)");
+          toast({
+            variant : "destructive",
+            description : "Please upload only video files (MP4, WebM, OGG)"
+          });
           return;
         }
       }
 
       setSelectedFiles([...selectedFiles, ...fileArray]);
-    onUpload([...selectedFiles, ...fileArray]);
+      onUpload([...selectedFiles, ...fileArray]);
     }
   };
 
@@ -90,14 +151,18 @@ const CampaignFormMediaUpload: React.FC<CampaignMediaUploadProps> = ({ onUpload 
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-medium mb-4">Upload media</h3>
-      <p className="text-sm text-gray-600 mb-4">Choose what media you want to upload</p>
-      
+      <p className="text-sm text-gray-600 mb-4">
+        Choose what media you want to upload
+      </p>
+
       {/* Tab Selection */}
       <div className="flex border-b border-gray-200 mb-4">
         <button
           onClick={() => setActiveTab("image")}
           className={`px-4 py-2 text-sm font-medium ${
-            activeTab === "image" ? "border-b-2 border-purple-500 text-purple-600" : "text-gray-500"
+            activeTab === "image"
+              ? "border-b-2 border-purple-500 text-purple-600"
+              : "text-gray-500"
           }`}
         >
           Image(s)
@@ -105,15 +170,17 @@ const CampaignFormMediaUpload: React.FC<CampaignMediaUploadProps> = ({ onUpload 
         <button
           onClick={() => setActiveTab("video")}
           className={`px-4 py-2 text-sm font-medium ${
-            activeTab === "video" ? "border-b-2 border-purple-500 text-purple-600" : "text-gray-500"
+            activeTab === "video"
+              ? "border-b-2 border-purple-500 text-purple-600"
+              : "text-gray-500"
           }`}
         >
           Video
         </button>
       </div>
-      
+
       <p className="text-xs text-gray-500 mb-2">Upload not more than 5 files</p>
-      
+
       <div
         className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 cursor-pointer"
         onDragOver={handleDragOver}
@@ -125,10 +192,16 @@ const CampaignFormMediaUpload: React.FC<CampaignMediaUploadProps> = ({ onUpload 
             <Upload size={24} className="text-purple-600" />
           </div>
           <p className="text-sm text-center">
-            Select image to upload<br/>
-            <span className="text-xs text-gray-500">Supported format: JPG, PNG, GIF, WebP (1MB max)</span>
+            Select image to upload
+            <br />
+            <span className="text-xs text-gray-500">
+              Supported format: JPG, PNG, GIF, WebP (1MB max)
+            </span>
           </p>
-          <button type="button" className="mt-4 bg-white border border-gray-300 rounded px-4 py-2 text-sm">
+          <button
+            type="button"
+            className="mt-4 bg-white border border-gray-300 rounded px-4 py-2 text-sm"
+          >
             Select file
           </button>
         </div>
@@ -141,7 +214,7 @@ const CampaignFormMediaUpload: React.FC<CampaignMediaUploadProps> = ({ onUpload 
           onChange={handleFileChange}
         />
       </div>
-      
+
       {/* Preview of uploaded files */}
       {selectedFiles.length > 0 && (
         <div className="mt-4">
