@@ -14,7 +14,7 @@ const CampaignFormMediaUpload: React.FC<CampaignMediaUploadProps> = ({ onUpload 
     if (e.target.files) {
       const fileArray = Array.from(e.target.files);
       
-      if (fileArray.length > 5) {
+      if (selectedFiles.length + fileArray.length > 5 ) {
         alert("You can upload at most 5 files");
         return;
       }
@@ -35,8 +35,8 @@ const CampaignFormMediaUpload: React.FC<CampaignMediaUploadProps> = ({ onUpload 
         }
       }
 
-      setSelectedFiles(fileArray);
-      onUpload(fileArray);
+      setSelectedFiles([...selectedFiles, ...fileArray]);
+    onUpload([...selectedFiles, ...fileArray]);
     }
   };
 
@@ -53,7 +53,7 @@ const CampaignFormMediaUpload: React.FC<CampaignMediaUploadProps> = ({ onUpload 
       const fileArray = Array.from(e.dataTransfer.files);
       
       // Validate file count
-      if (fileArray.length > 5) {
+      if (selectedFiles.length + fileArray.length > 5) {
         alert("You can upload at most 5 files");
         return;
       }
@@ -75,8 +75,8 @@ const CampaignFormMediaUpload: React.FC<CampaignMediaUploadProps> = ({ onUpload 
         }
       }
 
-      setSelectedFiles(fileArray);
-      onUpload(fileArray);
+      setSelectedFiles([...selectedFiles, ...fileArray]);
+    onUpload([...selectedFiles, ...fileArray]);
     }
   };
 
