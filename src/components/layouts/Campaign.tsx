@@ -322,6 +322,7 @@ const Campaign: React.FC = () => {
       const body = {
         name: campaignData.campaignName,
         goals: campaignData.campaignGoals,
+        kpi: campaignData.campaignKPIs,
         targetNumber: campaignData.targetNumber,
         publishers: 0,
         targetAudience: {
