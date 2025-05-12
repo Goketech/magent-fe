@@ -92,7 +92,7 @@ const Campaign: React.FC = () => {
             status: campaign.status,
             createdAt: campaign.createdAt,
             age: campaign.targetAudience.age,
-            gender: campaign.targetAudience.gender
+            gender: campaign.targetAudience.gender,
           })
         );
 
@@ -170,6 +170,11 @@ const Campaign: React.FC = () => {
     });
 
     if (!resp.ok) {
+      toast({
+        variant: "destructive",
+        description: "Failed to upload media. Please try again.",
+      });
+      setIsCreatingCampaign(false);
       throw new Error(`Cloudinary upload failed: ${resp.statusText}`);
     }
 
@@ -374,7 +379,9 @@ const Campaign: React.FC = () => {
     } catch (error) {
       toast({
         variant: "destructive",
-        description: "Failed to create Campaign. Please try again.",
+        description: `Failed to create Campaign. ${
+          error instanceof Error ? error.message : "Unknown error occurred"
+        }`,
       });
     }
 
