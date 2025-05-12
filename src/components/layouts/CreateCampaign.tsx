@@ -103,7 +103,7 @@ const CreateCampaign: React.FC<CreateCampaignProps> = ({ handleGoBack, onCampaig
         isOpen={showConfirmModal}
         onClose={() => {
           setShowConfirmModal(false);
-          formik.setSubmitting(false); // Reset submitting state when closing modal
+          // formik.setSubmitting(false); // Reset submitting state when closing modal
         }}
         onConfirm={handleConfirmLaunch}
         campaign={pendingCampaign}
