@@ -7,12 +7,20 @@ export const campaignFormSchema = Yup.object({
     .required("Campaign name is required")
     .max(100, "Campaign name cannot exceed 100 characters"),
   campaignGoals: Yup.string().required("Campaign goal is required"),
-  campaignKPIs: Yup.string().required("Campaign KPI is required"),
+  // campaignKPIs: Yup.string().required("Campaign KPI is required"),
   targetNumber: Yup.number()
     .required("Target number is required")
     .positive("Target number must be positive")
     .integer("Target number must be an integer"),
-  targetAudience: Yup.string().required("Target audience is required"),
+    age: Yup.number()
+    .typeError("Age must be a number")
+    .required("Age is required")
+    .min(13, "Minimum age is 13")
+    .max(120, "Maximum age is 120"),
+
+  gender: Yup.string()
+    .required("Gender is required")
+    .oneOf(["Male", "Female", "Both"], "Select a valid gender"),
   industry: Yup.string().required("Industry is required"),
   valuePerUser: Yup.string().required("Value Per User is required"),
   amount: Yup.number()

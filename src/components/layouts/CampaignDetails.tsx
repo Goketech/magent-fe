@@ -1,5 +1,6 @@
 import { MdArrowBackIos } from "react-icons/md";
 import { Campaign } from '../../lib/types';
+import Image from "next/image";
 
 interface CampaignDetailsProps {
   campaign: Campaign;
@@ -48,8 +49,8 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({ campaign, onBack, onA
             </div>
           </div>
           <div className='absolute top-0 right-0'>
-            <span className="bg-[#E6F4EB] text-[#009137] text-xs px-6 py-2 rounded-bl-md">
-              {campaign.status}
+            <span className="bg-[#FCF4E7] text-[#DD900D] text-xs px-6 py-2 rounded-bl-md">
+              Pending
             </span>
           </div>
         </div>
@@ -114,40 +115,65 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({ campaign, onBack, onA
         <div>
           <h3 className="text-lg font-medium mb-4">Media</h3>
           <div className="bg-gray-100 rounded-lg overflow-hidden">
-            <img 
-              src={campaign.mediaImage || "/api/placeholder/400/320"} 
-              alt="Campaign media" 
-              className="w-full h-64 object-cover"
-            />
+          <Image 
+                src={campaign.mediaImage || "/details-image.png"} 
+                alt="Campaign thumbnail"
+                width={355}  // Must specify numeric value (in pixels)
+                height={207}  // Must specify numeric value (in pixels)
+                className="w-full h-full object-cover"
+                style={{
+                  objectFit: 'cover' // Alternative to className approach
+                }}
+              />
           </div>
           <div className="flex mt-4 gap-2">
             <div className="h-12 w-12 bg-gray-200 rounded-md overflow-hidden">
-              <img 
-                src={campaign.mediaImage || "/api/placeholder/100/100"} 
-                alt="Thumbnail" 
+            <Image 
+                src={campaign.mediaImage || "/details-image.png"} 
+                alt="Campaign thumbnail"
+                width={77}  // Must specify numeric value (in pixels)
+                height={55}  // Must specify numeric value (in pixels)
                 className="w-full h-full object-cover"
-              />
+                style={{
+                  objectFit: 'cover' // Alternative to className approach
+                }}
+              /> 
             </div>
             <div className="h-12 w-12 bg-gray-200 rounded-md overflow-hidden">
-              <img 
-                src={campaign.mediaImage || "/api/placeholder/100/100"} 
-                alt="Thumbnail" 
+            <Image 
+                src={campaign.mediaImage || "/details-image.png"} 
+                alt="Campaign thumbnail"
+                width={77}  // Must specify numeric value (in pixels)
+                height={55}  // Must specify numeric value (in pixels)
                 className="w-full h-full object-cover"
-              />
+                style={{
+                  objectFit: 'cover' // Alternative to className approach
+                }}
+              /> 
             </div>
             <div className="h-12 w-12 bg-gray-200 rounded-md overflow-hidden">
-              <img 
-                src={campaign.mediaImage || "/api/placeholder/100/100"} 
-                alt="Thumbnail" 
+            <Image 
+                src={campaign.mediaImage || "/details-image.png"} 
+                alt="Campaign thumbnail"
+                width={77}  // Must specify numeric value (in pixels)
+                height={55}  // Must specify numeric value (in pixels)
                 className="w-full h-full object-cover"
-              />
+                style={{
+                  objectFit: 'cover' // Alternative to className approach
+                }}
+              /> 
             </div>
             <div className="h-12 w-12 bg-gray-200 rounded-md overflow-hidden">
-              <img 
-                src={campaign.mediaImage || "/api/placeholder/100/100"} 
-                alt="Thumbnail" 
+            <Image 
+                src={campaign.mediaImage || "/details-image.png"} 
+                alt="Campaign thumbnail"
+                width={77}  // Must specify numeric value (in pixels)
+                height={55}  // Must specify numeric value (in pixels)
                 className="w-full h-full object-cover"
-              />
+                style={{
+                  objectFit: 'cover' // Alternative to className approach
+                }}
+              /> 
             </div>
           </div>
         </div>
