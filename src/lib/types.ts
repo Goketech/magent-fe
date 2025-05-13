@@ -51,5 +51,6 @@ export interface Campaign {
     otherInformation?: string;
     mediaFiles?: File[];
     status?: CampaignStatus;
+    publishersCount?: number;
   }
   
