@@ -70,7 +70,7 @@ const Campaign: React.FC = () => {
         const campaigns: MyCampaignType[] = userCampaignsData.map(
           (campaign: any) => ({
             id: campaign._id,
-            name: campaign.name,
+            campaignName: campaign.name,
             campaignGoals: campaign.goals,
             targetNumber: campaign.targetNumber,
             campaignKPIs: campaign.kpi,
