@@ -20,7 +20,7 @@ import {
   developerPublicKey,
   confirmTransaction,
 } from "@/utils/transferCoin";
-import { start } from "repl";
+import { capitalizeEachWord } from "@/utils/capitalize";
 
 const Campaign: React.FC = () => {
   const { toast } = useToast();
@@ -70,10 +70,10 @@ const Campaign: React.FC = () => {
         const campaigns: MyCampaignType[] = userCampaignsData.map(
           (campaign: any) => ({
             id: campaign._id,
-            campaignName: campaign.name,
-            campaignGoals: campaign.goals,
+            campaignName: capitalizeEachWord(campaign.name),
+            campaignGoals: capitalizeEachWord(campaign.goals),
             targetNumber: campaign.targetNumber,
-            campaignKPIs: campaign.kpi,
+            campaignKPIs: capitalizeEachWord(campaign.kpi),
             industry: campaign.industry,
             valuePerUser: campaign.valuePerUser,
             amount: Number(campaign.valuePerUserAmount),
@@ -89,10 +89,11 @@ const Campaign: React.FC = () => {
             otherResources: campaign.otherSocials,
             otherInformation: campaign.otherInfo,
             mediaFiles: campaign.media,
-            status: campaign.status,
+            status: capitalizeEachWord(campaign.status),
             createdAt: campaign.createdAt,
             age: campaign.targetAudience.age,
-            gender: campaign.targetAudience.gender,
+            gender: capitalizeEachWord(campaign.targetAudience.gender),
+            publishersCount: campaign.publisherCount,
           })
         );
 
