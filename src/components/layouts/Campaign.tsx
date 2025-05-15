@@ -74,7 +74,7 @@ const Campaign: React.FC = () => {
             campaignGoals: capitalizeEachWord(campaign.goals),
             targetNumber: campaign.targetNumber,
             campaignKPIs: capitalizeEachWord(campaign.kpi),
-            industry: campaign.industry,
+            industry: capitalizeEachWord(campaign.industry),
             valuePerUser: campaign.valuePerUser,
             amount: Number(campaign.valuePerUserAmount),
             totalLiquidity: campaign.totalLiquidity,

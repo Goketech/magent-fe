@@ -91,7 +91,7 @@ const CreateCampaign: React.FC<CreateCampaignProps> = ({ handleGoBack, onCampaig
             <button
               type="submit"
               className="px-6 py-2 bg-[#330065] text-white rounded-full hover:bg-purple-700"
-              disabled={formik.isSubmitting}
+              // disabled={formik.isSubmitting}
             >
               Create a campaign
             </button>
