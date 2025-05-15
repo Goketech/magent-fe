@@ -78,10 +78,10 @@ const CampaignFormBasic: React.FC<CampaignFormBasicProps> = ({ formik }) => {
           >
             <option value="">Select goal</option>
             <option value="Engagement">Engagement</option>
-            <option value="Waitlist Signups">Waitlist Signups</option>
+            <option value="Waitlist">Waitlist Signups</option>
             <option value="Feedback">Feedback</option>
             <option value="Followers">Followers</option>
-            <option value="App Installs">App Installs</option>
+            <option value="Installs">App Installs</option>
             <option value="Signups">Signups</option>
           </select>
           {formik.touched.campaignGoals && formik.errors.campaignGoals && (
