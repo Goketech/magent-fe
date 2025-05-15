@@ -16,12 +16,12 @@ const CampaignFormBasic: React.FC<CampaignFormBasicProps> = ({ formik }) => {
     switch (goal) {
       case "Engagement":
         return "CPE";
-      case "App Installs":
+      case "Installs":
         return "CPI";
       case "Followers":
       case "Signups":
       case "Feedback":
-      case "Waitlist Signups":
+      case "Waitlist":
         return "CPA";
       default:
         return "";
