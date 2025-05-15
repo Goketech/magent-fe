@@ -150,7 +150,7 @@ const Campaign: React.FC = () => {
    */
   async function uploadToCloudinary(
     file: File
-  ): Promise<{ url: string; type: "image" | "video" }> {
+  ): Promise<{ url: string; typeOfMedia: "image" | "video" }> {
     const isImage = file.type.startsWith("image/");
     const uploadUrl = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
 
@@ -182,7 +182,7 @@ const Campaign: React.FC = () => {
     const json = await resp.json();
     return {
       url: json.secure_url as string,
-      type: isImage ? "image" : "video",
+      typeOfMedia: isImage ? "image" : "video",
     };
   }
 
