@@ -327,7 +327,7 @@ const MyCampaignLists: React.FC<CampaignListsProps> = ({
             <tbody className=''>
               {displayedCampaigns.map((campaign) => (
                 <MyCampaignList
-                  key={campaign.id}
+                  key={campaign._id}
                   campaign={campaign}
                   onViewDetails={() => onViewDetails(campaign)}
                 />

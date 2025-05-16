@@ -10,6 +10,7 @@ import MyCampaignDetails from "./MyCampaignDetails";
 import EmptyState from "./EmptyState";
 import {
   Campaign as CampaignType,
+  isCampaign,
   MyCampaign as MyCampaignType,
 } from "../../lib/types";
 import { useAuth } from "@/context/AuthProvider";
@@ -119,8 +120,9 @@ const Campaign: React.FC = () => {
     setRawFilters(newFilters);
   };
 
-  const handleViewDetails = (campaign: CampaignType | MyCampaignType) => {
+  const handleViewDetails = (campaign: CampaignType | MyCampaignType| any) => {
     setSelectedCampaign(campaign);
+    // console.log(campaign)
   };
 
   const handleCreateCampaign = () => {
@@ -390,18 +392,26 @@ const Campaign: React.FC = () => {
     // Exit create campaign view
     setCreateCampaign(false);
   };
+  
+  
+  // Then in your JSX
+  
+  
 
   return (
     <div className="container mx-auto px-2 mt-[-2.5rem]">
       {selectedCampaign ? (
-        "advertiser" in selectedCampaign ? (
+        isCampaign(selectedCampaign) ? (
           <CampaignDetails
             campaign={selectedCampaign}
             onBack={handleBack}
             onAccept={handleAccept}
           />
         ) : (
-          <MyCampaignDetails campaign={selectedCampaign} onBack={handleBack} />
+          <MyCampaignDetails 
+            campaign={selectedCampaign} 
+            onBack={handleBack} 
+          />
         )
       ) : createCampaign ? (
         <CreateCampaign
@@ -424,7 +434,6 @@ const Campaign: React.FC = () => {
             <CampaignLists
               activeFilters={filters}
               onViewDetails={handleViewDetails}
-              // campaigns={userCampaigns}
             />
           ) : userCampaigns.length === 0 ? (
             <EmptyState onCreateCampaign={handleCreateCampaign} />

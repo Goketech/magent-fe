@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import CampaignList, { Campaign } from './CampaignList';
-import { MyCampaign as MyCampaignType } from '@/lib/types';
+import { MyCampaign as MyCampaignType} from '@/lib/types';
 import { FilterState } from './CampaignFilter';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAuth } from "@/context/AuthProvider";
@@ -85,7 +85,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
       if (activeFilters.searchQuery) {
         const query = activeFilters.searchQuery.toLowerCase();
         result = result.filter(campaign => 
-          campaign.advertiser.toLowerCase().includes(query) ||
+          campaign.name.toLowerCase().includes(query) ||
           campaign.campaignName.toLowerCase().includes(query) ||
           campaign.industry.toLowerCase().includes(query) ||
           campaign.goals.toLowerCase().includes(query)
@@ -123,7 +123,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
       const response = await fetch('https://www.api.hellomagent.com/campaign/marketplace-campaigns', {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${jwt}`,
+          Authorization: `Bearer ${jwt}`,
           'Content-Type': 'application/json'
         }
       });
@@ -133,8 +133,9 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
       }
       
       const data = await response.json();
-      console.log(data)
-      setAllCampaigns(data);
+      
+      console.log(data.campaigns)
+      setAllCampaigns(data.campaigns);
       setTotalPages(Math.ceil(data.length / itemsPerPage));
     } catch (error) {
       console.error('Failed to fetch campaigns:', error);
@@ -182,7 +183,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
     const sortedCampaigns = [...allCampaigns].sort((a, b) => {
       // Map header id to campaign property
       const propMap: Record<string, keyof Campaign> = {
-        'advertisers': 'advertiser',
+        'advertisers': 'name',
         'campaign-name': 'campaignName',
         'campaign-goals': 'goals',
         'campaign-kpis': 'kpis',
@@ -344,7 +345,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
             <tbody>
               {displayedCampaigns.map((campaign) => (
                 <CampaignList 
-                  key={campaign.id} 
+                  key={campaign._id} 
                   campaign={campaign} 
                   onAccept={() => handleAcceptCampaign(campaign)}
                   onViewDetails={onViewDetails}

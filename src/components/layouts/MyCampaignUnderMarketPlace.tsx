@@ -42,7 +42,7 @@ const MyCampaignUnderMarketPlace: React.FC<CampaignListProps> = ({ campaign, onA
   };
 
   const handleAccept = () => {
-    onAccept(campaign.id);
+    onAccept(campaign._id);
     setIsModalOpen(true)
   };
   const handleCloseModal = () => {
@@ -118,7 +118,7 @@ const MyCampaignUnderMarketPlace: React.FC<CampaignListProps> = ({ campaign, onA
                   <button 
                     className="block w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-100"
                     onClick={() => {
-                      console.log(`Reject campaign ${campaign.id}`);
+                      console.log(`Reject campaign ${campaign._id}`);
                       setShowOptions(false);
                     }}
                   >

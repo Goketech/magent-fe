@@ -3,14 +3,18 @@
 import { useState } from 'react';
 import { MoreVertical } from 'lucide-react';
 import { MdOutlineCheckCircle } from 'react-icons/md';
+import { capitalizeEachWord } from "@/utils/capitalize";
+
 
 export interface Campaign {
-  id: number;
-  advertiser: string;
+  _id: number;
+  name: string;
   campaignName: string;
   goals: string;
   kpis: string;
   duration: string;
+  endDate: number;
+  startDate :number;
   industry: string;
   status: 'Active' | 'Completed' | 'Pending' | "Inactive";
 }
@@ -27,11 +31,11 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
   
   const getStatusBadgeClass = (status: string) => {
     switch(status) {
-      case 'Active':
+      case 'active':
         return 'bg-[#E6F4EB] text-[#009137]';
-      case 'Completed':
+      case 'completed':
         return 'bg-[#EBE6F0] text-[#330065]';
-      case 'Pending':
+      case 'pending':
         return "bg-[#FCF4E7] text-[#DD900D]";
       default:
         return 'bg-gray-100 text-gray-600';
@@ -39,7 +43,7 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
   };
 
   const handleAccept = () => {
-    onAccept(campaign.id);
+    onAccept(campaign._id);
     setIsModalOpen(true)
   };
   const handleCloseModal = () => {
@@ -56,16 +60,33 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
 
   return (
     <>
-    <tr className="border-b border-gray-200 hover:bg-gray-50">
-      <td className="py-3 px-4 text-xs">{campaign.advertiser}</td>
-      <td className="py-3 px-4 text-xs">{campaign.campaignName}</td>
-      <td className="py-3 px-4 text-xs">{campaign.goals}</td>
-      <td className="py-3 px-4 text-xs">{campaign.kpis}</td>
-      <td className="py-3 px-4 text-xs">{campaign.duration}</td>
-      <td className="py-3 px-4 text-xs">{campaign.industry}</td>
+    <tr className="border-b border-gray-200 hover:bg-gray-50"
+    key={campaign._id}>
+      <td className="py-3 px-4 text-xs">{capitalizeEachWord(campaign?.name)}</td>
+      <td className="py-3 px-4 text-xs">{capitalizeEachWord(campaign?.name)}</td>
+      <td className="py-3 px-4 text-xs">{capitalizeEachWord(campaign?.goals)}</td>
+      <td className="py-3 px-4 text-xs">{capitalizeEachWord('kpis' in campaign ? (campaign.kpis === "" ? "N/A" : campaign.kpis) : "N/A")}</td>
       <td className="py-3 px-4 text-xs">
-        <span className={`px-[10px] py-2 rounded-md ${getStatusBadgeClass(campaign.status)}`}>
-          {campaign.status}
+      {campaign.startDate && campaign.endDate ? (
+          <>
+            {new Date(campaign.startDate).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            })}{" "}
+            -{" "}
+            {new Date(campaign.endDate).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            })}
+          </>
+        ) : (
+          "N/A"
+        )}
+      </td>
+      <td className="py-3 px-4 text-xs">{capitalizeEachWord(campaign?.industry)}</td>
+      <td className="py-3 px-4 text-xs">
+        <span className={`px-[10px] py-2 rounded-md ${getStatusBadgeClass(campaign?.status)}`}>
+        {capitalizeEachWord(campaign?.status)}
         </span>
       </td>
       <td className="py-3 px-4 text-xs">
@@ -77,7 +98,8 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
             <MdOutlineCheckCircle size={20}/>
             Accept
           </button>
-          <div className="relative">
+          <div>
+            <div className="relative">
             <button 
               className="text-gray-500 hover:bg-gray-100 p-1 rounded-full"
               onClick={toggleOptions}
@@ -86,7 +108,7 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
             </button>
             
             {showOptions && (
-              <div className="absolute right-0 mt-1 w-32 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+              <div className="fixed w-32 right-3 bg-white border border-gray-200 rounded-md shadow-lg pointer-events-auto">
                 <div className="py-1">
                   <button 
                     className="block w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-100"
@@ -97,7 +119,7 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
                   <button 
                     className="block w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-100"
                     onClick={() => {
-                      console.log(`Reject campaign ${campaign.id}`);
+                      console.log(`Reject campaign ${campaign._id}`);
                       setShowOptions(false);
                     }}
                   >
@@ -107,6 +129,8 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
               </div>
             )}
           </div>
+          </div>
+          
         </div>
       </td>
     </tr>
