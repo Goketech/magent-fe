@@ -3,9 +3,8 @@ import CampaignList, { Campaign } from './CampaignList';
 import { MyCampaign as MyCampaignType } from '@/lib/types';
 import { FilterState } from './CampaignFilter';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useAuth } from "@/context/AuthProvider";
 import AcceptModal from '../ui/AcceptModal';
-import MyCampaignUnderMarketPlace from './MyCampaignUnderMarketPlace';
-
 
 interface TableHeader {
   id: string;
@@ -18,14 +17,14 @@ interface CampaignListsProps {
   itemsPerPage?: number;
   activeFilters?: FilterState;
   onViewDetails: (campaign: Campaign | MyCampaignType) => void;
-  campaigns: MyCampaignType[]
 }
+
 const EMPTY_ARRAY: Campaign[] = [];
+
 const CampaignLists: React.FC<CampaignListsProps> = ({ 
   initialCampaigns = EMPTY_ARRAY, 
   itemsPerPage = 10,
   onViewDetails,
-  campaigns,
   activeFilters = {
     industry: '',
     status: '',
@@ -38,18 +37,15 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
   const [allCampaigns, setAllCampaigns] = useState<Campaign[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
-  const [selectedCampaignId, setSelectedCampaignId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | MyCampaignType | null>(null);
-
-
+  const {jwt} = useAuth()
   
   // Filter campaigns based on activeFilters
   const filteredCampaigns = useMemo(() => {
-    let result = [...allCampaigns];
-    
+    let result = Array.isArray(allCampaigns) ? [...allCampaigns] : [];
     
     if (activeFilters) { // Apply filters only if they are not empty
       // Filter by industry
@@ -58,7 +54,6 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
           campaign.industry.toLowerCase() === activeFilters.industry.toLowerCase()
         );
       }
-      
       
       if (activeFilters.status) {// Filter by status
         result = result.filter(campaign => 
@@ -112,84 +107,51 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
     { id: "actions", label: "" }
   ];
 
-  const sampleData: Campaign[] = [
-    {
-      id: 1,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Pending"
-    },
-    {
-      id: 2,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Pending"
-    },
-    {
-      id: 3,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Pending"
-    },
-    {
-      id: 4,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Pending"
-    },
-    {
-      id: 5,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Pending"
-    },
-    {
-      id: 6,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Pending"
-    },
-    {
-      id: 7,
-      advertiser: "Modupe Akanni",
-      campaignName: "NFT Push '25",
-      goals: "Engagement",
-      kpis: "Likes",
-      duration: "Apr 15 - Apr 25",
-      industry: "DAOs",
-      status: "Pending"
-    }
-  ];
+  // Fetch campaigns from the API
+  const fetchCampaigns = async () => {
+    setLoading(true);
+    
+    try {
 
-  // Initialize with sample data or use provided initialCampaigns
+      
+      if (!jwt) {
+        console.error('No authentication token found');
+        setLoading(false);
+        return;
+      }
+      
+      const response = await fetch('https://www.api.hellomagent.com/campaign/marketplace-campaigns', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Error fetching campaigns: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log(data)
+      setAllCampaigns(data);
+      setTotalPages(Math.ceil(data.length / itemsPerPage));
+    } catch (error) {
+      console.error('Failed to fetch campaigns:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initialize with API data or use provided initialCampaigns
   useEffect(() => {
-    const data = initialCampaigns.length > 0 ? initialCampaigns : sampleData;
-    setAllCampaigns(data);
-    setTotalPages(Math.ceil(data.length / itemsPerPage));
+    if (initialCampaigns.length > 0) {
+      setAllCampaigns(initialCampaigns);
+      setTotalPages(Math.ceil(initialCampaigns.length / itemsPerPage));
+      setLoading(false);
+    } else {
+      fetchCampaigns();
+    }
   }, [initialCampaigns, itemsPerPage]);
   
   // Update totalPages when filtered results change
@@ -200,21 +162,12 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    // In a real app, this would fetch data for the specific page
-    setLoading(true);
-    
-    // Simulating API call
-    setTimeout(() => {
-      setLoading(false);
-    }, 300);
   };
 
   const handleAcceptCampaign = (campaign: Campaign | MyCampaignType) => {
     setSelectedCampaign(campaign);
     setIsModalOpen(true);
-    setSelectedCampaignId(null)
   };
-  
 
   const handleSort = (key: string) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -393,30 +346,20 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
                 <CampaignList 
                   key={campaign.id} 
                   campaign={campaign} 
-                  onAccept={() => handleAcceptCampaign(campaign)} // pass full object
-                    onViewDetails={onViewDetails}
-                />
-              ))}
-              {campaigns.map((campaign) => (
-                <MyCampaignUnderMarketPlace
-                  key={campaign.id} 
-                  campaign={campaign} 
-                  onAccept={() => handleAcceptCampaign(campaign)} // pass full object
+                  onAccept={() => handleAcceptCampaign(campaign)}
                   onViewDetails={onViewDetails}
                 />
-              ))
-
-              }
+              ))}
             </tbody>
           </table>
         )}
         {selectedCampaign && (
-  <AcceptModal
-    isOpen={isModalOpen}
-    onClose={() => setIsModalOpen(false)}
-    campaign={selectedCampaign}
-  />
-)}
+          <AcceptModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            campaign={selectedCampaign}
+          />
+        )}
       </div>
       
       <div className="flex justify-center mt-6 space-x-2">

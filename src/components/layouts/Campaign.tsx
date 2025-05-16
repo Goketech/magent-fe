@@ -424,7 +424,7 @@ const Campaign: React.FC = () => {
             <CampaignLists
               activeFilters={filters}
               onViewDetails={handleViewDetails}
-              campaigns={userCampaigns}
+              // campaigns={userCampaigns}
             />
           ) : userCampaigns.length === 0 ? (
             <EmptyState onCreateCampaign={handleCreateCampaign} />
