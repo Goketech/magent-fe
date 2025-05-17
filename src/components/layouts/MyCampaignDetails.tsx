@@ -1,8 +1,9 @@
 import { MdArrowBackIos } from "react-icons/md";
-import { MyCampaign as MyCampaignType } from "@/lib/types";
+import { MyCampaign } from "@/lib/types"; // Updated import
+import { capitalizeEachWord } from "@/utils/capitalize";
 
 interface MyCampaignDetailsProps {
-  campaign: MyCampaignType;
+  campaign: MyCampaign;
   onBack: () => void;
 }
 
@@ -30,25 +31,27 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({ campaign, onBack 
       >
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-xl font-semibold mb-1">{campaign.campaignName}</h2>
+            <h2 className="text-xl font-semibold mb-1">
+              {capitalizeEachWord(campaign.name || '')}
+            </h2>
             <div className="grid grid-cols-3 gap-10 mt-2">
               <div>
                 <p className="text-xs opacity-70 py-2">Campaign Goal</p>
-                <p className="text-sm">{campaign.campaignGoals}</p>
+                <p className="text-sm">{capitalizeEachWord(campaign?.goals || '')}</p>
               </div>
               <div>
                 <p className="text-xs opacity-70 py-2">Campaign KPIs</p>
-                <p className="text-sm">{campaign.campaignKPIs || 'N/A'}</p>
+                <p className="text-sm">{capitalizeEachWord('kpis' in campaign ? (campaign.kpis === "" ? "N/A" : campaign.kpis) : "N/A")}</p>
               </div>
               <div>
                 <p className="text-xs opacity-70 py-2">Target Number</p>
-                <p className="text-sm">{campaign.targetNumber}</p>
+                <p className="text-sm">{campaign?.targetNumber || 'N/A'}</p>
               </div>
             </div>
           </div>
           <div className='absolute top-0 right-0'>
-            <span className="bg-[#FCF4E7] text-[#DD900D] text-xs px-6 py-2 rounded-bl-md">
-              {'Pending'}
+            <span className="bg-[#EBE6F0] text-[#330065] text-xs px-6 py-2 rounded-bl-md">
+              {capitalizeEachWord(campaign?.status || '')}
             </span>
           </div>
         </div>
@@ -60,15 +63,15 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({ campaign, onBack 
           <div className="space-y-4">
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Campaign Name</p>
-              <p className="text-sm font-medium">{campaign.campaignName}</p>
+              <p className="text-sm font-medium">{capitalizeEachWord(campaign?.name || '')}</p>
             </div>
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Industry</p>
-              <p className="text-sm font-medium">{campaign.industry}</p>
+              <p className="text-sm font-medium">{capitalizeEachWord(campaign?.industry || '')}</p>
             </div>
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Campaign Goal</p>
-              <p className="text-sm font-medium">{campaign.campaignGoals}</p>
+              <p className="text-sm font-medium">{capitalizeEachWord(campaign?.goals || '')}</p>
             </div>
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Target Audience</p>
@@ -108,17 +111,17 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({ campaign, onBack 
 
         <div>
           <h3 className="text-lg font-medium mb-4">Media</h3>
-          {campaign.mediaFiles && campaign.mediaFiles.length > 0 ? (
+          {campaign.media && campaign.media.length > 0 ? (
             <>
               <div className="bg-gray-100 rounded-lg overflow-hidden">
                 <img 
-                  src={URL.createObjectURL(campaign.mediaFiles[0])} 
+                  src={URL.createObjectURL(campaign.media[0])} 
                   alt="Campaign media" 
                   className="w-full h-64 object-cover"
                 />
               </div>
               <div className="flex mt-4 gap-2">
-                {campaign.mediaFiles.map((file, index) => (
+                {campaign.media.map((file, index) => (
                   <div key={index} className="h-12 w-12 bg-gray-200 rounded-md overflow-hidden">
                     <img 
                       src={URL.createObjectURL(file)} 

@@ -1,56 +1,50 @@
-// types.ts
-export type CampaignStatus = "Active" | "Completed" | "Pending" | "Inactive";
+// In your types.ts file
+interface BaseCampaign {
+  _id: number;
+  id: string;
+  name: string;
+  goals: string;
+  industry: string;
+  status: string;
+  startDate?: number;
+  endDate?: number;
+  targetNumber?: string;
+  totalLiquidity?: string;
+  mediaImage?: string;
+}
 
+// Marketplace campaign type (with advertiser)
+export interface Campaign extends BaseCampaign {
+  campaignName: string;
+  campaignGoals: string;
+  kpis: string;
+  ageRange?: string;
+  cpc?: string;
+  totalPublishers?: number;
+  advertiser: unknown; // This is the key distinguishing property
+}
 
-export interface Campaign {
-    id: number;
-    advertiser: string;
-    campaignName: string;
-    goals: string;
-    kpis: string;
-    duration: string;
-    industry: string;
-    
-    status: CampaignStatus;
-    targetNumber?: number;
-    targetAudience?: string;
-    ageRange?: string;
-    cpc?: number | string;
-    totalLiquidity?: string;
-    totalPublishers?: number;
-    mediaImage?: string;
-  }
+// User's own campaign type (without advertiser)
+export interface MyCampaign extends BaseCampaign {
+  campaignName: string;
+  campaignGoals: string;
+  age?: string;
+  gender?: string;
+  valuePerUser?: string;
+  website?: string;
+  publishersCount? : number;
+  amount:number;
+  twitter?: string;
+  instagram?: string;
+  media?: File[];
+  kpis?: string; // Optional in MyCampaign
+}
 
+// Simple type guard functions
+export function isCampaign(campaign: Campaign | MyCampaign): campaign is Campaign {
+  return 'advertiser' in campaign;
+}
 
-  export interface MyCampaign {
-    id: number;
-  
-    // Required fields
-    campaignName: string;
-    campaignGoals: string;
-    campaignKPIs: string;
-    targetNumber: number;
-    industry: string;
-    valuePerUser: string;
-    amount: number;
-    totalLiquidity: number;
-    startDate: string; // Or Date if you're using actual Date objects
-    endDate: string;
-  
-    website: string;
-    twitter: string;
-  
-    // Optional fields
-    age: string;
-    gender: string;
-    youtube?: string;
-    instagram?: string;
-    telegram?: string;
-    discord?: string;
-    otherResources?: string;
-    otherInformation?: string;
-    mediaFiles?: File[];
-    status?: CampaignStatus;
-    publishersCount?: number;
-  }
-  
+export function isMyCampaign(campaign: Campaign | MyCampaign): campaign is MyCampaign {
+  return !('advertiser' in campaign);
+}

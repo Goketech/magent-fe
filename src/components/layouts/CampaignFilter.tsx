@@ -35,10 +35,15 @@ const CampaignFilter: React.FC<CampaignFilterProps> = ({ onFilterChange }) => {
   // Options for dropdown filters
   const filterOptions: Record<FilterType, FilterOption[]> = {
     industry: [
-      { label: 'DAOs', value: 'DAOs' },
+      { label: 'Infrastructure', value: 'Infrastructure' },
       { label: 'NFTs', value: 'NFTs' },
       { label: 'DeFi', value: 'DeFi' },
-      { label: 'Gaming', value: 'Gaming' }
+      { label: 'Gaming', value: 'Gaming' },
+      { label: 'DePIN', value: 'DePIN' },
+      { label: 'Consumer dApps', value: 'Consumer dApps' },
+      { label: 'Payments', value: 'Payments' },
+      { label: 'AI', value: 'AI' },
+      { label: 'DAOs', value: 'DAOs' },
     ],
     status: [
       { label: 'Active', value: 'Active' },
@@ -47,8 +52,12 @@ const CampaignFilter: React.FC<CampaignFilterProps> = ({ onFilterChange }) => {
     ],
     goals: [
       { label: 'Engagement', value: 'Engagement' },
-      { label: 'Awareness', value: 'Awareness' },
-      { label: 'Conversion', value: 'Conversion' }
+      { label: 'Waitlist', value: 'Waitlist' },
+      { label: 'Feedback', value: 'Feedback' },
+      { label: 'Installs', value: 'Installs' },
+      { label: 'Followers', value: 'Followers' },
+      { label: 'Conversion', value: 'Conversion' },
+      { label: 'Signups', value: 'Signups' }
     ]
   };
 

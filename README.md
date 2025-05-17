@@ -65,16 +65,14 @@ Marketing teams are drowning in data but starving for insights. Magent cuts thro
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/magent.git
-cd magent
+git clone https://github.com/Goketech/magent-fe.git
+cd magent-fe
 ```
 
 2. Install dependencies
 ```bash
 npm install
-# or
-yarn install
-```
+
 
 3. Set up environment variables
 ```bash
@@ -85,9 +83,7 @@ cp .env.example .env.local
 4. Run the development server
 ```bash
 npm run dev
-# or
-yarn dev
-```
+
 
 ## 🔒 Security & Performance
 
@@ -127,16 +123,16 @@ This project is licensed under the MIT License - see the `LICENSE.md` file for d
 
 ## 🏅 Hackathon Recognition
 
-**Winner: Best AI/ML Solution**
-*[Hackathon Name]*
-*[Date]*
+# **Winner: Best AI/ML Solution**
+# *[Hackathon Name]*
+# *[Date]*
 
 ---
 
 ### 💬 Connect With Us
 
-- **Website**: [magent.ai](https://magent.ai)
-- **Email**: hello@magent.ai
-- **Twitter**: [@magent_ai](https://twitter.com/magent_ai)
+- **Website**: (https://www.hellomagent.com/)
+- **Email**: Hellomagent@gmail.com
+- **X**: [@MagentHQ](https://x.com/magenthq)
 
 **Built with ❤️ by the Magent Team**
