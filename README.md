@@ -4,7 +4,7 @@
 
 Magent is an innovative AI-powered marketing assistant designed to revolutionize how businesses approach marketing strategy, data analysis, and customer engagement. By leveraging cutting-edge artificial intelligence, Magent transforms complex marketing data into actionable insights and personalized strategies.
 
-![Project Banner](/path/to/banner-image.png)
+![Project Banner](/public/logo.jpg)
 
 ## 🏆 Hackathon Highlight Reel
 
@@ -22,20 +22,19 @@ Marketing teams are drowning in data but starving for insights. Magent cuts thro
 ## 🛠 Tech Stack
 
 ### Frontend
-- Next.js 14
+- Next.js 15
 - React
 - TypeScript
 - Tailwind CSS
 - Shadcn/UI Components
 
 ### Backend
-- Supabase
-- Vercel Serverless Functions
-- TypeScript
+- Solana
+- JavaScript
 
 ### AI & Data Processing
-- Advanced Machine Learning Algorithms
-- Predictive Analytics Engine
+- Personalized Content Geeration
+- Research and Insights on Marketing
 
 ## 🌈 Key Features
 
@@ -57,8 +56,8 @@ Marketing teams are drowning in data but starving for insights. Magent cuts thro
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+
-- npm or Yarn
+- Node.js 22+
+- npm
 - Supabase Account
 
 ### Installation
@@ -72,18 +71,17 @@ cd magent-fe
 2. Install dependencies
 ```bash
 npm install
-
+```
 
 3. Set up environment variables
 ```bash
 cp .env.example .env.local
-# Fill in your Supabase credentials
 ```
 
 4. Run the development server
 ```bash
 npm run dev
-
+```
 
 ## 🔒 Security & Performance
 
@@ -95,7 +93,6 @@ npm run dev
 ## 🌍 Scalability
 
 Magent is built with horizontal scalability in mind:
-- Serverless infrastructure
 - Microservices architecture
 - Cloud-native design
 
@@ -108,24 +105,18 @@ Magent is built with horizontal scalability in mind:
 
 ## 🔜 Roadmap
 
-- [ ] Advanced Machine Learning Models
-- [ ] Multi-platform Integration
-- [ ] Real-time Collaboration Tools
-- [ ] Enhanced Predictive Analytics
+- [x] Pay-per-result Campaign
+- [x] AI-Agent SMM
+- [ ] Ads Network/Exchange
+- [ ] Voice Command Campaign Setup
+- [ ] NFT Digital Ad-Pass
 
-## 🤝 Contributing
-
-We welcome contributions! Please see `CONTRIBUTING.md` for details on our code of conduct and the process for submitting pull requests.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the `LICENSE.md` file for details.
 
 ## 🏅 Hackathon Recognition
 
-# **Winner: Best AI/ML Solution**
-# *[Hackathon Name]*
-# *[Date]*
+# **Third Place: General Track**
+# *Lagos Nexus Hackathon*
+# *14th December 2024*
 
 ---
 
