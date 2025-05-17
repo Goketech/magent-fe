@@ -134,7 +134,6 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
       
       const data = await response.json();
       
-      console.log(data.campaigns)
       setAllCampaigns(data.campaigns);
       setTotalPages(Math.ceil(data.length / itemsPerPage));
     } catch (error) {

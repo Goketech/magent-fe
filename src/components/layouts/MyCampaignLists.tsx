@@ -187,6 +187,8 @@ const MyCampaignLists: React.FC<CampaignListsProps> = ({
       return 0;
     });
 
+    console.log('Sorted Campaigns:', sortedCampaigns);
+
     setAllCampaigns(sortedCampaigns);
   };
 
@@ -327,7 +329,7 @@ const MyCampaignLists: React.FC<CampaignListsProps> = ({
             <tbody className=''>
               {displayedCampaigns.map((campaign) => (
                 <MyCampaignList
-                  key={campaign._id}
+                  key={campaign.id}
                   campaign={campaign}
                   onViewDetails={() => onViewDetails(campaign)}
                 />

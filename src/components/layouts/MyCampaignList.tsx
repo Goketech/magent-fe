@@ -39,8 +39,8 @@ const MyCampaignList: React.FC<MyCampaignListProps> = ({
 
   return (
     <tr className="border-b border-gray-200 hover:bg-gray-50">
-      <td className="py-3 px-4 text-xs">{campaign.name}</td>
-      <td className="py-3 px-4 text-xs">{campaign.goals}</td>
+      <td className="py-3 px-4 text-xs">{campaign.campaignName}</td>
+      <td className="py-3 px-4 text-xs">{campaign.campaignGoals}</td>
       <td className="py-3 px-4 text-xs flex gap-2">
         <span className="text-[#330065] bg-[#EBE6F0] py-[4px] px-[10px] rounded-md">
           {campaign.valuePerUser || 'N/A'}

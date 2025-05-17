@@ -105,22 +105,13 @@ const Campaign: React.FC = () => {
     };
 
     fetchCampaigns();
-  }, []);
-
-  // Save campaigns to localStorage whenever they change
-  useEffect(() => {
-    // Only save if we have campaigns to save
-    if (userCampaigns.length > 0) {
-      console.log("Saving to localStorage:", userCampaigns);
-      localStorage.setItem("userCampaigns", JSON.stringify(userCampaigns));
-    }
-  }, [userCampaigns]);
+  }, [jwt]);
 
   const handleFilterChange = (newFilters: FilterState) => {
     setRawFilters(newFilters);
   };
 
-  const handleViewDetails = (campaign: CampaignType | MyCampaignType| any) => {
+  const handleViewDetails = (campaign: CampaignType | MyCampaignType | any) => {
     setSelectedCampaign(campaign);
     // console.log(campaign)
   };
@@ -138,13 +129,9 @@ const Campaign: React.FC = () => {
   };
 
   const handleAccept = (id: number) => {
-    console.log(`Accepting campaign ${id}`);
+    // console.log(`Accepting campaign ${id}`);
     // accept logic
   };
-  // function resetCampaignData() {
-  //   localStorage.removeItem('userCampaigns');
-  //   console.log('Campaign data has been reset. Reload the page to see the effect.');
-  // }
 
   /**
    * Uploads a File to Cloudinary, returns the secure URL.
@@ -309,14 +296,12 @@ const Campaign: React.FC = () => {
       return;
     }
     const newCampaign: MyCampaignType = {
-      id: userCampaigns.length + 1, // Simple ID generation
+      id: userCampaigns.length + 1,
       ...campaignData,
-      status: "Active", // Default status
+      status: "Pending", // Default status
       createdAt: new Date().toISOString(),
-      // Add any other required fields for CampaignType
     };
 
-    // Explicitly save to localStorage immediately
     try {
       const uploads = await Promise.all(
         campaignData.mediaFiles.map((file: File) => uploadToCloudinary(file))
@@ -369,7 +354,11 @@ const Campaign: React.FC = () => {
         setIsCreatingCampaign(false);
         return;
       }
-      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`Error creating campaign: ${response.status}`);
+      }
+
       // Add to campaigns array
       const updatedCampaigns = [...userCampaigns, newCampaign];
 
@@ -392,11 +381,8 @@ const Campaign: React.FC = () => {
     // Exit create campaign view
     setCreateCampaign(false);
   };
-  
-  
+
   // Then in your JSX
-  
-  
 
   return (
     <div className="container mx-auto px-2 mt-[-2.5rem]">
@@ -408,10 +394,7 @@ const Campaign: React.FC = () => {
             onAccept={handleAccept}
           />
         ) : (
-          <MyCampaignDetails 
-            campaign={selectedCampaign} 
-            onBack={handleBack} 
-          />
+          <MyCampaignDetails campaign={selectedCampaign} onBack={handleBack} />
         )
       ) : createCampaign ? (
         <CreateCampaign

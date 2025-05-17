@@ -1,6 +1,7 @@
 // In your types.ts file
 interface BaseCampaign {
   _id: number;
+  id: string;
   name: string;
   goals: string;
   industry: string;
@@ -15,6 +16,7 @@ interface BaseCampaign {
 // Marketplace campaign type (with advertiser)
 export interface Campaign extends BaseCampaign {
   campaignName: string;
+  campaignGoals: string;
   kpis: string;
   ageRange?: string;
   cpc?: string;
@@ -24,6 +26,8 @@ export interface Campaign extends BaseCampaign {
 
 // User's own campaign type (without advertiser)
 export interface MyCampaign extends BaseCampaign {
+  campaignName: string;
+  campaignGoals: string;
   age?: string;
   gender?: string;
   valuePerUser?: string;
