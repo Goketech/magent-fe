@@ -46,6 +46,7 @@ const Campaign: React.FC = () => {
   const [createCampaign, setCreateCampaign] = useState<boolean>(false);
   const [userCampaigns, setUserCampaigns] = useState<MyCampaignType[]>([]);
   const [isCreatingCampaign, setIsCreatingCampaign] = useState(false);
+  const [campaignCount, setCampaignCount] = useState(0);
 
   const filters = useMemo(() => rawFilters, [rawFilters]);
 
@@ -174,7 +175,9 @@ const Campaign: React.FC = () => {
       typeOfMedia: isImage ? "image" : "video",
     };
   }
-
+  const handleCampaignCountChange = (count: number) => {
+    setCampaignCount(count);
+  };
   const handleAddCampaign = async (campaignData: any) => {
     console.log(campaignData);
     if (!jwt) {
@@ -382,8 +385,6 @@ const Campaign: React.FC = () => {
     setCreateCampaign(false);
   };
 
-  // Then in your JSX
-
   return (
     <div className="container mx-auto px-2 mt-[-2.5rem]">
       {selectedCampaign ? (
@@ -408,15 +409,17 @@ const Campaign: React.FC = () => {
             activeView={activeView}
             setActiveView={setActiveView}
           />
-          {userCampaigns.length !== 0 ? (
-            ""
-          ) : (
+          {(activeView === "marketplace" && campaignCount > 0) ||
+          (activeView === "myCampaigns" && userCampaigns.length > 0) ? (
             <CampaignFilter onFilterChange={handleFilterChange} />
+          ) : (
+            ""
           )}
           {activeView === "marketplace" ? (
             <CampaignLists
               activeFilters={filters}
               onViewDetails={handleViewDetails}
+              onCampaignCountChange={handleCampaignCountChange}
             />
           ) : userCampaigns.length === 0 ? (
             <EmptyState onCreateCampaign={handleCreateCampaign} />

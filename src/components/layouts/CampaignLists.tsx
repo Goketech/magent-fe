@@ -17,12 +17,14 @@ interface CampaignListsProps {
   itemsPerPage?: number;
   activeFilters?: FilterState;
   onViewDetails: (campaign: Campaign | MyCampaignType) => void;
+  onCampaignCountChange?: (count: number) => void;
 }
 
 const EMPTY_ARRAY: Campaign[] = [];
 
 const CampaignLists: React.FC<CampaignListsProps> = ({ 
   initialCampaigns = EMPTY_ARRAY, 
+  onCampaignCountChange,
   itemsPerPage = 10,
   onViewDetails,
   activeFilters = {
@@ -159,6 +161,11 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
     setTotalPages(Math.ceil(filteredCampaigns.length / itemsPerPage));
     setCurrentPage(1);
   }, [filteredCampaigns, itemsPerPage]);
+  useEffect(() => {
+    if (onCampaignCountChange) {
+      onCampaignCountChange(allCampaigns.length); // use original length, not filteredCampaigns
+    }
+  }, [onCampaignCountChange, allCampaigns.length]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
