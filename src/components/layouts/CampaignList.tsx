@@ -16,7 +16,7 @@ export interface Campaign {
   endDate: number;
   startDate :number;
   industry: string;
-  status: 'Active' | 'Completed' | 'Pending' | "Inactive";
+  status: 'Active' | 'completed' | 'Pending' | "Inactive";
 }
 
 interface CampaignListProps {
@@ -94,6 +94,7 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
           <button 
             className="rounded-md bg-[#330065] flex gap-3 items-center text-white px-4 py-1.5 text-xs hover:bg-purple-800 transition-colors"
             onClick={handleAccept}
+            disabled={campaign?.status == 'completed'}
           >
             <MdOutlineCheckCircle size={20}/>
             Accept

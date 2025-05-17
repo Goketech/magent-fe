@@ -408,7 +408,7 @@ const Campaign: React.FC = () => {
             activeView={activeView}
             setActiveView={setActiveView}
           />
-          {userCampaigns.length === 0 ? (
+          {userCampaigns.length !== 0 ? (
             ""
           ) : (
             <CampaignFilter onFilterChange={handleFilterChange} />

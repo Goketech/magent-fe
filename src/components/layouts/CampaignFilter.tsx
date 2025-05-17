@@ -1,5 +1,5 @@
 import {MdOutlineFilterList, MdSearch, MdClose} from "react-icons/md"
-import { useState } from 'react';
+import { useState,  useEffect, useRef  } from 'react';
 
 interface FilterOption {
   label: string;
@@ -31,6 +31,7 @@ const CampaignFilter: React.FC<CampaignFilterProps> = ({ onFilterChange }) => {
     endDate: '',
     searchQuery: ''
   });
+  const filterRef = useRef<HTMLDivElement>(null);
 
   // Options for dropdown filters
   const filterOptions: Record<FilterType, FilterOption[]> = {
@@ -95,6 +96,18 @@ const CampaignFilter: React.FC<CampaignFilterProps> = ({ onFilterChange }) => {
 
     onFilterChange(clearedState);
   };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setShowDropdown(null); // Close any open dropdown
+      }
+    };
+  
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const applyFilters = () => {
     const combinedFilters = {
@@ -111,7 +124,7 @@ const CampaignFilter: React.FC<CampaignFilterProps> = ({ onFilterChange }) => {
   };
 
   return (
-    <div className="w-full mb-6 ">
+    <div className="w-full mb-6 " ref={filterRef}>
       <div className="flex justify-between items-center flex-wrap gap-2">
         <div className="flex gap-2 items-center text-xs flex-wrap">
           <span className="text-[#330065] mr-1 ">Filter by</span>
