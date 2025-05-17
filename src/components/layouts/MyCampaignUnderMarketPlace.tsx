@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { MoreVertical } from 'lucide-react';
 import { MdOutlineCheckCircle } from 'react-icons/md';
-import { MyCampaign, CampaignStatus  } from '@/lib/types';
+import { MyCampaign  } from '@/lib/types';
 
 // export interface Campaign {
 //   id: number;
@@ -26,7 +26,7 @@ const MyCampaignUnderMarketPlace: React.FC<CampaignListProps> = ({ campaign, onA
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
-  const getStatusBadgeClass = (status: CampaignStatus | any) => {
+  const getStatusBadgeClass = (status: any) => {
     switch (status) {
       case "Active":
         return "bg-[#E6F4EB] text-[#009137]";
@@ -63,7 +63,7 @@ const MyCampaignUnderMarketPlace: React.FC<CampaignListProps> = ({ campaign, onA
       <td className="py-3 px-4 text-xs">{campaign.campaignName}</td>
       <td className="py-3 px-4 text-xs">{campaign.campaignName}</td>
       <td className="py-3 px-4 text-xs">{campaign.campaignGoals}</td>
-      <td className="py-3 px-4 text-xs">{campaign.campaignKPIs == "" ? "-----" : campaign.campaignKPIs }</td>
+      <td className="py-3 px-4 text-xs">{campaign.kpis == "" ? "-----" : campaign.kpis }</td>
       <td className="py-3 px-4 text-xs">
         {campaign.startDate && campaign.endDate ? (
           <>
