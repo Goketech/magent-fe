@@ -187,6 +187,8 @@ const MyCampaignLists: React.FC<CampaignListsProps> = ({
       return 0;
     });
 
+    console.log('Sorted Campaigns:', sortedCampaigns);
+
     setAllCampaigns(sortedCampaigns);
   };
 

@@ -153,7 +153,7 @@ function Advert() {
             {/* Progress Bar */}
             <div className="flex justify-between w-full">
               <p className="bg-[#EBE6F0] rounded-[8px] px-2 py-1 text-[#330065] text-xs whitespace-nowrap mr-2 md:mr-0">
-                Social Media Accout
+                Social Media Account
               </p>
               <div className="flex items-center justify-center">
                 {[1, 2, 3, 4, 5].map((step) => (
