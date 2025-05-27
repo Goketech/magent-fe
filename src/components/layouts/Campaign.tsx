@@ -10,6 +10,7 @@ import MyCampaignDetails from "./MyCampaignDetails";
 import EmptyState from "./EmptyState";
 import {
   Campaign as CampaignType,
+  isCampaign,
   MyCampaign as MyCampaignType,
 } from "../../lib/types";
 import { useAuth } from "@/context/AuthProvider";
@@ -20,7 +21,7 @@ import {
   developerPublicKey,
   confirmTransaction,
 } from "@/utils/transferCoin";
-import { start } from "repl";
+import { capitalizeEachWord } from "@/utils/capitalize";
 
 const Campaign: React.FC = () => {
   const { toast } = useToast();
@@ -45,6 +46,7 @@ const Campaign: React.FC = () => {
   const [createCampaign, setCreateCampaign] = useState<boolean>(false);
   const [userCampaigns, setUserCampaigns] = useState<MyCampaignType[]>([]);
   const [isCreatingCampaign, setIsCreatingCampaign] = useState(false);
+  const [campaignCount, setCampaignCount] = useState(0);
 
   const filters = useMemo(() => rawFilters, [rawFilters]);
 
@@ -70,11 +72,11 @@ const Campaign: React.FC = () => {
         const campaigns: MyCampaignType[] = userCampaignsData.map(
           (campaign: any) => ({
             id: campaign._id,
-            name: campaign.name,
-            campaignGoals: campaign.goals,
+            campaignName: capitalizeEachWord(campaign.name),
+            campaignGoals: capitalizeEachWord(campaign.goals),
             targetNumber: campaign.targetNumber,
-            campaignKPIs: campaign.kpi,
-            industry: campaign.industry,
+            campaignKPIs: capitalizeEachWord(campaign.kpi),
+            industry: capitalizeEachWord(campaign.industry),
             valuePerUser: campaign.valuePerUser,
             amount: Number(campaign.valuePerUserAmount),
             totalLiquidity: campaign.totalLiquidity,
@@ -89,10 +91,11 @@ const Campaign: React.FC = () => {
             otherResources: campaign.otherSocials,
             otherInformation: campaign.otherInfo,
             mediaFiles: campaign.media,
-            status: campaign.status,
+            status: capitalizeEachWord(campaign.status),
             createdAt: campaign.createdAt,
             age: campaign.targetAudience.age,
-            gender: campaign.targetAudience.gender,
+            gender: capitalizeEachWord(campaign.targetAudience.gender),
+            publishersCount: campaign.publisherCount,
           })
         );
 
@@ -103,23 +106,15 @@ const Campaign: React.FC = () => {
     };
 
     fetchCampaigns();
-  }, []);
-
-  // Save campaigns to localStorage whenever they change
-  useEffect(() => {
-    // Only save if we have campaigns to save
-    if (userCampaigns.length > 0) {
-      console.log("Saving to localStorage:", userCampaigns);
-      localStorage.setItem("userCampaigns", JSON.stringify(userCampaigns));
-    }
-  }, [userCampaigns]);
+  }, [jwt]);
 
   const handleFilterChange = (newFilters: FilterState) => {
     setRawFilters(newFilters);
   };
 
-  const handleViewDetails = (campaign: CampaignType | MyCampaignType) => {
+  const handleViewDetails = (campaign: CampaignType | MyCampaignType | any) => {
     setSelectedCampaign(campaign);
+    // console.log(campaign)
   };
 
   const handleCreateCampaign = () => {
@@ -135,13 +130,9 @@ const Campaign: React.FC = () => {
   };
 
   const handleAccept = (id: number) => {
-    console.log(`Accepting campaign ${id}`);
+    // console.log(`Accepting campaign ${id}`);
     // accept logic
   };
-  // function resetCampaignData() {
-  //   localStorage.removeItem('userCampaigns');
-  //   console.log('Campaign data has been reset. Reload the page to see the effect.');
-  // }
 
   /**
    * Uploads a File to Cloudinary, returns the secure URL.
@@ -149,7 +140,7 @@ const Campaign: React.FC = () => {
    */
   async function uploadToCloudinary(
     file: File
-  ): Promise<{ url: string; type: "image" | "video" }> {
+  ): Promise<{ url: string; typeOfMedia: "image" | "video" }> {
     const isImage = file.type.startsWith("image/");
     const uploadUrl = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
 
@@ -181,10 +172,12 @@ const Campaign: React.FC = () => {
     const json = await resp.json();
     return {
       url: json.secure_url as string,
-      type: isImage ? "image" : "video",
+      typeOfMedia: isImage ? "image" : "video",
     };
   }
-
+  const handleCampaignCountChange = (count: number) => {
+    setCampaignCount(count);
+  };
   const handleAddCampaign = async (campaignData: any) => {
     console.log(campaignData);
     if (!jwt) {
@@ -306,14 +299,12 @@ const Campaign: React.FC = () => {
       return;
     }
     const newCampaign: MyCampaignType = {
-      id: userCampaigns.length + 1, // Simple ID generation
+      id: userCampaigns.length + 1,
       ...campaignData,
-      status: "Active", // Default status
+      status: "Pending", // Default status
       createdAt: new Date().toISOString(),
-      // Add any other required fields for CampaignType
     };
 
-    // Explicitly save to localStorage immediately
     try {
       const uploads = await Promise.all(
         campaignData.mediaFiles.map((file: File) => uploadToCloudinary(file))
@@ -366,7 +357,11 @@ const Campaign: React.FC = () => {
         setIsCreatingCampaign(false);
         return;
       }
-      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`Error creating campaign: ${response.status}`);
+      }
+
       // Add to campaigns array
       const updatedCampaigns = [...userCampaigns, newCampaign];
 
@@ -393,7 +388,7 @@ const Campaign: React.FC = () => {
   return (
     <div className="container mx-auto px-2 mt-[-2.5rem]">
       {selectedCampaign ? (
-        "advertiser" in selectedCampaign ? (
+        isCampaign(selectedCampaign) ? (
           <CampaignDetails
             campaign={selectedCampaign}
             onBack={handleBack}
@@ -414,16 +409,17 @@ const Campaign: React.FC = () => {
             activeView={activeView}
             setActiveView={setActiveView}
           />
-          {userCampaigns.length === 0 ? (
-            ""
-          ) : (
+          {(activeView === "marketplace" && campaignCount > 0) ||
+          (activeView === "myCampaigns" && userCampaigns.length > 0) ? (
             <CampaignFilter onFilterChange={handleFilterChange} />
+          ) : (
+            ""
           )}
           {activeView === "marketplace" ? (
             <CampaignLists
               activeFilters={filters}
               onViewDetails={handleViewDetails}
-              campaigns={userCampaigns}
+              onCampaignCountChange={handleCampaignCountChange}
             />
           ) : userCampaigns.length === 0 ? (
             <EmptyState onCreateCampaign={handleCreateCampaign} />

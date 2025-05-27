@@ -1068,7 +1068,7 @@ function Content() {
             handleRegenerate={handleGenerateClick}
             isStepCompleted={isStepCompleted}
             loading={loading}
-            buttonClicked={buttonClicked}
+            // buttonClicked={buttonClicked}
             isPublishing={isPublishing}
             handlePublish={handlePublish}
           />
@@ -1094,7 +1094,7 @@ function Content() {
                 handleRegenerate={handleGenerateClick}
                 isStepCompleted={isStepCompleted}
                 loading={loading}
-                buttonClicked={buttonClicked}
+                // buttonClicked={buttonClicked}
                 isPublishing={isPublishing}
                 handlePublish={handlePublish}
               />

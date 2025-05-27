@@ -25,10 +25,23 @@ export const campaignFormSchema = Yup.object({
   valuePerUser: Yup.string().required("Value Per User is required"),
   amount: Yup.number()
     .required("Amount is required")
-    .positive("Amount must be positive"),
+    .positive("Amount must be positive")
+    ,
   totalLiquidity: Yup.number()
     .required("Total liquidity is required")
-    .positive("Total liquidity must be positive"),
+    .positive("Total liquidity must be positive")
+    .test(
+      'amount-within-budget',
+      'Total reward (amount × target number) exceeds total liquidity',
+      function(value) {
+        const { targetNumber, amount } = this.parent;
+        // Only validate if all values exist
+        if (value && targetNumber && amount) {
+          return amount * targetNumber <= value;
+        }
+        return true;
+      }
+    ),
   startDate: Yup.date()
     .required("Start date is required")
     .min(new Date(), "Start date must be in the future"),
@@ -89,7 +102,19 @@ export const basicInfoSchema = Yup.object({
 
   totalLiquidity: Yup.number()
     .required("Total liquidity is required")
-    .positive("Total liquidity must be positive"),
+    .positive("Total liquidity must be positive")
+    .test(
+      'amount-within-budget',
+      'Total reward (amount × target number) exceeds total liquidity',
+      function(value) {
+        const { targetNumber, amount } = this.parent;
+        // Only validate if all values exist
+        if (value && targetNumber && amount) {
+          return amount * targetNumber <= value;
+        }
+        return true;
+      }
+    ),
 
   startDate: Yup.date()
     .required("Start date is required")

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { MoreVertical } from "lucide-react";
-import { MyCampaign as MyCampaignType } from "@/lib/types";
+import { MyCampaign } from "@/lib/types"; // Updated import
 
 interface MyCampaignListProps {
-  campaign: MyCampaignType;
-  onViewDetails: (campaign: MyCampaignType) => void;
+  campaign: MyCampaign;
+  onViewDetails: (campaign: MyCampaign) => void;
 }
 
 const MyCampaignList: React.FC<MyCampaignListProps> = ({
@@ -39,18 +39,17 @@ const MyCampaignList: React.FC<MyCampaignListProps> = ({
 
   return (
     <tr className="border-b border-gray-200 hover:bg-gray-50">
-      {/* <td className="py-3 px-4 text-xs">{campaign.advertiser}</td> */}
       <td className="py-3 px-4 text-xs">{campaign.campaignName}</td>
       <td className="py-3 px-4 text-xs">{campaign.campaignGoals}</td>
       <td className="py-3 px-4 text-xs flex gap-2">
         <span className="text-[#330065] bg-[#EBE6F0] py-[4px] px-[10px] rounded-md">
-          {campaign.valuePerUser}
+          {campaign.valuePerUser || 'N/A'}
         </span>
         <span className="bg-[#E6F4EB] text-[#009137] py-[4px] px-[10px] rounded-md">
-          ${campaign.amount}
+          ${campaign.amount || '0'}
         </span>
       </td>
-      <td className="py-3 px-4 text-xs">${campaign.totalLiquidity} USDC</td>
+      <td className="py-3 px-4 text-xs">${campaign.totalLiquidity || '0'} USDC</td>
       <td className="py-3 px-4 text-xs">$ 0</td>
       <td className="py-3 px-4 text-xs">$ 0</td>
       <td className="py-3 px-4 text-xs">
@@ -70,12 +69,12 @@ const MyCampaignList: React.FC<MyCampaignListProps> = ({
           "N/A"
         )}
       </td>
-      <td className="py-3 px-4 text-xs">12</td>
+      <td className="py-3 px-4 text-xs">{campaign.publishersCount || 0}</td>
       <td className="py-3 px-4 text-xs">
         <span
           className={`px-[10px] py-2 rounded-md bg-[#FCF4E7] text-[#DD900D] `}
         >
-          Pending
+          {campaign.status}
         </span>
       </td>
       <td className="py-3 px-4 text-xs">
@@ -100,7 +99,7 @@ const MyCampaignList: React.FC<MyCampaignListProps> = ({
                   <button
                     className="block w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-100"
                     onClick={() => {
-                      console.log(`Edit campaign ${campaign.id}`);
+                      console.log(`Edit campaign ${campaign._id}`);
                       setShowOptions(false);
                     }}
                   >

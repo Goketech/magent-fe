@@ -8,13 +8,14 @@ import { Loading } from "../ui/loading";
 type PreviewProps = {
   isStepCompleted: (step: number) => boolean;
   loading: boolean;
-  buttonClicked: boolean;
+  // buttonClicked: boolean;
   handlePublish: () => void;
   handleRegenerate: () => void;
   isPublishing: boolean;
 };
 
 const splitParagraph = (text: string, linesPerChunk: number = 5) => {
+  console.log("text", text);
   const sentences = text.split(".");
   const chunks: string[] = [];
   let tempChunk = "";
@@ -30,13 +31,15 @@ const splitParagraph = (text: string, linesPerChunk: number = 5) => {
 
   if (tempChunk) chunks.push(tempChunk.trim());
 
+  console.log("chunks", chunks);
+
   return chunks;
 };
 
 const Preview: React.FC<PreviewProps> = ({
   isStepCompleted,
   loading,
-  buttonClicked,
+  // buttonClicked,
   handlePublish,
   handleRegenerate,
   isPublishing,
@@ -98,7 +101,7 @@ const Preview: React.FC<PreviewProps> = ({
               <div className="w-[76px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
             )}
 
-            {!buttonClicked || loading || paragraphs.length === 1 ? (
+            {loading || paragraphs.length === 1 ? (
               <>
                 <div className="w-[135px] md:w-[271px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
                 <div className="w-[162px] md:w-[298px] h-[12px] rounded-[20px] bg-[#F0F0F0]" />
@@ -179,9 +182,9 @@ const Preview: React.FC<PreviewProps> = ({
       >
         <button
           onClick={handleRegenerate}
-          disabled={!buttonClicked || loading}
+          disabled={loading}
           className={`border-none bg-transparent text-sm font-semibold flex gap-2 items-center transition ${
-            !buttonClicked || loading
+            loading
               ? "text-[#D7D7D7] cursor-not-allowed"
               : "text-[#330065] hover:text-[#220044]"
           }`}
@@ -201,9 +204,9 @@ const Preview: React.FC<PreviewProps> = ({
 
         <button
           onClick={handlePublish}
-          disabled={!buttonClicked || loading}
+          disabled={loading}
           className={`rounded-[32px] w-full md:w-[120px] px-4 py-2 text-sm font-semibold ${
-            !buttonClicked || loading
+            loading
               ? "bg-[#D7D7D7] cursor-not-allowed"
               : "bg-[#330065] hover:opacity-90"
           } text-white transition`}
