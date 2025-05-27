@@ -522,7 +522,7 @@ function Content() {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
       )}
       <div className="flex flex-col md:flex-row justify-between gap-6 h-full w-full">
-      <div className="flex flex-col gap-5 w-full h-full">
+        <div className="flex flex-col gap-5 w-full h-full">
           <div>
             <h2 className="text-sm md:text-[20px] font-medium mb-4">
               Social media management

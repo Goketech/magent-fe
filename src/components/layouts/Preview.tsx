@@ -110,12 +110,12 @@ const Preview: React.FC<PreviewProps> = ({
                 {editingIndex === 0 ? (
                   <div className="relative">
                     <textarea
-      ref={textareaRef}
-      value={editedText}
-      onChange={handleChange}
-      className="w-full text-sm text-[#212221] leading-[1.5] font-normal bg-white resize-none focus:outline-none border border-gray-300 rounded-md p-3"
-      style={{ whiteSpace: "pre-wrap", overflow: "hidden" }}
-    />
+                      ref={textareaRef}
+                      value={editedText}
+                      onChange={handleChange}
+                      className="w-full text-sm text-[#212221] leading-[1.5] font-normal bg-white resize-none focus:outline-none border border-gray-300 rounded-md p-3"
+                      style={{ whiteSpace: "pre-wrap", overflow: "hidden" }}
+                    />
                     <div className="mt-2 flex gap-2 justify-end">
                       <button
                         onClick={() => {
