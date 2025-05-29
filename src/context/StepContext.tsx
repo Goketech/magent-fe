@@ -5,13 +5,14 @@ import React, {
   ComponentType,
   useContext,
   useState,
+  useEffect,
 } from "react";
 import Content from "@/components/layouts/Content";
 import Research from "@/components/layouts/Research";
 import Library from "@/components/layouts/Library";
 import Advert from "@/components/layouts/Advert";
-import Campaign from "@/components/layouts/Campaign"
-
+import Campaign from "@/components/layouts/Campaign";
+import { useAuth } from "./AuthProvider";
 
 interface Topic {
   mode: "type" | "select";
@@ -64,7 +65,7 @@ export const StepProvider = ({ children }: { children: ReactNode }) => {
         value: "",
       },
     ],
-    selectTopics: [],  
+    selectTopics: [],
     minFrequency: 0,
     maxFrequency: 0,
     duration: 0,
