@@ -22,6 +22,7 @@ import {
   confirmTransaction,
 } from "@/utils/transferCoin";
 import { capitalizeEachWord } from "@/utils/capitalize";
+import { apiClient } from "@/utils/apiClient";
 
 const Campaign: React.FC = () => {
   const { toast } = useToast();
@@ -54,14 +55,11 @@ const Campaign: React.FC = () => {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const userCampaignResponse = await fetch(
-          "https://www.api.hellomagent.com/campaign/user-campaigns",
+        const userCampaignResponse = await apiClient(
+          "/campaign/user-campaigns",
           {
             method: "GET",
-            headers: {
-              Authorization: `Bearer ${jwt}`,
-              "Content-Type": "application/json",
-            },
+            token: jwt ?? undefined,
           }
         );
 
@@ -201,32 +199,54 @@ const Campaign: React.FC = () => {
 
     const amountToSend = Number(campaignData.totalLiquidity);
 
-    const transactionResponse = await fetch(
-      "https://www.api.hellomagent.com/transactions/create-transaction",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          feature: "campaign",
-          reference: `campaign_${Date.now()}`,
-          amount: amountToSend,
-        }),
+    const createTransaction = async (
+      amountToSend: number,
+      jwt: string | null,
+      setIsCreatingCampaign: (val: boolean) => void
+    ) => {
+      try {
+        const transactionResponse = await apiClient(
+          "/transactions/create-transaction",
+          {
+            method: "POST",
+            token: jwt ?? undefined,
+            body: {
+              feature: "campaign",
+              reference: `campaign_${Date.now()}`,
+              amount: amountToSend,
+            },
+          }
+        );
+
+        console.log("Transaction created:", transactionResponse);
+        return transactionResponse;
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          description: "Failed to initiate transaction. Please try again.",
+        });
+        setIsCreatingCampaign(false);
+        return;
       }
+    };
+
+    // if (!transactionResponse.ok) {
+    //   toast({
+    //     variant: "destructive",
+    //     description: "Failed to initiate transaction. Please try again.",
+    //   });
+    //   setIsCreatingCampaign(false);
+    //   return;
+    // }
+
+    const transactionData = await createTransaction(
+      amountToSend,
+      jwt,
+      setIsCreatingCampaign
     );
 
-    if (!transactionResponse.ok) {
-      toast({
-        variant: "destructive",
-        description: "Failed to initiate transaction. Please try again.",
-      });
-      setIsCreatingCampaign(false);
-      return;
-    }
+    if (!transactionData) return; // already handled the error in createTransaction
 
-    const transactionData = await transactionResponse.json();
     const transactionId = transactionData.transactionId;
     let signature = "";
 
@@ -274,30 +294,46 @@ const Campaign: React.FC = () => {
       setIsCreatingCampaign(false);
       return;
     }
-    const updateResponse = await fetch(
-      "https://www.api.hellomagent.com/transactions/update-transaction-status",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          transactionId,
-          status: "success",
-          signature,
-        }),
-      }
-    );
+    const updateTransactionStatus = async (
+      transactionId: string,
+      signature: string,
+      jwt: string | null,
+      setIsCreatingCampaign: (val: boolean) => void
+    ) => {
+      try {
+        const data = await apiClient(
+          "/transactions/update-transaction-status",
+          {
+            method: "POST",
+            token: jwt ?? undefined,
+            body: {
+              transactionId,
+              status: "success",
+              signature,
+            },
+          }
+        );
 
-    if (!updateResponse.ok) {
-      toast({
-        variant: "destructive",
-        description: "Failed to verify transaction. Please try again.",
-      });
-      setIsCreatingCampaign(false);
-      return;
-    }
+        console.log("Transaction updated:", data);
+        return data;
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          description: "Failed to verify transaction. Please try again.",
+        });
+        setIsCreatingCampaign(false);
+        return;
+      }
+    };
+
+    // if (!updateResponse.ok) {
+    //   toast({
+    //     variant: "destructive",
+    //     description: "Failed to verify transaction. Please try again.",
+    //   });
+    //   setIsCreatingCampaign(false);
+    //   return;
+    // }
     const newCampaign: MyCampaignType = {
       id: userCampaigns.length + 1,
       ...campaignData,
@@ -337,30 +373,29 @@ const Campaign: React.FC = () => {
         otherSocials: campaignData.otherResources,
         otherInfo: campaignData.otherInformation,
       };
-      const response: any = await fetch(
-        "https://www.api.hellomagent.com/campaign/create-campaign",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${jwt}`,
-          },
-          body: JSON.stringify(body),
+      const createCampaign = async (
+        body: any,
+        jwt: string | null,
+        setIsCreatingCampaign: (val: boolean) => void
+      ) => {
+        try {
+          const response = await apiClient("/campaign/create-campaign", {
+            method: "POST",
+            token: jwt ?? undefined,
+            body,
+          });
+
+          console.log("Campaign created:", response);
+          return response;
+        } catch (error) {
+          toast({
+            variant: "destructive",
+            description: "Failed to create campaign. Please try again.",
+          });
+          setIsCreatingCampaign(false);
+          return;
         }
-      );
-
-      if (!response.ok) {
-        toast({
-          variant: "destructive",
-          description: "Failed to create campaign. Please try again.",
-        });
-        setIsCreatingCampaign(false);
-        return;
-      }
-
-      if (!response.ok) {
-        throw new Error(`Error creating campaign: ${response.status}`);
-      }
+      };
 
       // Add to campaigns array
       const updatedCampaigns = [...userCampaigns, newCampaign];
