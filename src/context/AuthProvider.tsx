@@ -9,6 +9,7 @@ import {
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useToast } from "@/hooks/use-toast";
 import bs58 from "bs58";
+import { apiClient } from "@/utils/apiClient";
 
 interface AuthContextType {
   jwt: string | null;
@@ -52,11 +53,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       setIsAuthenticating(true);
-      const response = await fetch(
-        "https://www.api.hellomagent.com/auth/get-nonce",
+      const response = await apiClient(
+        "/auth/get-nonce",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          token: jwt || undefined,
           body: JSON.stringify({ publicKey: publicKey.toBase58() }),
         }
       );
@@ -73,11 +74,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const signedMessage = await signMessage(new TextEncoder().encode(nonce));
       const signature = bs58.encode(signedMessage);
 
-      const verifyRes = await fetch(
-        "https://www.api.hellomagent.com/auth/verify-signature",
+      const verifyRes = await apiClient(
+        "/auth/verify-signature",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          token: jwt || undefined,
           body: JSON.stringify({ publicKey: publicKey.toBase58(), signature }),
         }
       );
