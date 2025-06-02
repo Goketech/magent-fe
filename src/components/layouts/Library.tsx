@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import SchedulePost from "./SchedulePost";
 import PublishPost from "./PublishPost";
 import { useAuth } from "@/context/AuthProvider";
+import { apiClient } from "@/utils/apiClient";
 
 const content = [
   {
@@ -59,14 +60,11 @@ function Library() {
   useEffect(() => {
     const fetchPublishedPost = async () => {
       try {
-        const response = await fetch(
-          "https://www.api.hellomagent.com/twitter/content-history",
+        const response = await apiClient(
+          "/twitter/content-history",
           {
             method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${jwt}`,
-            },
+            token: jwt || undefined,
           }
         );
         if (response.ok) {

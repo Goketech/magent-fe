@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import ChatModal from "@/components/layouts/ChatModal";
+import { apiClient } from "@/utils/apiClient";
+import { useAuth } from "@/context/AuthProvider";
 
 export interface Message {
   user: "user" | "magent";
@@ -19,11 +21,13 @@ const Page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const { jwt } = useAuth();
+
   const handleSubmit = async () => {
     if (!inputText.trim()) return;
 
     const token = localStorage.getItem("access_token");
-    if (!token) {
+    if (!jwt && !token) {
       toast({
         variant: "destructive",
         description: "Please sign in.",
@@ -46,15 +50,12 @@ const Page = () => {
 
     try {
       /* eslint-disable  @typescript-eslint/no-explicit-any */
-      const response: any = await fetch(
-        "https://www.api.hellomagent.com/api/ai/query",
+      const response: any = await apiClient(
+        "/api/ai/query",
         {
           method: "POST",
 
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+          token: jwt ?? undefined,
           body: JSON.stringify({ input: inputText }),
         }
       );

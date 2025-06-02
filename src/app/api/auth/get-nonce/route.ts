@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { apiClient } from "@/utils/apiClient";
 
 export async function POST(request: NextRequest) {
   try {
     const { publicKey } = await request.json();
 
-    const response = await fetch("https://www.api.hellomagent.com/auth/get-nonce", {
+    const response = await apiClient("/auth/get-nonce", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      token: undefined,
       body: JSON.stringify({ publicKey }),
     });
 
