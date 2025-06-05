@@ -62,14 +62,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       );
 
-      console.log("Response from get-nonce:", response);
-
       if (!response.ok) {
         toast({
           variant: "destructive",
           description: "Failed to connect wallet",
         });
-        // throw new Error("Failed to get nonce");
+        throw new Error("Failed to get nonce");
       }
 
       const { nonce } = await response.json();
