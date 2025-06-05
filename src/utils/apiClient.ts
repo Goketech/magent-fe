@@ -31,5 +31,5 @@ export const apiClient = async (path: string, options: ApiOptions = {}) => {
     throw new Error(error.message || 'API request failed');
   }
 
-  return res.json();
+  return res;
 };
