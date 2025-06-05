@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const response = await apiClient("/auth/verify-signature", {
       method: "POST",
       token: undefined,
-      body: JSON.stringify({ publicKey, signature }),
+      body: { publicKey, signature },
     });
 
     const data = await response.json();
