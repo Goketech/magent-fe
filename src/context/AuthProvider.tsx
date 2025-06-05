@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         {
           method: "POST",
           token: jwt || undefined,
-          body: JSON.stringify({ publicKey: publicKey.toBase58() }),
+          body: { publicKey: publicKey.toBase58() },
         }
       );
 
@@ -79,7 +79,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         {
           method: "POST",
           token: jwt || undefined,
-          body: JSON.stringify({ publicKey: publicKey.toBase58(), signature }),
+          body: { publicKey: publicKey.toBase58(), signature },
         }
       );
 

@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const response = await apiClient("/auth/get-nonce", {
       method: "POST",
       token: undefined,
-      body: JSON.stringify({ publicKey }),
+      body: { publicKey },
     });
 
     const data = await response.json();

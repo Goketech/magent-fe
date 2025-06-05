@@ -154,14 +154,14 @@ function Content() {
         {
           method: "POST",
           token: jwt ?? undefined,
-          body: JSON.stringify({
+          body: {
             topic:
               inputMode === "type"
                 ? stepData.typeTopics
                 : stepData.selectTopics,
             firstStyle: stepData.postStyle,
             secondStyle: stepData.commentStyle,
-          }),
+          },
         }
       );
 
@@ -217,11 +217,11 @@ function Content() {
       {
         method: "POST",
         token: jwt ?? undefined,
-        body: JSON.stringify({
+        body: {
           feature: "sample_tweet",
           reference: `sample_${Date.now()}`,
           amount: amountToSend,
-        }),
+        },
       }
     );
 
@@ -287,11 +287,11 @@ function Content() {
       {
         method: "POST",
         token: jwt ?? undefined,
-        body: JSON.stringify({
+        body: {
           transactionId,
           status: "success",
           signature,
-        }),
+        },
       }
     );
 
@@ -338,7 +338,7 @@ function Content() {
         {
           method: "POST",
           token: jwt ?? undefined,
-          body: JSON.stringify({
+          body: {
             topic:
               inputMode === "type"
                 ? stepData.typeTopics
@@ -350,7 +350,7 @@ function Content() {
             secondStyle: stepData.commentStyle,
             accessToken: token,
             transactionId,
-          }),
+          },
         }
       );
 
