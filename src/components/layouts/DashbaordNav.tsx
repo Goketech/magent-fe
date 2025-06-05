@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { apiClient } from "@/utils/apiClient";
 
 interface SignInData {
   email: string;
@@ -141,13 +142,11 @@ const DashbaordNav = () => {
 
     try {
       setIsLoading(true);
-      const response = await fetch(
-        "https://www.api.hellomagent.com/auth/login",
+      const response = await apiClient(
+        "/auth/login",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          token: undefined,
           body: JSON.stringify(formData.signin),
         }
       );
@@ -180,13 +179,11 @@ const DashbaordNav = () => {
 
     try {
       setIsLoading(true);
-      const response = await fetch(
-        "https://www.api.hellomagent.com/auth/register",
+      const response = await apiClient(
+        "/auth/register",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          token: undefined,
           body: JSON.stringify(formData.signup),
         }
       );

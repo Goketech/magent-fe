@@ -5,6 +5,7 @@ import { FilterState } from './CampaignFilter';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAuth } from "@/context/AuthProvider";
 import AcceptModal from '../ui/AcceptModal';
+import { apiClient } from '@/utils/apiClient';
 
 interface TableHeader {
   id: string;
@@ -122,12 +123,9 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
         return;
       }
       
-      const response = await fetch('https://www.api.hellomagent.com/campaign/marketplace-campaigns', {
+      const response = await apiClient('/campaign/marketplace-campaigns', {
         method: 'GET',
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-          'Content-Type': 'application/json'
-        }
+        token: jwt ?? undefined,
       });
       
       if (!response.ok) {

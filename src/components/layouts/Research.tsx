@@ -128,7 +128,7 @@ const Research = () => {
   };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center w-full m-auto">
       {!hasSubmitted ? (
         <div>
           <p className="text-center mb-[24px] text-xl md:text-[24px] font-[500] leading-[36px] text-[#212221] whitespace-nowrap">

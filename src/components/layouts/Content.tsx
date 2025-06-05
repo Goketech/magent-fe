@@ -13,6 +13,7 @@ import {
   confirmTransaction,
 } from "@/utils/transferCoin";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { apiClient } from "@/utils/apiClient";
 
 interface TwitterProfile {
   profile_image_url: string;
@@ -148,14 +149,11 @@ function Content() {
     }
 
     try {
-      const response = await fetch(
-        "https://www.api.hellomagent.com/twitter/sample-post",
+      const response = await apiClient(
+        "/twitter/sample-post",
         {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-            "Content-Type": "application/json",
-          },
+          token: jwt ?? undefined,
           body: JSON.stringify({
             topic:
               inputMode === "type"
@@ -214,14 +212,11 @@ function Content() {
     const days = stepData.duration;
     const amountToSend = Number((days * dailyPrice).toFixed(3));
 
-    const transactionResponse = await fetch(
-      "https://www.api.hellomagent.com/transactions/create-transaction",
+    const transactionResponse = await apiClient(
+      "/transactions/create-transaction",
       {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-          "Content-Type": "application/json",
-        },
+        token: jwt ?? undefined,
         body: JSON.stringify({
           feature: "sample_tweet",
           reference: `sample_${Date.now()}`,
@@ -287,14 +282,11 @@ function Content() {
       setIsPublishing(false);
       return;
     }
-    const updateResponse = await fetch(
-      "https://www.api.hellomagent.com/transactions/update-transaction-status",
+    const updateResponse = await apiClient(
+      "/transactions/update-transaction-status",
       {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-          "Content-Type": "application/json",
-        },
+        token: jwt ?? undefined,
         body: JSON.stringify({
           transactionId,
           status: "success",
@@ -341,14 +333,11 @@ function Content() {
         return;
       }
 
-      const response = await fetch(
-        "https://www.api.hellomagent.com/twitter/schedule-post",
+      const response = await apiClient(
+        "/twitter/schedule-post",
         {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-            "Content-Type": "application/json",
-          },
+          token: jwt ?? undefined,
           body: JSON.stringify({
             topic:
               inputMode === "type"
@@ -522,7 +511,7 @@ function Content() {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
       )}
       <div className="flex flex-col md:flex-row justify-between gap-6 h-full w-full">
-      <div className="flex flex-col gap-5 w-full h-full">
+        <div className="flex flex-col gap-5 w-full h-full">
           <div>
             <h2 className="text-sm md:text-[20px] font-medium mb-4">
               Social media management

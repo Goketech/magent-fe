@@ -2,6 +2,7 @@ import AppWalletProvider from "@/components/AppWalletProvider";
 import { AuthProvider } from "@/context/AuthProvider";
 import { StepProvider } from "@/context/StepContext";
 import type { Metadata } from "next";
+import './globals.css';
 
 export const metadata: Metadata = {
   title: "Magent",
