@@ -219,7 +219,7 @@ const Campaign: React.FC = () => {
         );
 
         console.log("Transaction created:", transactionResponse);
-        return transactionResponse;
+        return transactionResponse.json();
       } catch (error) {
         toast({
           variant: "destructive",
