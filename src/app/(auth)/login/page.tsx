@@ -71,7 +71,7 @@ function page() {
 
   return (
     <div className="bg-white w-full h-screen">
-      <div className="w-full max-w-screen-2xl px-4 md:px-6 lg:px-8 mx-auto flex flex-col md:flex-row h-full items-center justify-between gap-6 py-6">
+      <div className="w-full max-w-screen-2xl px-4 mx-auto flex flex-col md:flex-row h-full items-center justify-between gap-6 py-6">
         <div className="hidden md:block w-full h-full relative">
           <WelcomeBox />
         </div>
