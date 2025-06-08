@@ -36,6 +36,8 @@ function FormInput({
     setShowPassword(!showPassword);
   };
 
+  // const shouldShowError = error && !value;
+
   return (
     <div className="w-full max-w-[500px]">
       <label className="block text-[#212221] text-sm mb-2">{label}</label>

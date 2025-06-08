@@ -50,12 +50,23 @@ const Navbar = () => {
         </div>
 
         {/* Desktop Contact Button */}
-        <div className="hidden md:block">
+        <div className="hidden md:block space-x-4">
           <Link href="mailto:modupe775@gmail.com">
             <Button className="bg-[#242424] px-[16px] py-[12px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px] border border-white">
               Contact Sales
             </Button>
           </Link>
+          <Link href="/login">
+            <Button className="bg-[#242424] px-[16px] py-[12px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px] border border-white">
+              Login
+            </Button>
+          </Link>
+          <Link href="/signup">
+            <Button className="bg-[#242424] px-[16px] py-[12px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px] border border-white">
+              Sign Up
+            </Button>
+          </Link>
+
         </div>
 
         {/* Mobile Menu Toggle */}

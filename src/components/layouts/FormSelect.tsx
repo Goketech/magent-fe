@@ -11,6 +11,7 @@ interface FormSelectProps {
   onChange?: (e: { target: { value: string } }) => void;
   style?: React.CSSProperties;
   tabIndex?: number;
+  error?: string;
   onSelectionChange?: (selectedValue: string) => void;
 }
 
@@ -20,6 +21,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
   value,
   onChange,
   label,
+  error,
   onSelectionChange,
   ...props
 }) => {
@@ -38,6 +40,8 @@ const FormSelect: React.FC<FormSelectProps> = ({
 
   const selectedOption = options.find((option) => option.value === value);
 
+  const shouldShowError = error && !value;
+
   return (
     <div className="w-full max-w-[500px] relative">
       <label className="block text-[#212221] text-sm mb-2">{label}</label>
@@ -50,6 +54,13 @@ const FormSelect: React.FC<FormSelectProps> = ({
               ? "border-[#330065] shadow-sm"
               : "border-[#D7D7D7] hover:border-[#330065]"
           }
+          ${
+              shouldShowError
+                ? "border-red-500 hover:border-red-500 focus:border-red-500"
+                : isFocused
+                ? "border-[#330065] shadow-sm"
+                : "border-[#D7D7D7] hover:border-[#330065]"
+            }
         `}
         onClick={() => {
           setIsOpen(!isOpen);
@@ -83,6 +94,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
           }`}
         />
       </div>
+      {shouldShowError && <p className="text-red-500 text-sm mt-1">{error}</p>}
 
       {isOpen && (
         <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-[8px] shadow-lg z-10 max-h-60 overflow-y-auto">
@@ -102,6 +114,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
               {option.label}
             </div>
           ))}
+          {shouldShowError && <p className="text-red-500 text-sm mt-1">{error}</p>}
         </div>
       )}
     </div>
