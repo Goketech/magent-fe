@@ -147,7 +147,7 @@ const DashbaordNav = () => {
         {
           method: "POST",
           token: undefined,
-          body: JSON.stringify(formData.signin),
+          body: formData.signin,
         }
       );
 

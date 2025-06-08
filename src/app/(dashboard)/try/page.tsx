@@ -56,7 +56,7 @@ const Page = () => {
           method: "POST",
 
           token: jwt ?? undefined,
-          body: JSON.stringify({ input: inputText }),
+          body: { input: inputText },
         }
       );
 

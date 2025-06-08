@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const response = await apiClient("/auth/verify-signature", {
       method: "POST",
       token: undefined,
-      body: JSON.stringify({ publicKey, signature }),
+      body: { publicKey, signature },
     });
 
     const data = await response.json();
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     // Return the tokens
     return NextResponse.json(data.nonce);
   } catch (error) {
-    console.error("Get Nonce Error:", error);
-    return NextResponse.json({ error: "Failed to get nonce" }, { status: 500 });
+    console.error("Verify Signature Error:", error);
+    return NextResponse.json({ error: "Failed to verify signature" }, { status: 500 });
   }
 }
