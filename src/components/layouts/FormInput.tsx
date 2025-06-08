@@ -39,7 +39,7 @@ function FormInput({
   // const shouldShowError = error && !value;
 
   return (
-    <div className="w-full max-w-[500px]">
+    <div className="w-full">
       <label className="block text-[#212221] text-sm mb-2">{label}</label>
       <div className="relative">
         <input

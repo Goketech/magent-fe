@@ -71,7 +71,7 @@ function page() {
 
   return (
     <div className="bg-white w-full h-screen">
-      <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row items-center justify-between h-full py-6">
+      <div className="w-full max-w-screen-2xl px-4 md:px-6 lg:px-8 mx-auto flex flex-col md:flex-row h-full items-center justify-between gap-6 py-6">
         <div className="hidden md:block w-full h-full relative">
           <WelcomeBox />
         </div>
@@ -111,7 +111,7 @@ function page() {
               showPasswordToggle
               error={errMsg}
             />
-            <div className="flex flex-col justify-center items-center gap-4 mt-3">
+            <div className="flex w-full flex-col justify-center items-center gap-4 mt-3">
               <button
                 type="submit"
                 className="w-full bg-[#330065] text-white py-3 rounded-[32px] hover:bg-[#4D2B8C] transition-colors duration-200"

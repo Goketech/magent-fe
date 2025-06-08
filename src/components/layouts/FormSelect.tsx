@@ -43,7 +43,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
   const shouldShowError = error && !value;
 
   return (
-    <div className="w-full max-w-[500px] relative">
+    <div className="w-full relative">
       <label className="block text-[#212221] text-sm mb-2">{label}</label>
       <div
         className={`
