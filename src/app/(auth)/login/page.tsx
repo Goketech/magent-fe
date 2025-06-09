@@ -1,23 +1,82 @@
 "use client";
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import WelcomeBox from "@/components/layouts/WelcomeBox";
 import { ChevronRight } from "lucide-react";
 import FormInput from "@/components/layouts/FormInput";
 import MobileAuthNav from "@/components/layouts/MobileAuthNav";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { Loading } from "@/components/ui/loading";
 
 function page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [errMsg, setErrMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useRouter();
+  const { toast } = useToast();
+
+  const AUTH_API_URL = process.env.NEXT_PUBLIC_AUTH_API_URL;
+
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setErrMsg("");
+    setLoading(true);
+
+    try {
+      if (!email.trim() || !password.trim()) {
+        setErrMsg("Please fill in all fields.");
+        return;
+      }
+      const response = await fetch(`${AUTH_API_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+      console.log("Login response:", data);
+
+      if (response.ok) {
+        localStorage.setItem("token", data.token);
+        toast({
+          title: "Login Successful",
+          description: "Welcome back!",
+          variant: "success",
+        });
+        navigate.push("/dashboard");
+      } else {
+        setErrMsg(data.message || "Login failed");
+        toast({
+          title: "Login Failed",
+          description: data.message || "Please check your credentials.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again later.",
+        variant: "destructive",
+      });
+    }finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="bg-white w-full h-screen">
-      <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row items-center justify-center md:gap-10 h-full p-6">
+    <div className="bg-white w-full h-[100dvh]">
+      <div className="px-4 max-w-screen-2xl mx-auto flex flex-col lg:flex-row h-full items-center justify-between gap-6 py-6">
         <div className="hidden md:block w-full h-full relative">
           <WelcomeBox />
         </div>
         <div className="w-full relative h-full">
+          <div className="w-full max-w-lg">
           <div className="block md:hidden">
             <MobileAuthNav />
           </div>
@@ -29,8 +88,11 @@ function page() {
               </div>
             </Link>
           </div>
-          <form className="mt-12 md:mt-6 flex flex-col gap-4 p-4">
-            <h1 className="text-[#212221] text-[28px] font-semibold">
+          <form
+            onSubmit={handleLogin}
+            className="mt-12 md:mt-6 flex flex-col gap-4 px-4 md:px-8 lg:px-12"
+          >
+            <h1 className="text-[#212221] text-[24px] md:text-[28px] font-semibold">
               Welcome back, Chad
             </h1>
             <FormInput
@@ -39,6 +101,7 @@ function page() {
               label="Email Address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              error={errMsg}
             />
             <FormInput
               placeholder="Password (min 8 characters)"
@@ -46,18 +109,21 @@ function page() {
               label="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              error={passwordError}
               showPasswordToggle
+              error={errMsg}
             />
-            <div className="flex flex-col justify-center items-center gap-4 mt-3">
+            <div className="flex w-full flex-col justify-center items-center gap-4 mt-3">
               <button
                 type="submit"
                 className="w-full bg-[#330065] text-white py-3 rounded-[32px] hover:bg-[#4D2B8C] transition-colors duration-200"
               >
-                Sign in
+                {
+                  loading ? <div className="flex justify-center gap-2 items-center"><Loading height="20" width="20" /> <span>Signing in</span></div> : "Sign in"
+                }
               </button>
             </div>
           </form>
+          </div>
         </div>
       </div>
     </div>
