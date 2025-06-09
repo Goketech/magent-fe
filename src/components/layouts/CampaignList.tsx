@@ -92,9 +92,9 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
       <td className="py-3 px-4 text-xs">
         <div className="flex items-center gap-2">
           <button 
-            className="rounded-md bg-[#330065] flex gap-3 items-center text-white px-4 py-1.5 text-xs hover:bg-purple-800 transition-colors"
+            className="rounded-md bg-[#330065] flex gap-3 items-center text-white px-4 py-1.5 text-xs hover:bg-purple-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={handleAccept}
-            disabled={campaign?.status == 'completed'}
+            disabled={campaign?.status == 'completed' || campaign?.status === 'Inactive'}
           >
             <MdOutlineCheckCircle size={20}/>
             Accept
