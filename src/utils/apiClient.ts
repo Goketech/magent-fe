@@ -1,4 +1,5 @@
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+import { redirect } from 'next/navigation'
 
 interface ApiOptions {
   method?: RequestMethod;
@@ -25,6 +26,16 @@ export const apiClient = async (path: string, options: ApiOptions = {}) => {
     ...(body && { body: JSON.stringify(body) })
     
   });
+
+  if (res.status === 401) {
+    // Redirect to login page
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login'; // Client-side redirect
+    } else {
+      redirect('/login'); // Server-side redirect for App Router
+    }
+    throw new Error('Unauthorized - redirecting');
+  }
 
   if (!res.ok) {
     const error = await res.json().catch(() => ({}));
