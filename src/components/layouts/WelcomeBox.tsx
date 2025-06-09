@@ -1,31 +1,46 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 function WelcomeBox() {
   return (
-    <div className="flex flex-col justify-between bg-[#F9F9F9] w-full rounded-[6px] h-[calc(100vh-3rem)] fixed md:max-w-[550px]">
-      <div>
-        <Image
-          src="/authLogo.svg"
-          alt="Logo"
-          width={100}
-          height={100}
-          className="p-6"
-        />
-      </div>
-      <div className="px-6">
-        <h1 className="text-[#330065] text-[56px] font-bold">
-          Marketing made easy with AI
-        </h1>
-        <p className="text-base text-[#4D4E4D]">
-          Simple marketing tool built for startups, creators, and businesses
-          that want to move fast and grow faster.
-        </p>
-      </div>
-      <div>
-        <span className="w-full flex bg-[#C0B0CF] h-[32px]"></span>
-        <span className="w-full flex bg-[#A18AB8] h-[32px]"></span>
-        <span className="w-full flex bg-[#765498] h-[32px] rounded-b-[6px]"></span>
+    <div
+      className="
+        flex flex-col justify-between
+        w-full h-auto lg:h-[calc(100vh-3rem)]
+        bg-cover bg-center bg-no-repeat
+        rounded-[6px] relative
+        items-center px-6 py-6
+        max-w-full sm:max-w-xl md:max-w-[450px] lg:max-w-[550px] xl:max-w-[600px] 2xl:max-w-[650px]
+        mx-auto lg:mx-0
+        lg:fixed
+      "
+      style={{ backgroundImage: "url('/background.png')" }}
+    >
+      <div className="flex flex-col items-center justify-center h-full gap-4">
+        <div>
+          <Image
+            src="/rocket.png"
+            alt="Rocket"
+            width={280}
+            height={280}
+            className="p-4 sm:p-6"
+          />
+        </div>
+        <div className="flex flex-col items-center justify-center gap-3 text-center">
+          <Link href="/">
+            <Image
+              src="/authLogo.svg"
+              alt="Logo"
+              width={100}
+              height={100}
+              className="mx-auto"
+            />
+          </Link>
+          <h3 className="text-[#212221] text-sm sm:text-base font-bold bg-white/40 rounded-[6px] px-2 py-1">
+            Your AI partner for smarter, faster marketing
+          </h3>
+        </div>
       </div>
     </div>
   );

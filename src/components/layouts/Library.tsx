@@ -69,7 +69,6 @@ function Library() {
         );
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
         } else {
           console.error("Failed to fetch published posts");
         }

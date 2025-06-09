@@ -24,7 +24,6 @@ const AcceptModal: React.FC<AcceptModalProps> = ({ isOpen, onClose, campaign }) 
     },
     validationSchema: acceptSchema,
     onSubmit: (values) => {
-      console.log("Accepted campaign with data:", values);
       // Add your confirm logic here
     },
   });

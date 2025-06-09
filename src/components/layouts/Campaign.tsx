@@ -112,7 +112,6 @@ const Campaign: React.FC = () => {
 
   const handleViewDetails = (campaign: CampaignType | MyCampaignType | any) => {
     setSelectedCampaign(campaign);
-    // console.log(campaign)
   };
 
   const handleCreateCampaign = () => {
@@ -177,7 +176,6 @@ const Campaign: React.FC = () => {
     setCampaignCount(count);
   };
   const handleAddCampaign = async (campaignData: any) => {
-    console.log(campaignData);
     if (!jwt) {
       toast({
         variant: "destructive",
@@ -218,7 +216,6 @@ const Campaign: React.FC = () => {
           }
         );
 
-        console.log("Transaction created:", transactionResponse);
         return transactionResponse.json();
       } catch (error) {
         toast({
@@ -314,7 +311,6 @@ const Campaign: React.FC = () => {
           }
         );
 
-        console.log("Transaction updated:", data);
         return data;
       } catch (error) {
         toast({
@@ -385,7 +381,6 @@ const Campaign: React.FC = () => {
             body,
           });
 
-          console.log("Campaign created:", response);
           return response;
         } catch (error) {
           toast({
