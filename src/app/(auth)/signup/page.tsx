@@ -218,12 +218,13 @@ function page() {
 };
 
   return (
-    <div className="bg-white w-full h-screen">
-      <div className="w-full max-w-screen-2xl px-4 mx-auto flex flex-col md:flex-row h-full items-center justify-between gap-6 py-6">
+    <div className="bg-white w-full h-[100dvh]">
+      <div className="px-4 max-w-screen-2xl mx-auto flex flex-col lg:flex-row h-full items-center justify-between gap-6 py-6">
         <div className="hidden md:block w-full h-full relative">
           <WelcomeBox />
         </div>
         <div className="w-full relative h-full">
+          <div className="w-full max-w-lg">
           <div className="block md:hidden">
             <MobileAuthNav />
           </div>
@@ -237,7 +238,7 @@ function page() {
           </div>
           <form
             onSubmit={handleSubmit}
-            className="mt-12 md:mt-6 flex flex-col gap-4 p-4"
+            className="mt-12 md:mt-6 flex flex-col gap-4 px-4 md:px-8 lg:px-12"
           >
             <h1 className="text-[#212221] text-[28px] font-semibold">
               Create your account
@@ -349,6 +350,7 @@ function page() {
               </button>
             </div>
           </form>
+          </div>
         </div>
       </div>
     </div>
