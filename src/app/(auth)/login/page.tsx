@@ -39,10 +39,9 @@ function page() {
       });
 
       const data = await response.json();
-      console.log("Login response:", data);
 
       if (response.ok) {
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("auth_token", data.token);
         toast({
           title: "Login Successful",
           description: "Welcome back!",

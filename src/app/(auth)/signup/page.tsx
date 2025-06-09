@@ -179,12 +179,9 @@ function page() {
 
     const data = await response.json();
 
-    console.log(data);
-
-    localStorage.setItem("token", JSON.stringify(data.token));
+    localStorage.setItem("auth_token", JSON.stringify(data.token));
 
     if (response.ok) {
-      console.log("Registration successful:", data);
       toast({
         variant: "success",
         description: "Registration successful!",
@@ -193,7 +190,6 @@ function page() {
     } else {
       if (data.details && Array.isArray(data.details)) {
         const errorMessages = data.details.map((detail: any) => detail.message);
-        console.log("Registration errors:", errorMessages.join(", "));
         toast({
           variant: "destructive",
           description: `Registration failed: ${errorMessages.join(", ")}`,
