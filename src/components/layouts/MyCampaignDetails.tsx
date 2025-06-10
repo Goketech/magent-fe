@@ -34,7 +34,7 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({ campaign, onBack 
             <h2 className="text-xl font-semibold mb-1">
               {capitalizeEachWord(campaign.name || '')}
             </h2>
-            <div className="grid grid-cols-3 gap-10 mt-2">
+            <div className="grid grid-cols-4 gap-10 mt-2">
               <div>
                 <p className="text-xs opacity-70 py-2">Campaign Goal</p>
                 <p className="text-sm">{capitalizeEachWord(campaign?.goals || '')}</p>
@@ -45,7 +45,11 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({ campaign, onBack 
               </div>
               <div>
                 <p className="text-xs opacity-70 py-2">Target Number</p>
-                <p className="text-sm">{campaign?.targetNumber || 'N/A'}</p>
+                <p className="text-sm">{campaign?.targetNumber}</p>
+              </div>
+              <div>
+                <p className="text-xs opacity-70 py-2">Total Publishers</p>
+                <p className="text-sm">{campaign?.publisherCount}</p>
               </div>
             </div>
           </div>
@@ -74,12 +78,13 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({ campaign, onBack 
               <p className="text-sm font-medium">{capitalizeEachWord(campaign?.goals || '')}</p>
             </div>
             <div className="flex justify-between">
+              <p className="text-sm text-gray-600">Campaign KPIs</p>
+              <p className="text-sm font-medium">{capitalizeEachWord(campaign?.kpis || 'N/A')}</p>
+            </div>
+            <div className="flex justify-between">
               <p className="text-sm text-gray-600">Target Audience</p>
-              <p className="text-sm font-medium">
-                {campaign.age && campaign.gender 
-                  ? `${campaign.age}, ${campaign.gender}`
-                  : 'N/A'}
-              </p>
+                              <p className="text-sm">{campaign?.targetAudience?.gender == 'both' ? "Male and Female" : campaign?.targetAudience?.gender}</p>
+
             </div>
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Campaign Duration</p>
@@ -91,11 +96,15 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({ campaign, onBack 
             </div>
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Value Per User</p>
-              <p className="text-sm font-medium">{campaign.valuePerUser || 'N/A'}</p>
+              <p className="text-sm font-medium">{`${campaign.valuePerUser?.toUpperCase()}, $${campaign.valuePerUserAmount} per ${campaign.goals}`} </p>
             </div>
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Total Liquidity</p>
-              <p className="text-sm font-medium">{campaign.totalLiquidity || 'N/A'}</p>
+              <p className="text-sm font-medium">{`$${campaign.totalLiquidity}` || 'N/A'}</p>
+            </div>
+            <div className="flex justify-between">
+              <p className="text-sm text-gray-600">Total Publisher</p>
+              <p className="text-sm font-medium">{`${campaign.publisherCount}` || 'N/A'}</p>
             </div>
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Social Links</p>

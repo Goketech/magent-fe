@@ -32,8 +32,13 @@ export interface MyCampaign extends BaseCampaign {
   gender?: string;
   valuePerUser?: string;
   website?: string;
-  publishersCount? : number;
-  amount:number;
+  publisherCount? : number;
+  valuePerUserAmount:number;
+  targetAudience?: {
+    age?: string;
+    gender?: string;
+  }
+  targetNumber?: string;
   twitter?: string;
   instagram?: string;
   media?: File[];

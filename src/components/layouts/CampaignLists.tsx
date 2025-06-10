@@ -111,37 +111,22 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
   ];
 
   // Fetch campaigns from the API
-  const fetchCampaigns = async () => {
-    setLoading(true);
-    
-    try {
+const fetchCampaigns = async () => {
+  setLoading(true);
 
-      
-      if (!jwt) {
-        console.error('No authentication token found');
-        setLoading(false);
-        return;
-      }
-      
-      const response = await apiClient('/campaign/marketplace-campaigns', {
-        method: 'GET',
-        token: jwt ?? undefined,
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Error fetching campaigns: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      setAllCampaigns(data.campaigns);
-      setTotalPages(Math.ceil(data.length / itemsPerPage));
-    } catch (error) {
-      console.error('Failed to fetch campaigns:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const data = await apiClient('/campaign/marketplace-campaigns', {
+      method: 'GET',
+    });
+
+    setAllCampaigns(data.campaigns);
+    setTotalPages(Math.ceil(data.campaigns.length / itemsPerPage));
+  } catch (error) {
+    console.error('Failed to fetch campaigns:', error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Initialize with API data or use provided initialCampaigns
   useEffect(() => {
