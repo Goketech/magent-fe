@@ -1,6 +1,7 @@
 import { MdArrowBackIos } from "react-icons/md";
-import { MyCampaign } from "@/lib/types"; // Updated import
+import { MyCampaign } from "@/lib/types"; 
 import { capitalizeEachWord } from "@/utils/capitalize";
+
 
 interface MyCampaignDetailsProps {
   campaign: MyCampaign;
@@ -108,8 +109,9 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
               <p className="text-sm">
                 {campaign?.targetAudience?.gender == "both"
                   ? "Male and Female"
-                  : campaign?.targetAudience?.gender} (
-                {campaign?.targetAudience?.age}{"+"})
+                  : campaign?.targetAudience?.gender}{" "}
+                ({campaign?.targetAudience?.age}
+                {"+"})
               </p>
             </div>
             <div className="flex justify-between">
@@ -184,6 +186,18 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
                   !campaign.instagram &&
                   "N/A"}
               </div>
+            </div>
+            <div className="flex justify-end">
+              <button
+                className="rounded-2xl bg-[#330065] flex gap-3 items-center text-white px-4 py-1.5 text-xs hover:bg-purple-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                // onClick={handleAccept}
+                disabled={
+                  campaign?.status == "completed" ||
+                  campaign?.status === "Inactive"
+                }
+              >
+                Accept
+              </button>
             </div>
           </div>
         </div>

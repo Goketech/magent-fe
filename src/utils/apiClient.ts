@@ -41,11 +41,7 @@ export const apiClient = async (path: string, options: ApiOptions = {}) => {
   });
 
   if (res.status === 401) {
-    if (typeof window !== 'undefined') {
-      window.location.href = '/login';
-    } else {
-      redirect('/login');
-    }
+    
     throw new Error('Unauthorized - redirecting');
   }
 
