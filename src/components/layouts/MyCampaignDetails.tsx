@@ -1,13 +1,17 @@
 import { MdArrowBackIos } from "react-icons/md";
-import { MyCampaign } from "@/lib/types"; // Updated import
+import { MyCampaign } from "@/lib/types"; 
 import { capitalizeEachWord } from "@/utils/capitalize";
+
 
 interface MyCampaignDetailsProps {
   campaign: MyCampaign;
   onBack: () => void;
 }
 
-const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({ campaign, onBack }) => {
+const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
+  campaign,
+  onBack,
+}) => {
   return (
     <div className="w-full p-4 bg-white rounded-md shadow">
       <div className="flex items-center mb-4">
@@ -23,7 +27,8 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({ campaign, onBack 
       <div
         className="rounded-lg p-4 mb-6 text-white relative overflow-hidden"
         style={{
-          backgroundImage: "url('/details.png'), linear-gradient(#330065, #330065)",
+          backgroundImage:
+            "url('/details.png'), linear-gradient(#330065, #330065)",
           backgroundSize: "contain",
           backgroundRepeat: "repeat",
           backgroundBlendMode: "overlay",
@@ -32,26 +37,40 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({ campaign, onBack 
         <div className="flex justify-between items-center">
           <div>
             <h2 className="text-xl font-semibold mb-1">
-              {capitalizeEachWord(campaign.name || '')}
+              {capitalizeEachWord(campaign.name || "")}
             </h2>
-            <div className="grid grid-cols-3 gap-10 mt-2">
+            <div className="grid grid-cols-4 gap-10 mt-2">
               <div>
                 <p className="text-xs opacity-70 py-2">Campaign Goal</p>
-                <p className="text-sm">{capitalizeEachWord(campaign?.goals || '')}</p>
+                <p className="text-sm">
+                  {capitalizeEachWord(campaign?.goals || "")}
+                </p>
               </div>
               <div>
                 <p className="text-xs opacity-70 py-2">Campaign KPIs</p>
-                <p className="text-sm">{capitalizeEachWord('kpis' in campaign ? (campaign.kpis === "" ? "N/A" : campaign.kpis) : "N/A")}</p>
+                <p className="text-sm">
+                  {capitalizeEachWord(
+                    "kpis" in campaign
+                      ? campaign.kpis === ""
+                        ? "N/A"
+                        : campaign.kpis
+                      : "N/A"
+                  )}
+                </p>
               </div>
               <div>
                 <p className="text-xs opacity-70 py-2">Target Number</p>
-                <p className="text-sm">{campaign?.targetNumber || 'N/A'}</p>
+                <p className="text-sm">{campaign?.targetNumber}</p>
+              </div>
+              <div>
+                <p className="text-xs opacity-70 py-2">Total Publishers</p>
+                <p className="text-sm">{campaign?.publisherCount}</p>
               </div>
             </div>
           </div>
-          <div className='absolute top-0 right-0'>
+          <div className="absolute top-0 right-0">
             <span className="bg-[#EBE6F0] text-[#330065] text-xs px-6 py-2 rounded-bl-md">
-              {capitalizeEachWord(campaign?.status || '')}
+              {capitalizeEachWord(campaign?.status || "")}
             </span>
           </div>
         </div>
@@ -63,48 +82,122 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({ campaign, onBack 
           <div className="space-y-4">
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Campaign Name</p>
-              <p className="text-sm font-medium">{capitalizeEachWord(campaign?.name || '')}</p>
+              <p className="text-sm font-medium">
+                {capitalizeEachWord(campaign?.name || "")}
+              </p>
             </div>
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Industry</p>
-              <p className="text-sm font-medium">{capitalizeEachWord(campaign?.industry || '')}</p>
+              <p className="text-sm font-medium">
+                {capitalizeEachWord(campaign?.industry || "")}
+              </p>
             </div>
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Campaign Goal</p>
-              <p className="text-sm font-medium">{capitalizeEachWord(campaign?.goals || '')}</p>
+              <p className="text-sm font-medium">
+                {capitalizeEachWord(campaign?.goals || "")}
+              </p>
+            </div>
+            <div className="flex justify-between">
+              <p className="text-sm text-gray-600">Campaign KPIs</p>
+              <p className="text-sm font-medium">
+                {capitalizeEachWord(campaign?.kpis || "N/A")}
+              </p>
             </div>
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Target Audience</p>
-              <p className="text-sm font-medium">
-                {campaign.age && campaign.gender 
-                  ? `${campaign.age}, ${campaign.gender}`
-                  : 'N/A'}
+              <p className="text-sm">
+                {campaign?.targetAudience?.gender == "both"
+                  ? "Male and Female"
+                  : campaign?.targetAudience?.gender}{" "}
+                ({campaign?.targetAudience?.age}
+                {"+"})
               </p>
             </div>
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Campaign Duration</p>
               <p className="text-sm font-medium">
-                {campaign.startDate && campaign.endDate 
-                  ? `${new Date(campaign.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${new Date(campaign.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
-                  : 'N/A'}
+                {campaign.startDate && campaign.endDate
+                  ? `${new Date(campaign.startDate).toLocaleDateString(
+                      "en-US",
+                      { month: "short", day: "numeric" }
+                    )} - ${new Date(campaign.endDate).toLocaleDateString(
+                      "en-US",
+                      { month: "short", day: "numeric" }
+                    )}`
+                  : "N/A"}
               </p>
             </div>
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Value Per User</p>
-              <p className="text-sm font-medium">{campaign.valuePerUser || 'N/A'}</p>
+              <p className="text-sm font-medium">
+                {`${campaign.valuePerUser?.toUpperCase()}, $${
+                  campaign.valuePerUserAmount
+                } per ${campaign.goals}`}{" "}
+              </p>
             </div>
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Total Liquidity</p>
-              <p className="text-sm font-medium">{campaign.totalLiquidity || 'N/A'}</p>
+              <p className="text-sm font-medium">
+                {`$${campaign.totalLiquidity}` || "N/A"}
+              </p>
+            </div>
+            <div className="flex justify-between">
+              <p className="text-sm text-gray-600">Total Publisher</p>
+              <p className="text-sm font-medium">
+                {`${campaign.publisherCount}` || "N/A"}
+              </p>
             </div>
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Social Links</p>
               <div className="text-sm font-medium">
-                {campaign.website && <a href={campaign.website} target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">Website</a>}
-                {campaign.twitter && <a href={campaign.twitter} target="_blank" rel="noopener noreferrer" className="ml-2 text-purple-600 hover:underline">Twitter</a>}
-                {campaign.instagram && <a href={campaign.instagram} target="_blank" rel="noopener noreferrer" className="ml-2 text-purple-600 hover:underline">Instagram</a>}
-                {!campaign.website && !campaign.twitter && !campaign.instagram && 'N/A'}
+                {campaign.website && (
+                  <a
+                    href={campaign.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-purple-600 hover:underline"
+                  >
+                    Website
+                  </a>
+                )}
+                {campaign.twitter && (
+                  <a
+                    href={campaign.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-2 text-purple-600 hover:underline"
+                  >
+                    Twitter
+                  </a>
+                )}
+                {campaign.instagram && (
+                  <a
+                    href={campaign.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-2 text-purple-600 hover:underline"
+                  >
+                    Instagram
+                  </a>
+                )}
+                {!campaign.website &&
+                  !campaign.twitter &&
+                  !campaign.instagram &&
+                  "N/A"}
               </div>
+            </div>
+            <div className="flex justify-end">
+              <button
+                className="rounded-2xl bg-[#330065] flex gap-3 items-center text-white px-4 py-1.5 text-xs hover:bg-purple-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                // onClick={handleAccept}
+                disabled={
+                  campaign?.status == "completed" ||
+                  campaign?.status === "Inactive"
+                }
+              >
+                Accept
+              </button>
             </div>
           </div>
         </div>
@@ -114,17 +207,20 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({ campaign, onBack 
           {campaign.media && campaign.media.length > 0 ? (
             <>
               <div className="bg-gray-100 rounded-lg overflow-hidden">
-                <img 
-                  src={URL.createObjectURL(campaign.media[0])} 
-                  alt="Campaign media" 
+                <img
+                  src={URL.createObjectURL(campaign.media[0])}
+                  alt="Campaign media"
                   className="w-full h-64 object-cover"
                 />
               </div>
               <div className="flex mt-4 gap-2">
                 {campaign.media.map((file, index) => (
-                  <div key={index} className="h-12 w-12 bg-gray-200 rounded-md overflow-hidden">
-                    <img 
-                      src={URL.createObjectURL(file)} 
+                  <div
+                    key={index}
+                    className="h-12 w-12 bg-gray-200 rounded-md overflow-hidden"
+                  >
+                    <img
+                      src={URL.createObjectURL(file)}
                       alt={`Thumbnail ${index + 1}`}
                       className="w-full h-full object-cover"
                     />

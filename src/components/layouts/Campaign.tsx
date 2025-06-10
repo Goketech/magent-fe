@@ -52,59 +52,52 @@ const Campaign: React.FC = () => {
   const filters = useMemo(() => rawFilters, [rawFilters]);
 
   // Load campaigns from localStorage on component mount
-  useEffect(() => {
-    const fetchCampaigns = async () => {
-      try {
-        const userCampaignResponse = await apiClient(
-          "/campaign/user-campaigns",
-          {
-            method: "GET",
-            token: jwt ?? undefined,
-          }
-        );
+useEffect(() => {
+  const fetchCampaigns = async () => {
+    try {
+      const userCampaignsData = await apiClient("/campaign/user-campaigns", {
+        method: "GET",
+      });
 
-        if (!userCampaignResponse.ok) {
-          throw new Error("Failed to fetch user campaigns");
-        }
-        const userCampaignsData = await userCampaignResponse.json();
-        const campaigns: MyCampaignType[] = userCampaignsData.map(
-          (campaign: any) => ({
-            id: campaign._id,
-            campaignName: capitalizeEachWord(campaign.name),
-            campaignGoals: capitalizeEachWord(campaign.goals),
-            targetNumber: campaign.targetNumber,
-            campaignKPIs: capitalizeEachWord(campaign.kpi),
-            industry: capitalizeEachWord(campaign.industry),
-            valuePerUser: campaign.valuePerUser,
-            amount: Number(campaign.valuePerUserAmount),
-            totalLiquidity: campaign.totalLiquidity,
-            startDate: campaign.startDate,
-            endDate: campaign.endDate,
-            website: campaign.website,
-            twitter: campaign.xAccount,
-            youtube: campaign.youtube,
-            instagram: campaign.instagram,
-            telegram: campaign.telegram,
-            discord: campaign.discord,
-            otherResources: campaign.otherSocials,
-            otherInformation: campaign.otherInfo,
-            mediaFiles: campaign.media,
-            status: capitalizeEachWord(campaign.status),
-            createdAt: campaign.createdAt,
-            age: campaign.targetAudience.age,
-            gender: capitalizeEachWord(campaign.targetAudience.gender),
-            publishersCount: campaign.publisherCount,
-          })
-        );
+      const campaigns: MyCampaignType[] = userCampaignsData.map(
+        (campaign: any) => ({
+          id: campaign._id,
+          campaignName: capitalizeEachWord(campaign.name),
+          campaignGoals: capitalizeEachWord(campaign.goals),
+          targetNumber: campaign.targetNumber,
+          campaignKPIs: capitalizeEachWord(campaign.kpi),
+          industry: capitalizeEachWord(campaign.industry),
+          valuePerUser: campaign.valuePerUser,
+          amount: Number(campaign.valuePerUserAmount),
+          totalLiquidity: campaign.totalLiquidity,
+          startDate: campaign.startDate,
+          endDate: campaign.endDate,
+          website: campaign.website,
+          twitter: campaign.xAccount,
+          youtube: campaign.youtube,
+          instagram: campaign.instagram,
+          telegram: campaign.telegram,
+          discord: campaign.discord,
+          otherResources: campaign.otherSocials,
+          otherInformation: campaign.otherInfo,
+          mediaFiles: campaign.media,
+          status: capitalizeEachWord(campaign.status),
+          createdAt: campaign.createdAt,
+          age: campaign.targetAudience.age,
+          gender: capitalizeEachWord(campaign.targetAudience.gender),
+          publishersCount: campaign.publisherCount,
+        })
+      );
 
-        setUserCampaigns(campaigns);
-      } catch (error) {
-        console.error("Failed to parse saved campaigns:", error);
-      }
-    };
+      setUserCampaigns(campaigns);
+    } catch (error) {
+      console.error("Failed to fetch user campaigns:", error);
+    }
+  };
 
-    fetchCampaigns();
-  }, [jwt]);
+  fetchCampaigns();
+}, []);
+
 
   const handleFilterChange = (newFilters: FilterState) => {
     setRawFilters(newFilters);
@@ -113,6 +106,7 @@ const Campaign: React.FC = () => {
   const handleViewDetails = (campaign: CampaignType | MyCampaignType | any) => {
     setSelectedCampaign(campaign);
   };
+  console.log("Selected Campaign:", selectedCampaign);
 
   const handleCreateCampaign = () => {
     setCreateCampaign(true);
@@ -207,7 +201,6 @@ const Campaign: React.FC = () => {
           "/transactions/create-transaction",
           {
             method: "POST",
-            token: jwt ?? undefined,
             body: {
               feature: "campaign",
               reference: `campaign_${Date.now()}`,
@@ -302,7 +295,6 @@ const Campaign: React.FC = () => {
           "/transactions/update-transaction-status",
           {
             method: "POST",
-            token: jwt ?? undefined,
             body: {
               transactionId,
               status: "success",
@@ -377,7 +369,6 @@ const Campaign: React.FC = () => {
         try {
           const response = await apiClient("/campaign/create-campaign", {
             method: "POST",
-            token: jwt ?? undefined,
             body,
           });
 

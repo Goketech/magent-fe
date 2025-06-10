@@ -13,7 +13,7 @@ import Image from "next/image";
 import { CustomWalletButton } from "../CustomWalletButton";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useStepContext } from "@/context/StepContext";
-
+import { useRouter } from "next/navigation";
 
 const SideNav = ({
   isSidebarOpen,
@@ -23,12 +23,14 @@ const SideNav = ({
   toggleSidebar: () => void;
 }) => {
   const { stepData, updateStepData } = useStepContext();
-
-
+  const logout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
 
   const navItems = [
     { id: "Research", label: "Research", icon: <MdManageSearch size={20} /> },
-    { id: "Campaign", label: "Campaign", icon:<MdAdsClick size={20}/> },
+    { id: "Campaign", label: "Campaign", icon: <MdAdsClick size={20} /> },
     { id: "Content", label: "SMM", icon: <MdFlashOn size={20} /> },
     { id: "Library", label: "Library", icon: <MdBookmark size={20} /> },
   ];
@@ -86,7 +88,7 @@ const SideNav = ({
               <span>Settings</span>
             </div>
             <div
-              onClick={() => updateStepData({ active: "" })}
+              onClick={() => logout()}
               className={`flex items-center gap-2 p-[8px] rounded-[4px] text-[14px] leading-[21px] cursor-pointer ${
                 stepData.active === "Logout"
                   ? "bg-[#F2F2F2] text-[#D42620]"

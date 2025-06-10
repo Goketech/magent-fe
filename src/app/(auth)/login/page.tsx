@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/components/ui/loading";
+import { apiClient } from "@/utils/apiClient";
 
 function page() {
   const [email, setEmail] = useState("");
@@ -18,55 +19,48 @@ function page() {
   const navigate = useRouter();
   const { toast } = useToast();
 
-  const AUTH_API_URL = process.env.NEXT_PUBLIC_AUTH_API_URL;
 
-  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrMsg("");
-    setLoading(true);
+const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setErrMsg("");
+  setLoading(true);
 
-    try {
-      if (!email.trim() || !password.trim()) {
-        setErrMsg("Please fill in all fields.");
-        return;
-      }
-      const response = await fetch(`${AUTH_API_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem("auth_token", data.token);
-        toast({
-          title: "Login Successful",
-          description: "Welcome back!",
-          variant: "success",
-        });
-        navigate.push("/dashboard");
-      } else {
-        setErrMsg(data.message || "Login failed");
-        toast({
-          title: "Login Failed",
-          description: data.message || "Please check your credentials.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Error during login:", error);
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred. Please try again later.",
-        variant: "destructive",
-      });
-    }finally {
-      setLoading(false);
+  try {
+    if (!email.trim() || !password.trim()) {
+      setErrMsg("Please fill in all fields.");
+      return;
     }
-  };
+
+    const data = await apiClient('/auth/login', {
+      method: 'POST',
+      body: { email, password },
+    });
+
+    localStorage.setItem("auth_token", data.token);
+
+    toast({
+      title: "Login Successful",
+      description: "Welcome back!",
+      variant: "success",
+    });
+
+    navigate.push("/dashboard");
+
+  } catch (error: any) {
+    console.error("Error during login:", error);
+    const message = error.message || "An unexpected error occurred. Please try again later.";
+    setErrMsg(message);
+
+    toast({
+      title: "Login Failed",
+      description: message,
+      variant: "destructive",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="bg-white w-full h-[100dvh]">
