@@ -10,8 +10,8 @@ import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Loading } from "@/components/ui/loading";
+import { apiClient } from "@/utils/apiClient";
 
-const AUTH_API_URL = process.env.NEXT_PUBLIC_AUTH_API_URL;
 
 function page() {
   const [email, setEmail] = useState("");
@@ -98,13 +98,11 @@ function page() {
 
   const handleRoleChange = (selectedRole: string) => {
     setRole(selectedRole);
+    setSelectedRoleType(selectedRole);
     if (selectedRole === "Advertiser" || selectedRole === "Publisher") {
       setShowAdditionalFields(true);
-      setSelectedRoleType(selectedRole);
     } else {
       setShowAdditionalFields(false);
-
-      setSelectedRoleType("");
     }
   };
 
@@ -112,20 +110,22 @@ function page() {
     setIndustry(selectedIndustry);
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
   e.preventDefault();
 
-  setErrMsg(""); 
+  setErrMsg("");
   setPasswordError("");
-  setIsLoading(true); 
+  setIsLoading(true);
+  console.log(selectedRoleType, "selectedRoleType");
+  console.log(email, userName, password, confirmPassword, role, companyName, industry, expertise);
 
   try {
+    // ✅ Basic field validation
     if (!email || !userName || !password || !confirmPassword || !role) {
       setErrMsg("Please fill in all fields");
       return;
     }
 
-    // Add validation for additional fields
     if (selectedRoleType === "Advertiser" && (!companyName || !industry)) {
       setErrMsg("Please fill in company name and industry");
       return;
@@ -136,20 +136,12 @@ function page() {
       return;
     }
 
-    // Validate password requirements
+    // ✅ Password validation
     const passwordErrors = [];
-    if (password.length < 8) {
-      passwordErrors.push("at least 8 characters long");
-    }
-    if (!/[A-Z]/.test(password)) {
-      passwordErrors.push("at least one uppercase letter");
-    }
-    if (!/[a-z]/.test(password)) {
-      passwordErrors.push("at least one lowercase letter");
-    }
-    if (!/[0-9]/.test(password)) {
-      passwordErrors.push("at least one number");
-    }
+    if (password.length < 8) passwordErrors.push("at least 8 characters long");
+    if (!/[A-Z]/.test(password)) passwordErrors.push("at least one uppercase letter");
+    if (!/[a-z]/.test(password)) passwordErrors.push("at least one lowercase letter");
+    if (!/[0-9]/.test(password)) passwordErrors.push("at least one number");
 
     if (passwordErrors.length > 0) {
       setErrMsg(`Password must contain: ${passwordErrors.join(", ")}`);
@@ -161,12 +153,10 @@ function page() {
       return;
     }
 
-    const response = await fetch(`${AUTH_API_URL}/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    // ✅ Call API using apiClient
+    const data = await apiClient('/auth/register', {
+      method: 'POST',
+      body: {
         email,
         userName,
         password,
@@ -174,48 +164,34 @@ function page() {
         businessName: selectedRoleType === "Advertiser" ? companyName : undefined,
         industry: selectedRoleType === "Advertiser" ? industry : undefined,
         expertise: selectedRoleType === "Publisher" ? expertise : undefined,
-      }),
+      }
     });
 
-    const data = await response.json();
+    // ✅ Handle success
+    localStorage.setItem("auth_token", JSON.stringify(data.token));
 
-    console.log(data);
+    toast({
+      variant: "success",
+      description: "Registration successful!",
+    });
 
-    localStorage.setItem("token", JSON.stringify(data.token));
+    navigate.push("/login");
 
-    if (response.ok) {
-      console.log("Registration successful:", data);
-      toast({
-        variant: "success",
-        description: "Registration successful!",
-      });
-      navigate.push("/login"); 
-    } else {
-      if (data.details && Array.isArray(data.details)) {
-        const errorMessages = data.details.map((detail: any) => detail.message);
-        console.log("Registration errors:", errorMessages.join(", "));
-        toast({
-          variant: "destructive",
-          description: `Registration failed: ${errorMessages.join(", ")}`,
-        })
-      } else {
-        toast({
-          variant: "destructive",
-          description: data.message || "Registration failed. Please try again.",
-        });
-      }
-      console.error("Registration error:", data);
-    }
-  } catch (error) {
-    console.error("Network or unexpected error:", error);
+  } catch (error: any) {
+    // ✅ Handle error
+    const errorMessage = error?.message || "Something went wrong. Try again later.";
+
     toast({
       variant: "destructive",
-      description: "Something went wrong. Try again later.",
+      description: errorMessage,
     });
-  }finally {
-    setIsLoading(false); 
+
+    console.error("Registration error:", error);
+  } finally {
+    setIsLoading(false);
   }
 };
+
 
   return (
     <div className="bg-white w-full h-[100dvh]">

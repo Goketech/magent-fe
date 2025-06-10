@@ -29,13 +29,23 @@ const MobileNav = () => {
   const handleToggleNav = () => {
     setShowNavItems((prev) => !prev);
   };
+  const logout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
 
   return (
     <>
       <div className="md:hidden flex items-center justify-between px-4 py-3 bg-white shadow-sm fixed top-0 z-30 w-full">
         <div className="flex items-center gap-2">
-          <MdMenu size={24} onClick={handleToggleNav} className="cursor-pointer" />
-          <span className="font-medium text-sm">{activeItem?.label || "Menu"}</span>
+          <MdMenu
+            size={24}
+            onClick={handleToggleNav}
+            className="cursor-pointer"
+          />
+          <span className="font-medium text-sm">
+            {activeItem?.label || "Menu"}
+          </span>
         </div>
         <CustomWalletButton />
       </div>
@@ -55,6 +65,17 @@ const MobileNav = () => {
               {item.label}
             </div>
           ))}
+          <div
+            onClick={() => logout()}
+            className={`flex items-center justify-end gap-2 p-[8px] rounded-[4px] text-[14px] leading-[21px] cursor-pointer ml-auto ${
+              stepData.active === "Logout"
+                ? "bg-[#F2F2F2] text-[#D42620]"
+                : "hover:bg-[#F2F2F2] text-black"
+            }`}
+          >
+            <MdLogout size={20} />
+            <span>Logout</span>
+          </div>
         </div>
       )}
     </>

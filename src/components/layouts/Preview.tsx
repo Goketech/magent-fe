@@ -15,7 +15,6 @@ type PreviewProps = {
 };
 
 const splitParagraph = (text: string, linesPerChunk: number = 5) => {
-  console.log("text", text);
   const sentences = text.split(".");
   const chunks: string[] = [];
   let tempChunk = "";
@@ -30,8 +29,6 @@ const splitParagraph = (text: string, linesPerChunk: number = 5) => {
   });
 
   if (tempChunk) chunks.push(tempChunk.trim());
-
-  console.log("chunks", chunks);
 
   return chunks;
 };
