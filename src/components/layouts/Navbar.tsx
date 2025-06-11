@@ -132,6 +132,16 @@ const Navbar = () => {
             >
               Contact Sales
             </Link>
+            <Link href="/login">
+            <Button className="bg-[#242424] px-[16px] py-[12px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px] border border-white">
+              Login
+            </Button>
+          </Link>
+          <Link href="/signup">
+            <Button className="bg-[#242424] px-[16px] py-[12px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px] border border-white">
+              Sign Up
+            </Button>
+          </Link>
           </div>
         </div>
       )}
