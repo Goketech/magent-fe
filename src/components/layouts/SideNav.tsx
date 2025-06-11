@@ -8,8 +8,9 @@ import {
   MdLogout,
   MdMenu,
 } from "react-icons/md";
-import React from "react";
+import React, {useState} from "react";
 import Image from "next/image";
+import ConfirmLogoutModal from "@/components/ui/ConfirmLogoutModal";
 import { CustomWalletButton } from "../CustomWalletButton";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useStepContext } from "@/context/StepContext";
@@ -27,6 +28,7 @@ const SideNav = ({
     localStorage.removeItem("token");
     window.location.href = "/login";
   };
+  const [showConfirmLogout, setShowConfirmLogout] = useState(false);
 
   const navItems = [
     { id: "Research", label: "Research", icon: <MdManageSearch size={20} /> },
@@ -88,8 +90,8 @@ const SideNav = ({
               <span>Settings</span>
             </div>
             <div
-              onClick={() => logout()}
-              className={`flex items-center gap-2 p-[8px] rounded-[4px] text-[14px] leading-[21px] cursor-pointer ${
+              onClick={() => setShowConfirmLogout(true)}
+              className={`flex items-center gap-2 p-[8px] text-red-600 rounded-[4px] text-[14px] leading-[21px] cursor-pointer ${
                 stepData.active === "Logout"
                   ? "bg-[#F2F2F2] text-[#D42620]"
                   : "hover:bg-[#F2F2F2] text-black"
@@ -100,6 +102,11 @@ const SideNav = ({
             </div>
           </div>
         </div>
+        <ConfirmLogoutModal 
+        isOpen ={showConfirmLogout}
+        onClose={() => setShowConfirmLogout(false)}
+        onLogout={logout}
+        />
 
         {/* Wallet Button */}
         <div className="mt-auto">
