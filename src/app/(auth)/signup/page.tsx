@@ -81,19 +81,24 @@ function page() {
   ];
 
   const industryOptions = [
-    { label: "Technology", value: "Technology" },
-    { label: "Finance", value: "Finance" },
-    { label: "Healthcare", value: "Healthcare" },
-    { label: "Education", value: "Education" },
-    { label: "Retail", value: "Retail" },
+    { label: "Payments", value: "Payments" },
+    { label: "DAOs", value: "DAOs" },
+    { label: "DeFi", value: "DeFi" },
+    { label: "Infrastructure", value: "Infrastructure" },
+    { label: "DePIN", value: "DePIN" },
+    { label: "Customer dApps", value: "Customer dApps" },
+    { label: "NFTs", value: "NFTs" },
+    { label: "Gaming", value: "Gaming" },
+    { label: "Artificial Intelligence", value: "Artificial Intelligence" },
   ];
 
   const expertiseOptions = [
-    { label: "Digital Marketing", value: "Digital Marketing" },
-    { label: "Content Creation", value: "Content Creation" },
-    { label: "SEO", value: "SEO" },
-    { label: "Social Media Management", value: "Social Media Management" },
-    { label: "Data Analysis", value: "Data Analysis" },
+    { label: "KOL/Influencer", value: "KOL/Influencer" },
+    { label: "Shiller", value: "Shiller" },
+    { label: "Sales/Business developer", value: "Sales/Business developer" },
+    { label: "Marketer", value: "Marketer" },
+    { label: "Content creator", value: "Content creator" },
+    { label: "Writer", value: "Writer" },
   ];
 
   const handleRoleChange = (selectedRole: string) => {
