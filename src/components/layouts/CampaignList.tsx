@@ -117,14 +117,6 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
                   >
                     View details
                   </button>
-                  <button 
-                    className="block w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-100"
-                    onClick={() => {
-                      setShowOptions(false);
-                    }}
-                  >
-                    Reject
-                  </button>
                 </div>
               </div>
             )}
