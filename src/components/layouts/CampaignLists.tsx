@@ -3,7 +3,6 @@ import CampaignList, { Campaign } from './CampaignList';
 import { MyCampaign as MyCampaignType} from '@/lib/types';
 import { FilterState } from './CampaignFilter';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useAuth } from "@/context/AuthProvider";
 import AcceptModal from '../ui/AcceptModal';
 import { apiClient } from '@/utils/apiClient';
 
@@ -41,10 +40,10 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isEmpty, setIsEmpty] = useState<boolean>(false);
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | MyCampaignType | null>(null);
-  const {jwt} = useAuth()
   
   // Filter campaigns based on activeFilters
   const filteredCampaigns = useMemo(() => {
@@ -118,8 +117,13 @@ const fetchCampaigns = async () => {
     const data = await apiClient('/campaign/marketplace-campaigns', {
       method: 'GET',
     });
+    
 
     setAllCampaigns(data.campaigns);
+    if(data.campaigns.length === 0) {
+      setIsEmpty(true);
+      setLoading(false);
+    }
     setTotalPages(Math.ceil(data.campaigns.length / itemsPerPage));
   } catch (error) {
     console.error('Failed to fetch campaigns:', error);
@@ -308,54 +312,62 @@ const fetchCampaigns = async () => {
   
   return (
     <div className="w-full">
-      <div className="overflow-x-auto">
-        {loading ? (
-          <div className="py-20 flex justify-center items-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-900"></div>
-          </div>
-        ) : (
-          <table className="min-w-full">
-            <thead>
-              <tr className="border-b border-gray-200">
-                {headers.map((header) => (
-                  <th 
-                    key={header.id} 
-                    className={`py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${header.sortable ? 'cursor-pointer hover:bg-gray-50' : ''}`}
-                    onClick={() => header.sortable && handleSort(header.id)}
-                  >
-                    <div className="flex items-center">
-                      {header.label}
-                      {header.sortable && getSortIcon(header.id)}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {displayedCampaigns.map((campaign) => (
-                <CampaignList 
-                  key={campaign._id} 
-                  campaign={campaign} 
-                  onAccept={() => handleAcceptCampaign(campaign)}
-                  onViewDetails={onViewDetails}
-                />
+  <div className="overflow-x-auto">
+    {loading ? (
+      <div className="py-20 flex justify-center items-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-900"></div>
+      </div>
+    ) : isEmpty ? (
+      <div className="py-20 flex flex-col items-center justify-center text-center text-gray-500">
+        <p className="text-lg font-medium">No campaigns found</p>
+        <p className="text-sm text-gray-400 mt-1">Check back later</p>
+      </div>
+    ) : (
+      <>
+        <table className="min-w-full">
+          <thead>
+            <tr className="border-b border-gray-200">
+              {headers.map((header) => (
+                <th 
+                  key={header.id} 
+                  className={`py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${header.sortable ? 'cursor-pointer hover:bg-gray-50' : ''}`}
+                  onClick={() => header.sortable && handleSort(header.id)}
+                >
+                  <div className="flex items-center">
+                    {header.label}
+                    {header.sortable && getSortIcon(header.id)}
+                  </div>
+                </th>
               ))}
-            </tbody>
-          </table>
-        )}
-        {selectedCampaign && (
-          <AcceptModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            campaign={selectedCampaign}
-          />
-        )}
-      </div>
-      
-      <div className="flex justify-center mt-6 space-x-2">
-        {renderPagination()}
-      </div>
-    </div>
+            </tr>
+          </thead>
+          <tbody>
+            {displayedCampaigns.map((campaign) => (
+              <CampaignList 
+                key={campaign._id} 
+                campaign={campaign} 
+                onAccept={() => handleAcceptCampaign(campaign)}
+                onViewDetails={onViewDetails}
+              />
+            ))}
+          </tbody>
+        </table>
+        <div className="flex justify-center mt-6 space-x-2">
+          {renderPagination()}
+        </div>
+      </>
+    )}
+
+    {selectedCampaign && (
+      <AcceptModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        campaign={selectedCampaign}
+      />
+    )}
+  </div>
+</div>
+
   );
 };
 
