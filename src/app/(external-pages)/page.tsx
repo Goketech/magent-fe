@@ -91,7 +91,7 @@ export default function Home() {
             your fingertips.
           </p>
         </div>
-        <div className="w-full md:w-[464px] relative p-[0.5px] rounded-[12px] bg-gradient-border shadow-2xl shadow-[#AEDDFF]">
+        {/* <div className="w-full md:w-[464px] relative p-[0.5px] rounded-[12px] bg-gradient-border shadow-2xl shadow-[#AEDDFF]">
           <form
             className="rounded-[12px] text-white bg-background px-[20px] py-[24px]"
             onSubmit={handleSubmit}
@@ -131,7 +131,7 @@ export default function Home() {
               {loading ? <Loading width="20" height="40" /> : "Join Waitlist"}
             </Button>
           </form>
-        </div>
+        </div> */}
       </div>
       <div className="px-[20px] md:px-[80px] mb-[160px]">
         <span className="text-[13px] font-[600] leading-19.5px] px-[12px] py-[2px] bg-[#FFFFFF] rounded-[32px]">
