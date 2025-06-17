@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${pulicSans.className} antialiased bg-background text-foreground`}
+        className={`${pulicSans.className} `}
       >
         {children}
         <Toaster />
