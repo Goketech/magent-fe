@@ -186,6 +186,9 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     // ✅ Handle error
     const errorMessage = error?.message || "Something went wrong. Try again later.";
 
+    console.log(errorMessage)
+
+
     toast({
       variant: "destructive",
       description: errorMessage,
@@ -196,6 +199,7 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     setIsLoading(false);
   }
 };
+
 
 
   return (

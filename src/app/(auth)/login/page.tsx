@@ -94,7 +94,6 @@ const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
               label="Email Address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              error={errMsg}
             />
             <FormInput
               placeholder="Password (min 8 characters)"
