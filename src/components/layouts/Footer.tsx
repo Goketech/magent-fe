@@ -1,23 +1,199 @@
-import Link from "next/link";
+"use client";
 
-const Footer = () => {
+import React, { useRef } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { motion, useInView, Variants } from "framer-motion";
+import { BsTwitterX } from "react-icons/bs";
+import { FaGithub } from "react-icons/fa6";
+import { SiDiscord } from "react-icons/si";
+import { FaTelegramPlane, FaInstagram } from "react-icons/fa";
+
+const socialLinks = [
+  { href: "#", label: "X", Icon: BsTwitterX },
+  { href: "#", label: "GitHub", Icon: FaGithub },
+  { href: "#", label: "Discord", Icon: SiDiscord },
+  { href: "#", label: "Telegram", Icon: FaTelegramPlane },
+  { href: "#", label: "Instagram", Icon: FaInstagram },
+];
+
+const footerLinkSections = [
+  {
+    title: "Product",
+    links: [
+      "Connect",
+      "Marketing",
+      "AI Powered Sales",
+      "Platform Integration",
+      "Own-to-Earn",
+      "Research",
+      "Reports",
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      "Connect",
+      "Marketing",
+      "AI Powered Sales",
+      "Platform Integration",
+      "Own-to-Earn",
+      "Research",
+      "Reports",
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      "Connect",
+      "Marketing",
+      "AI Powered Sales",
+      "Platform Integration",
+      "Own-to-Earn",
+      "Research",
+      "Reports",
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      "Connect",
+      "Marketing",
+      "AI Powered Sales",
+      "Platform Integration",
+      "Own-to-Earn",
+      "Research",
+      "Reports",
+    ],
+  },
+];
+
+const Footer: React.FC = () => {
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.1 });
+
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        staggerChildren: 0.1,
+        when: "beforeChildren", // Ensure container animation completes before children start
+      },
+    },
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
+
+  const linkColumnVariants: Variants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut",
+        staggerChildren: 0.05, // Stagger links within the column
+      },
+    },
+  };
+
   return (
-    <div className="pt-[20px] md:pt-[80px] flex flex-col gap-[20px] md:gap-0 px-[20px] md:flex-row md:px-[80px] justify-between md:items-center mb-5 text-white">
-      <p className="font-bold">&copy; Magent {new Date().getFullYear()}</p>
-      <Link href="/" className="z-50">
-        <h5 className="font-bold text-2xl text-primary bg-gradient-border bg-clip-text text-transparent">
-          magent
-        </h5>
-      </Link>
-      <div className="flex gap-[28px] items-center">
-        <Link className="hover:text-primary" href="/">
-          <p>Terms of Service</p>
-        </Link>
-        <Link className="hover:text-primary" href="/">
-          <p>Privacy Policy</p>
-        </Link>
+    <motion.footer
+      ref={sectionRef}
+      variants={containerVariants}
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      className="bg-[#08121D] text-neutral-300 py-12 md:py-12 px-4 sm:px-6 lg:px-8 mt-16" // Slightly lighter than body for differentiation
+      aria-labelledby="footer-heading"
+    >
+      <div className="max-w-7xl mx-auto">
+        {/* Top section: Logo and Social Icons */}
+        <motion.div
+          variants={itemVariants}
+          className="flex flex-col md:flex-row justify-between items-center mb-10 md:mb-12"
+        >
+          <motion.div variants={itemVariants} className="mb-6 md:mb-0">
+            <Link href="/" className="z-50">
+              <Image
+                src="/magentlogo.svg"
+                alt="Logo"
+                width={141}
+                height={41}
+                priority
+              />
+            </Link>
+          </motion.div>
+          <motion.div variants={itemVariants} className="flex gap-[40px]">
+            {socialLinks.map(({ href, label, Icon }) => (
+              <motion.a
+                key={label}
+                href={href}
+                aria-label={label}
+                className="text-neutral-400 hover:text-purple-400 transition-colors"
+                whileHover={{ scale: 1.1, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Icon size={24} />
+              </motion.a>
+            ))}
+          </motion.div>
+        </motion.div>
+
+        {/* Link Columns */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mb-10 md:mb-12">
+          {footerLinkSections.map((section, index) => (
+            <motion.div
+              key={section.title}
+              variants={linkColumnVariants}
+              // Custom prop to pass delay for staggered animation of columns
+              custom={index}
+              initial="hidden" // Ensure children also use initial hidden
+              animate={isInView ? "visible" : "hidden"}
+              // Individual column delay based on index
+              transition={{ delay: index * 0.1 + 0.2 }} // Stagger columns after initial footer anim
+            >
+              <h3 className="text-lg font-semibold text-white mb-4">
+                {section.title}
+              </h3>
+              <ul className="space-y-2.5">
+                {section.links.map((link) => (
+                  <motion.li key={link} variants={itemVariants}>
+                    <a
+                      href="#"
+                      className="text-neutral-400 hover:text-purple-300 transition-colors text-sm"
+                    >
+                      {link}
+                    </a>
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Bottom section: Divider and Copyright */}
+        <motion.div
+          variants={itemVariants}
+          className="border-t border-neutral-700 pt-8 mt-8"
+        >
+          <p className="text-sm text-neutral-500">
+            &copy; {new Date().getFullYear()} - Magent. All rights reserved.
+          </p>
+        </motion.div>
       </div>
-    </div>
+      <h2 id="footer-heading" className="sr-only">
+        Footer
+      </h2>
+    </motion.footer>
   );
 };
 
