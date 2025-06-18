@@ -129,7 +129,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
       variants={cardVariants}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
-      className={`flex flex-col shadow-2xl overflow-hidden
+      className={`flex flex-col justify-center shadow-2xl overflow-hidden max-w-[400px]
         ${
           isBestDeal
             ? "border-[6px] border-[#AAA1FF] transform md:scale-105 rounded-3xl"
@@ -138,7 +138,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
         ${isBestDeal ? "bg-[#AAA1FF]" : ''}`}
     >
       {isBestDeal && (
-        <div className="w-[410px] h-[54px] ">
+        <div className="max-w-[410px] h-[54px] ">
           <motion.div
             style={{
               background: `radial-gradient(ellipse at center, rgba(168, 85, 247, 0.25) 0%, rgba(168, 85, 247, 0) 70%)`,
@@ -225,7 +225,7 @@ const Pricing: React.FC = () => {
   return (
     <div
       ref={sectionRef}
-      className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-neutral-950 overflow-hidden"
+      className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden"
     >
       <div className="max-w-7xl mx-auto">
         <motion.h2
@@ -245,8 +245,9 @@ const Pricing: React.FC = () => {
         >
           Security. Privacy. Freedom. For Everyone
         </motion.p>
+<div className="flex justify-center">
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-6 lg:gap-8 items-end">
+        <div className="grid grid-cols-1 content-center lg:grid-cols-3 gap-8 md:gap-6 lg:gap-8 items-end">
           {pricingPlansData.map((plan, index) => (
             <div
               key={plan.id}
@@ -264,6 +265,7 @@ const Pricing: React.FC = () => {
             </div>
           ))}
         </div>
+</div>
       </div>
     </div>
   );

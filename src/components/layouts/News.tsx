@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useInView, Variants } from 'framer-motion';
 import Slider from 'react-slick';
+import Image from "next/image"
 
 // Placeholder component for images
 const NewsImagePlaceholder: React.FC<{ text: string; className?: string }> = ({ text, className = "" }) => (
@@ -14,8 +15,9 @@ const NewsImagePlaceholder: React.FC<{ text: string; className?: string }> = ({ 
 interface NewsArticle {
   id: string;
   imageText: string;
+  imageUrl: string;
   category: string;
-  categoryColor: string; // Tailwind bg color class e.g., 'bg-pink-500'
+  categoryColor: string;
   title: string;
   description: string;
 }
@@ -24,6 +26,7 @@ const newsArticlesData: NewsArticle[] = [
   {
     id: 'news1',
     imageText: 'Image: Smartphone displaying holographic financial data, glowing pink/purple.',
+    imageUrl: '/new1.png',
     category: 'Mobile Intelligence',
     categoryColor: 'bg-pink-500',
     title: 'Data Levitates: Immersive UX in Your Palm',
@@ -32,6 +35,7 @@ const newsArticlesData: NewsArticle[] = [
   {
     id: 'news2',
     imageText: 'Image: Stylized human head with glowing neural circuits inside, futuristic interface elements around it.',
+    imageUrl: '/new2.png',
     category: 'Meet the Mind of Tomorrow',
     categoryColor: 'bg-purple-500',
     title: 'AI is Here: Decoding the Future, One Stream at a Time',
@@ -40,6 +44,7 @@ const newsArticlesData: NewsArticle[] = [
   {
     id: 'news3',
     imageText: 'Image: Laptop screen with complex data visualizations and graphs, glowing blue.',
+    imageUrl: '/new3.png',
     category: 'Your Digital Edge',
     categoryColor: 'bg-indigo-500',
     title: 'Next-Gen Metrics: Visualize & Optimize',
@@ -48,6 +53,7 @@ const newsArticlesData: NewsArticle[] = [
   {
     id: 'news4',
     imageText: 'Image: Abstract representation of interconnected data nodes, glowing green.',
+    imageUrl: '/new1.png',
     category: 'Decentralized Insights',
     categoryColor: 'bg-green-500',
     title: 'The Future of Data: Transparent & Secure',
@@ -56,6 +62,7 @@ const newsArticlesData: NewsArticle[] = [
   {
     id: 'news5',
     imageText: 'Image: Collaborative workspace with futuristic AR displays, glowing orange.',
+    imageUrl: '/new2.png',
     category: 'Web3 Collaboration',
     categoryColor: 'bg-orange-500',
     title: 'Building Together: The New Era of Teamwork',
@@ -64,6 +71,7 @@ const newsArticlesData: NewsArticle[] = [
   {
     id: 'news6',
     imageText: 'Image: Artistic render of a secure data vault with digital locks, glowing teal.',
+    imageUrl: '/new3.png',
     category: 'Privacy in Web3',
     categoryColor: 'bg-teal-500',
     title: 'Own Your Data: The Sovereignty Shift',
@@ -73,15 +81,21 @@ const newsArticlesData: NewsArticle[] = [
 
 interface NewsCardProps extends NewsArticle {}
 
-const NewsCard: React.FC<NewsCardProps> = ({ imageText, category, categoryColor, title, description }) => {
+const NewsCard: React.FC<NewsCardProps> = ({ imageText, category, categoryColor, title, description, imageUrl }) => {
   return (
-    <div className="bg-neutral-800 rounded-xl shadow-xl overflow-hidden h-full flex flex-col mx-2 md:mx-3" role="article" aria-labelledby={`news-title-${title.replace(/\s+/g, '-').toLowerCase()}`}>
-      <NewsImagePlaceholder text={imageText} />
+    <div className="bg-[#130F18] rounded-xl shadow-xl overflow-hidden h-full flex flex-col mx-2 md:mx-3" role="article" aria-labelledby={`news-title-${title.replace(/\s+/g, '-').toLowerCase()}`}>
+      <Image
+        src={imageUrl}
+        alt={imageText}
+        className="w-full h-48 object-cover rounded-t-xl"
+        width={600}
+        height={600}
+      />
       <div className="p-5 md:p-6 flex flex-col flex-grow">
-        <span className={`text-xs font-semibold px-3 py-1 ${categoryColor} text-white rounded-full self-start mb-3`}>
-          {category}
-        </span>
-        <h3 id={`news-title-${title.replace(/\s+/g, '-').toLowerCase()}`} className="text-lg md:text-xl font-semibold text-white mb-2">{title}</h3>
+        {/* <span className={`text-xs font-semibold px-3 py-1 ${categoryColor} text-white rounded-full self-start mb-3`}>
+          {category} */}
+        {/* </span> */}
+        <h3 id={`news-title-${title.replace(/\s+/g, '-').toLowerCase()}`} className="text-lg md:text-xl font-semibold text-[#DE3AF7] mb-2">{title}</h3>
         <p className="text-neutral-400 text-sm leading-relaxed flex-grow">{description}</p>
       </div>
     </div>
@@ -103,25 +117,25 @@ const News: React.FC = () => {
   };
   
   const sliderSettings = {
-    dots: true,
+    // dots: true,
     infinite: true,
-    speed: 600,
+    speed: 3000,
     slidesToShow: 3,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 4000,
+    autoplaySpeed: 1000,
     pauseOnHover: true,
-    arrows: false, // Set to true if you want default arrows, or implement custom ones
+    arrows: false,
     responsive: [
       {
-        breakpoint: 1024, // Tailwind 'lg'
+        breakpoint: 1024, 
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
         }
       },
       {
-        breakpoint: 768, // Tailwind 'md'
+        breakpoint: 768, 
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
@@ -140,7 +154,7 @@ const News: React.FC = () => {
   };
 
   return (
-    <div ref={sectionRef} className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-neutral-950 overflow-hidden">
+    <div ref={sectionRef} className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
       <div className="max-w-6xl mx-auto">
         <motion.h2
           variants={titleVariants}

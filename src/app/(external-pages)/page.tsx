@@ -1,5 +1,7 @@
 "use client";
 import { useState, FormEvent } from "react";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loading } from "@/components/ui/loading";
@@ -12,6 +14,7 @@ import WhyMagent from "@/components/layouts/WhyMagent";
 import Pricing from "@/components/layouts/Pricing";
 import CustomerMarket from "@/components/layouts/CustomerMarket";
 import Newsletter from "@/components/layouts/Newsletter";
+import News from "@/components/layouts/News";
 
 export default function Home() {
   const { toast } = useToast();
@@ -90,6 +93,7 @@ export default function Home() {
         <WhyMagent/>
         <Pricing/>
         <CustomerMarket/>
+        <News/>
         <Newsletter/>
         {/* <div className="max-w-[581px] text-white ">
           <h1 className="text-[30px] md:text-[60px] font-[800] leading-[38.4px] md:leading-[72px]">

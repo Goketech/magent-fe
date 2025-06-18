@@ -112,11 +112,10 @@ const Footer: React.FC = () => {
       variants={containerVariants}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
-      className="bg-[#08121D] text-neutral-300 py-12 md:py-12 px-4 sm:px-6 lg:px-8 mt-16" // Slightly lighter than body for differentiation
+      className="bg-[#08121D] text-neutral-300 py-12 md:py-12 px-4 sm:px-6 lg:px-8 mt-16"
       aria-labelledby="footer-heading"
     >
       <div className="max-w-7xl mx-auto">
-        {/* Top section: Logo and Social Icons */}
         <motion.div
           variants={itemVariants}
           className="flex flex-col md:flex-row justify-between items-center mb-10 md:mb-12"
@@ -149,7 +148,7 @@ const Footer: React.FC = () => {
         </motion.div>
 
         {/* Link Columns */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mb-10 md:mb-12">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mb-10 md:mb-12">
           {footerLinkSections.map((section, index) => (
             <motion.div
               key={section.title}

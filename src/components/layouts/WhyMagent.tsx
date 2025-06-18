@@ -137,7 +137,7 @@ const WhyMagent: React.FC = () => {
 
 
   return (
-    <div className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-neutral-950 overflow-hidden"> {/* Added overflow-hidden to contain animations */}
+    <div className="py-16 md:py-16 px-4 sm:px-6 lg:px-8 overflow-hidden"> {/* Added overflow-hidden to contain animations */}
       <div className="max-w-7xl mx-auto">
         <motion.h2
           ref={titleRef}
@@ -150,7 +150,6 @@ const WhyMagent: React.FC = () => {
         </motion.h2>
 
         <div className="space-y-16 md:space-y-24">
-          {/* Feature Block 1: Crypto-native Ads Exchange */}
           <FeatureBlock
             imagePlaceholder="Image: Hand interacting with a futuristic financial graph, vibrant teal and magenta lines on dark background."
             title={<>Crypto-native<br />Ads Exchange</>}
@@ -164,7 +163,6 @@ const WhyMagent: React.FC = () => {
             imagePosition="left"
           />
 
-          {/* Feature Block 2: AI Powered Sales/KOL Campaign manager */}
           <FeatureBlock
             imagePlaceholder="Image: Laptop displaying code, with a glowing, stylized brain emerging from the screen, set against a dark, techy background."
             title={<>AI Powered Sales/KOL<br />Campaign manager</>}
@@ -178,7 +176,6 @@ const WhyMagent: React.FC = () => {
             imagePosition="right" 
           />
 
-          {/* Feature Block 3: AI Powered Marketing Assistant */}
           <FeatureBlock
             imagePlaceholder="Image: Hand reaching towards a cloud of glowing, abstract digital icons and data points, in shades of pink and purple."
             title={<>AI Powered<br />Marketing Assistant</>}
