@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 import { Loading } from "@/components/ui/loading";
 import { apiClient } from "@/utils/apiClient";
 
-
 function page() {
   const [email, setEmail] = useState("");
   const [userName, setUserName] = useState("");
@@ -24,14 +23,28 @@ function page() {
   const [role, setRole] = useState("");
   const [industry, setIndustry] = useState("");
   const [expertise, setExpertise] = useState("");
-  const [selectedRoleType, setSelectedRoleType] = useState("");
-  const [selectedIndustry, setSelectedIndustry] = useState("");
-  const [showAdditionalFields, setShowAdditionalFields] = useState(false);
+  const [selectedRole, setSelectedRole] = useState("");
   const [errMsg, setErrMsg] = useState("");
+  const [roleError, setRoleError] = useState("");
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useRouter();
-  
+  const [emailError, setEmailError] = useState("");
+  const [userNameError, setUserNameError] = useState("");
+  const [companyNameError, setCompanyNameError] = useState("");
+  const [industryError, setIndustryError] = useState("");
+  const [expertiseError, setExpertiseError] = useState("");
+
+  const clearAllErrors = () => {
+    setEmailError("");
+    setUserNameError("");
+    setPasswordError("");
+    setConfirmPasswordError("");
+    setRoleError("");
+    setCompanyNameError("");
+    setIndustryError("");
+    setExpertiseError("");
+  };
 
   const validatePassword = (pass: string) => {
     if (pass.length < 8) {
@@ -101,106 +114,174 @@ function page() {
     { label: "Writer", value: "Writer" },
   ];
 
-  const handleRoleChange = (selectedRole: string) => {
-    setRole(selectedRole);
-    setSelectedRoleType(selectedRole);
-    if (selectedRole === "Advertiser" || selectedRole === "Publisher") {
-      setShowAdditionalFields(true);
-    } else {
-      setShowAdditionalFields(false);
+  const handleRoleChange = (newRole: string) => {
+    setSelectedRole(newRole);
+
+    if (newRole !== "Advertiser") {
+      setCompanyName("");
+      setIndustry("");
+      setCompanyNameError("");
+      setIndustryError("");
     }
+    if (newRole !== "Publisher") {
+      setExpertise("");
+      setExpertiseError("");
+    }
+
+    setErrMsg("");
   };
 
   const handleIndustryChange = (selectedIndustry: string) => {
     setIndustry(selectedIndustry);
+    setIndustryError("");
   };
 
-const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    setEmailError("");
+  };
 
-  setErrMsg("");
-  setPasswordError("");
-  setIsLoading(true);
-  console.log(selectedRoleType, "selectedRoleType");
-  console.log(email, userName, password, confirmPassword, role, companyName, industry, expertise);
+  const handleUserNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUserName(e.target.value);
+    setUserNameError("");
+  };
 
-  try {
-    // ✅ Basic field validation
-    if (!email || !userName || !password || !confirmPassword || !role) {
-      setErrMsg("Please fill in all fields");
-      return;
-    }
+  const handleCompanyNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCompanyName(e.target.value);
+    setCompanyNameError("");
+  };
 
-    if (selectedRoleType === "Advertiser" && (!companyName || !industry)) {
-      setErrMsg("Please fill in company name and industry");
-      return;
-    }
+  const handleExpertiseChange = (value: string) => {
+    setExpertise(value);
+    setExpertiseError("");
+  };
 
-    if (selectedRoleType === "Publisher" && !expertise) {
-      setErrMsg("Please fill in your expertise");
-      return;
-    }
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    // ✅ Password validation
-    const passwordErrors = [];
-    if (password.length < 8) passwordErrors.push("at least 8 characters long");
-    if (!/[A-Z]/.test(password)) passwordErrors.push("at least one uppercase letter");
-    if (!/[a-z]/.test(password)) passwordErrors.push("at least one lowercase letter");
-    if (!/[0-9]/.test(password)) passwordErrors.push("at least one number");
+    clearAllErrors();
+    setIsLoading(true);
 
-    if (passwordErrors.length > 0) {
-      setErrMsg(`Password must contain: ${passwordErrors.join(", ")}`);
-      return;
-    }
+    let hasError = false;
 
-    if (password !== confirmPassword) {
-      setErrMsg("Passwords do not match");
-      return;
-    }
+    console.log(
+      email,
+      userName,
+      password,
+      confirmPassword,
+      role,
+      companyName,
+      industry,
+      expertise
+    );
 
-    // ✅ Call API using apiClient
-    const data = await apiClient('/auth/register', {
-      method: 'POST',
-      body: {
-        email,
-        userName,
-        password,
-        role: selectedRoleType.toLowerCase(),
-        businessName: selectedRoleType === "Advertiser" ? companyName : undefined,
-        industry: selectedRoleType === "Advertiser" ? industry : undefined,
-        expertise: selectedRoleType === "Publisher" ? expertise : undefined,
+    try {
+      // ✅ Basic field validation
+      if (!email) {
+        setEmailError("Please enter your email address");
+        hasError = true;
+      } else if (!email.includes("@")) {
+        setEmailError("Please enter a valid email address");
+        hasError = true;
       }
-    });
 
-    // ✅ Handle success
-    localStorage.setItem("auth_token", JSON.stringify(data.token));
+      if (!userName) {
+        setUserNameError("Please enter a username");
+        hasError = true;
+      }
 
-    toast({
-      variant: "success",
-      description: "Registration successful!",
-    });
+      if (!password) {
+        setPasswordError("Please enter a password");
+        hasError = true;
+      }
 
-    navigate.push("/login");
+      if (!confirmPassword) {
+        setConfirmPasswordError("Please confirm your password");
+        hasError = true;
+      }
 
-  } catch (error: any) {
-    // ✅ Handle error
-    const errorMessage = error?.message || "Something went wrong. Try again later.";
+      if (!selectedRole) {
+        setRoleError("Please select a role");
+        hasError = true;
+      }
 
-    console.log(errorMessage)
+      if (selectedRole === "Advertiser") {
+        if (!companyName) {
+          setCompanyNameError("Please enter your company name");
+          hasError = true;
+        }
+        if (!industry) {
+          setIndustryError("Please select an industry");
+          hasError = true;
+        }
+      }
 
+      if (selectedRole === "Publisher" && !expertise) {
+        setExpertiseError("Please select your expertise");
+        hasError = true;
+      }
 
-    toast({
-      variant: "destructive",
-      description: errorMessage,
-    });
+      // ✅ Password validation
+      const passwordErrors = [];
+      if (password.length < 8)
+        passwordErrors.push("at least 8 characters long");
+      if (!/[A-Z]/.test(password))
+        passwordErrors.push("at least one uppercase letter");
+      if (!/[a-z]/.test(password))
+        passwordErrors.push("at least one lowercase letter");
+      if (!/[0-9]/.test(password)) passwordErrors.push("at least one number");
 
-    console.error("Registration error:", error);
-  } finally {
-    setIsLoading(false);
-  }
-};
+      if (passwordErrors.length > 0) {
+        setPasswordError(`Password must contain: ${passwordErrors.join(", ")}`);
+        hasError = true;
+      }
 
+      if (password !== confirmPassword) {
+        setConfirmPasswordError("Passwords do not match");
+        hasError = true;
+      }
 
+      if (hasError) {
+        return;
+      }
+
+      // ✅ Call API using apiClient
+      const data = await apiClient("/auth/register", {
+        method: "POST",
+        body: {
+          email,
+          userName,
+          password,
+          role: selectedRole.toLowerCase(),
+          businessName: selectedRole === "Advertiser" ? companyName : undefined,
+          industry: selectedRole === "Advertiser" ? industry : undefined,
+          expertise: selectedRole === "Publisher" ? expertise : undefined,
+        },
+      });
+
+      // ✅ Handle success
+      localStorage.setItem("auth_token", JSON.stringify(data.token));
+
+      toast({
+        variant: "success",
+        description: "Registration successful!",
+      });
+
+      navigate.push("/login");
+    } catch (error: any) {
+      // ✅ Handle error
+      const errorMessage =
+        error?.message || "Something went wrong. Try again later.";
+      toast({
+        variant: "destructive",
+        description: errorMessage,
+      });
+
+      console.error("Registration error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="bg-white w-full h-[100dvh]">
@@ -210,131 +291,137 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         </div>
         <div className="w-full relative h-full">
           <div className="w-full max-w-lg">
-          <div className="block md:hidden">
-            <MobileAuthNav />
-          </div>
-          <div className="hidden md:flex justify-end">
-            <Link href="/login">
-              <div className="flex gap-1 items-center justify-center bg-[#F6F6F6] rounded-[32px] px-4 py-3 text-[#330065] text-sm">
-                <span>Sign in</span>
-                <ChevronRight className="h-4 w-4" />
-              </div>
-            </Link>
-          </div>
-          <form
-            onSubmit={handleSubmit}
-            className="mt-12 md:mt-6 flex flex-col gap-4 px-4 md:px-8 lg:px-12"
-          >
-            <h1 className="text-[#212221] text-[28px] font-semibold">
-              Create your account
-            </h1>
-            <FormSelect
-              placeholder="Select role"
-              options={roleOptions}
-              value={role}
-              label="Role"
-              onChange={(e) => setRole(e.target.value)}
-              onSelectionChange={handleRoleChange}
-              error={errMsg}
-            />
-            {selectedRoleType == "Advertiser" && (
-              <>
-                <FormInput
-                  placeholder="Enter company name"
-                  type="text"
-                  label="Company Name"
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                  error={errMsg}
-                />
-                <FormSelect
-                  placeholder="Select industry"
-                  options={industryOptions}
-                  value={industry}
-                  label="Industry"
-                  onChange={(e) => setIndustry(e.target.value)}
-                  onSelectionChange={handleIndustryChange}
-                  error={errMsg}
-                />
-              </>
-            )}
-            {selectedRoleType == "Publisher" && (
-              <>
-                <FormSelect
-                  placeholder="Select expertise"
-                  options={expertiseOptions}
-                  value={expertise}
-                  label="Expertise"
-                  onChange={(e) => setExpertise(e.target.value)}
-                  error={errMsg}
-                />
-              </>
-            )}
-            <FormInput
-              placeholder="Enter email address"
-              type="email"
-              label="Email Address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              error={errMsg}
-            />
-            <FormInput
-              placeholder="Enter username"
-              type="text"
-              label="Username"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              error={errMsg}
-            />
-            <FormInput
-              placeholder="Password (min 8 characters)"
-              type="password"
-              label="Password"
-              value={password}
-              onChange={handlePasswordChange}
-              error={passwordError || errMsg}
-              showPasswordToggle
-            />
-            <FormInput
-              placeholder="Confirm Password"
-              type="password"
-              label="Confirm Password"
-              value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
-              error={confirmPasswordError || errMsg}
-              showPasswordToggle
-            />
-            <div className="flex flex-col justify-center items-center gap-4 mt-3">
-              <button
-                type="submit"
-                className="w-full bg-[#330065] text-white py-3 rounded-[32px] hover:bg-[#4D2B8C] transition-colors duration-200"
-              >
-                {
-                  isLoading ? <div className="flex gap-2 items-center justify-center"><Loading height="20" width="20" /> <span>Signing up</span></div> : "Sign up"
-                }
-              </button>
-              <div className="flex items-center gap-2 text-[#212221] text-sm w-full justify-center">
-                <span className="w-full h-[1px] bg-[#D7D7D7]"></span>
-                <span>OR</span>
-                <span className="w-full h-[1px] bg-[#D7D7D7]"></span>
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-white text-[#212221] py-3 rounded-[32px] hover:bg-[#330065] hover:text-white border border-[#D7D7D7] transition-colors duration-200 flex justify-center items-center gap-2 mb-10"
-              >
-                {" "}
-                <span>
-                  <Image
-                    src="/google.svg"
-                    alt="google"
-                    width={20}
-                    height={20}
-                  />
-                </span>
-                Continue with google
-              </button>
+            <div className="block md:hidden">
+              <MobileAuthNav />
             </div>
-          </form>
+            <div className="hidden md:flex justify-end">
+              <Link href="/login">
+                <div className="flex gap-1 items-center justify-center bg-[#F6F6F6] rounded-[32px] px-4 py-3 text-[#330065] text-sm">
+                  <span>Sign in</span>
+                  <ChevronRight className="h-4 w-4" />
+                </div>
+              </Link>
+            </div>
+            <form
+              onSubmit={handleSubmit}
+              className="mt-12 md:mt-6 flex flex-col gap-4 px-4 md:px-8 lg:px-12"
+            >
+              <h1 className="text-[#212221] text-[28px] font-semibold">
+                Create your account
+              </h1>
+              <FormSelect
+                placeholder="Select role"
+                options={roleOptions}
+                value={role}
+                label="Role"
+                onChange={(e) => setRole(e.target.value)}
+                onSelectionChange={handleRoleChange}
+                error={roleError}
+              />
+              {selectedRole == "Advertiser" && (
+                <>
+                  <FormInput
+                    placeholder="Enter company name"
+                    type="text"
+                    label="Company Name"
+                    value={companyName}
+                    onChange={handleCompanyNameChange}
+                    error={companyNameError}
+                  />
+                  <FormSelect
+                    placeholder="Select industry"
+                    options={industryOptions}
+                    value={industry}
+                    label="Industry"
+                    onChange={(e) => setIndustry(e.target.value)}
+                    onSelectionChange={handleIndustryChange}
+                    error={industryError}
+                  />
+                </>
+              )}
+              {selectedRole == "Publisher" && (
+                <>
+                  <FormSelect
+                    placeholder="Select expertise"
+                    options={expertiseOptions}
+                    value={expertise}
+                    label="Expertise"
+                    onChange={(e) => setExpertise(e.target.value)}
+                    onSelectionChange={handleExpertiseChange}
+                    error={expertiseError}
+                  />
+                </>
+              )}
+              <FormInput
+                placeholder="Enter email address"
+                type="email"
+                label="Email Address"
+                value={email}
+                onChange={handleEmailChange}
+                error={emailError}
+              />
+              <FormInput
+                placeholder="Enter username"
+                type="text"
+                label="Username"
+                value={userName}
+                onChange={handleUserNameChange}
+                error={userNameError}
+              />
+              <FormInput
+                placeholder="Password (min 8 characters)"
+                type="password"
+                label="Password"
+                value={password}
+                onChange={handlePasswordChange}
+                error={passwordError}
+                showPasswordToggle
+              />
+              <FormInput
+                placeholder="Confirm Password"
+                type="password"
+                label="Confirm Password"
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange}
+                error={confirmPasswordError}
+                showPasswordToggle
+              />
+              <div className="flex flex-col justify-center items-center gap-4 mt-3">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-[#330065] text-white py-3 rounded-[32px] hover:bg-[#4D2B8C] transition-colors duration-200"
+                >
+                  {isLoading ? (
+                    <div className="flex gap-2 items-center justify-center">
+                      <Loading height="20" width="20" /> <span>Signing up</span>
+                    </div>
+                  ) : (
+                    "Sign up"
+                  )}
+                </button>
+                <div className="flex items-center gap-2 text-[#212221] text-sm w-full justify-center">
+                  <span className="w-full h-[1px] bg-[#D7D7D7]"></span>
+                  <span>OR</span>
+                  <span className="w-full h-[1px] bg-[#D7D7D7]"></span>
+                </div>
+                <button
+                  type="button"
+                  className="w-full bg-white text-[#212221] py-3 rounded-[32px] hover:bg-[#330065] hover:text-white border border-[#D7D7D7] transition-colors duration-200 flex justify-center items-center gap-2 mb-10"
+                >
+                  {" "}
+                  <span>
+                    <Image
+                      src="/google.svg"
+                      alt="google"
+                      width={20}
+                      height={20}
+                    />
+                  </span>
+                  Continue with google
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

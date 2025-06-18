@@ -26,8 +26,13 @@ const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
   setLoading(true);
 
   try {
-    if (!email.trim() || !password.trim()) {
-      setErrMsg("Please fill in all fields.");
+    if (!email) {
+      setErrMsg("Please enter your email.");
+      return;
+    } 
+    
+    if (!password) {
+      setPasswordError("Please enter your password.");
       return;
     }
 
@@ -49,8 +54,6 @@ const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
   } catch (error: any) {
     console.error("Error during login:", error);
     const message = error.message || "An unexpected error occurred. Please try again later.";
-    setErrMsg(message);
-
     toast({
       title: "Login Failed",
       description: message,
@@ -94,6 +97,7 @@ const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
               label="Email Address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              error={errMsg}
             />
             <FormInput
               placeholder="Password (min 8 characters)"
@@ -102,7 +106,7 @@ const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               showPasswordToggle
-              error={errMsg}
+              error={passwordError}
             />
             <div className="flex w-full flex-col justify-center items-center gap-4 mt-3">
               <button
