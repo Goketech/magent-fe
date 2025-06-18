@@ -30,7 +30,7 @@ const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
       setErrMsg("Please enter your email.");
       return;
     } 
-    
+
     if (!password) {
       setPasswordError("Please enter your password.");
       return;
@@ -108,6 +108,9 @@ const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
               showPasswordToggle
               error={passwordError}
             />
+            <div className="flex justify-end items-center mt-2">
+              <Link href="/forgotPassword" className="text-sm text-[#330065]">Forgot Password?</Link>
+            </div>
             <div className="flex w-full flex-col justify-center items-center gap-4 mt-3">
               <button
                 type="submit"
