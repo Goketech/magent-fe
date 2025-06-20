@@ -118,7 +118,7 @@ select option:not(:checked) {
   grid-column: 1;
   grid-row: auto;
 }
-.designelement1 {
+.designelement1, .designelement2 {
   display: none;
 }
 
@@ -152,7 +152,7 @@ select option:not(:checked) {
     grid-column: 2 / span 1;
     grid-row: 3 / span 1;
   }
-  .designelement1 {
+  .designelement1, .designelement2 {
     display: none;
   }
   .item7 {
@@ -210,8 +210,16 @@ select option:not(:checked) {
     grid-row: 4 / span 2;
   }
   .designelement1 {
+    display: block;
     grid-column: 2 / span 1;
     grid-row: 3 / span 2;
+  }
+  .designelement2{
+    display: block;
+    grid-column: 2 / span 1;
+    grid-row: 4 / span 2;
+    
+    rotate: 180deg;
   }
   .item7 {
     grid-column: 1 / span 1;

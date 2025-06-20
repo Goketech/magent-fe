@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform, MotionValue, useInView } from "framer-motion";
+import { motion, useInView, useMotionValue, useSpring, animate, useTransform } from "framer-motion";
 import Image from "next/image";
+import Animation from "./Animation";
 
 interface OfferCardData {
   id: string;
@@ -26,30 +27,46 @@ const OfferCard: React.FC<OfferCardProps> = ({
   className,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: cardRef,
-    offset: ["start end", "end start"], 
+  
+  const isInView = useInView(cardRef, { once: true, margin: "-50px" });
+  
+  const isGradientInView = useInView(cardRef, { 
+    once: false, 
+    margin: "-20px",
+    amount: 0.3 
   });
 
-  // Check if card is in view for entrance animation
-  const isInView = useInView(cardRef, { once: true, margin: "-50px" });
+  // Motion value for rotation
+  const rotationDegrees = useMotionValue(0);
+  const springRotation = useSpring(rotationDegrees, {
+    stiffness: 50,
+    damping: 20,
+    mass: 1
+  });
 
-  const rotationDegrees: MotionValue<number> = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [0, 720]
-  );
-
-  const conicGradientBackground: MotionValue<string> = useTransform(
-    rotationDegrees,
-    (latestRotation) =>
-      `conic-gradient(from ${latestRotation}deg at 50% 50%, #C8B6FF, #FFC8DD, #F2E8CF, #BDE0FE, #A8DADC, #C8B6FF)`
-  );
+  // Animate rotation when in view
+  React.useEffect(() => {
+    if (isGradientInView) {
+      // Start continuous rotation when in view
+      const controls = animate(rotationDegrees, 360, {
+        duration: 4,
+        ease: "linear",
+        repeat: Infinity,
+      });
+      return controls.stop;
+    } else {
+      // Stop and reset when out of view
+      animate(rotationDegrees, 0, {
+        duration: 0.5,
+        ease: "easeOut"
+      });
+    }
+  }, [isGradientInView, rotationDegrees]);
 
   return (
     <motion.div
       ref={cardRef}
-      className={`${className} relative bg-gradient-to-b from-[#7B7B7B1A] from-10% via-[#15151580] via-50% to-[#15151580] to-100% rounded-xl shadow-2xl h-[400px] md:h-full overflow-hidden group flex flex-col`}
+      className={`${className} relative bg-gradient-to-b from-[#7B7B7B1A] from-10% via-[#15151580] via-50% to-[#15151580] to-100% rounded-xl shadow-2xl h-[400px] md:h-full overflow-hidden group flex flex-col p-[4px]`}
       // Entrance animation
       initial={{ opacity: 0, y: 50, scale: 0.95 }}
       animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 50, scale: 0.95 }}
@@ -67,12 +84,19 @@ const OfferCard: React.FC<OfferCardProps> = ({
       whileTap={{ scale: 0.98 }}
     >
       <motion.div
-        className="absolute inset-[-200%]" 
-        style={{
-          zIndex: 0,
-          background: conicGradientBackground,
-        }}
-      />
+ className="absolute inset-[-200%]" 
+ style={{
+   zIndex: 0,
+   background: useTransform(
+     springRotation,
+     (rotation) =>
+       `conic-gradient(from ${rotation}deg at 50% 50%, #C8B6FF, #FFC8DD, #F2E8CF, #BDE0FE, #A8DADC, #C8B6FF)`
+   ),
+ }}
+ // Additional scale animation when gradient is active
+ animate={isGradientInView ? { scale: 1 } : { scale: 0.8 }}
+ transition={{ duration: 0.5, ease: "easeOut" }}
+/>
       <div className="relative z-10 bg-neutral-900 m-[2px] rounded-[10px] flex flex-col flex-grow">
         <div className="bg-gradient-to-b from-[#7B7B7B1A] from-10% via-[#15151580] via-50% to-[#15151580] to-100% flex flex-col flex-grow rounded-[10px] p-6">
           <motion.span
@@ -282,7 +306,8 @@ const WhatWeOffer: React.FC = () => {
           <OfferCard {...allOfferCards[3]} className="item4" />
           <OfferCard {...allOfferCards[4]} className="item5 md:-mt-16" />
           <OfferCard {...allOfferCards[5]} className="item6 " />
-          <DesignElement1 className="designelement1" />
+          <Animation className="designelement1" />
+          <Animation className="designelement2 -mt-12" />
           <OfferCard {...allOfferCards[6]} className="item7 md:-my-16" />
           <OfferCard {...allOfferCards[7]} className="item8 md:-my-16" />
           <OfferCard {...allOfferCards[8]} className="item9 md:-my-16" />

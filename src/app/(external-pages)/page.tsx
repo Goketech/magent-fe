@@ -11,7 +11,7 @@ import { Check } from "lucide-react";
 import LandingHero from "@/components/layouts/LandingHero";
 import WhatWeOffer from "@/components/layouts/WhatWeOffer";
 import WhyMagent from "@/components/layouts/WhyMagent";
-import Pricing from "@/components/layouts/Pricing";
+// import Pricing from "@/components/layouts/Pricing";
 import CustomerMarket from "@/components/layouts/CustomerMarket";
 import Newsletter from "@/components/layouts/Newsletter";
 import News from "@/components/layouts/News";
@@ -91,7 +91,7 @@ export default function Home() {
         <LandingHero />
         <WhatWeOffer/>
         <WhyMagent/>
-        <Pricing/>
+        {/* <Pricing/> */}
         <CustomerMarket/>
         <News/>
         <Newsletter/>

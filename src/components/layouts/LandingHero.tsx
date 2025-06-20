@@ -71,7 +71,7 @@ const LandingHero = () => {
 
       {/* Right Element */}
       <motion.div 
-        className="hidden md:block w-[243px] h-[203px] bg-slate-600"
+        className="hidden md:block w-[243px] h-[203px] "
         initial={{ opacity: 0, x: 100, scale: 0.8 }}
         animate={{ opacity: 1, x: 0, scale: 1 }}
         transition={{ 
@@ -84,7 +84,9 @@ const LandingHero = () => {
           backgroundColor: "#475569", // Slightly lighter slate
           transition: { duration: 0.3 }
         }}
-      />
+      >
+        <Animation />
+      </motion.div>
     </motion.div>
   );
 };
