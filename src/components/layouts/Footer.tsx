@@ -7,14 +7,14 @@ import { motion, useInView, Variants } from "framer-motion";
 import { BsTwitterX } from "react-icons/bs";
 import { FaGithub } from "react-icons/fa6";
 import { SiDiscord } from "react-icons/si";
-import { FaTelegramPlane, FaInstagram } from "react-icons/fa";
+import { FaTelegramPlane, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 const socialLinks = [
-  { href: "#", label: "X", Icon: BsTwitterX },
-  { href: "#", label: "GitHub", Icon: FaGithub },
-  { href: "#", label: "Discord", Icon: SiDiscord },
-  { href: "#", label: "Telegram", Icon: FaTelegramPlane },
-  { href: "#", label: "Instagram", Icon: FaInstagram },
+  { href: "https://x.com/magenthq", label: "X", Icon: BsTwitterX },
+  { href: "https://www.linkedin.com/company/magenthq", label: "LinkedIn", Icon: FaLinkedin },
+  { href: "https://discord.com/invite/r42PDfh2Xc", label: "Discord", Icon: SiDiscord },
+  { href: "https://t.me/hellomagent_bot", label: "Telegram", Icon: FaTelegramPlane },
+  { href: "https://www.instagram.com/magenthq", label: "Instagram", Icon: FaInstagram },
 ];
 
 const footerLinkSections = [
@@ -135,6 +135,7 @@ const Footer: React.FC = () => {
             {socialLinks.map(({ href, label, Icon }) => (
               <motion.a
                 key={label}
+                target="_blank"
                 href={href}
                 aria-label={label}
                 className="text-neutral-400 hover:text-purple-400 transition-colors"
