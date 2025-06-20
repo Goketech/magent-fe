@@ -53,7 +53,7 @@ const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
 
   } catch (error: any) {
     console.error("Error during login:", error);
-    const message = error.message || "An unexpected error occurred. Please try again later.";
+    const message = error?.message || "An unexpected error occurred. Please try again later.";
     toast({
       title: "Login Failed",
       description: message,
@@ -109,7 +109,7 @@ const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
               error={passwordError}
             />
             <div className="flex justify-end items-center mt-2">
-              <Link href="/forgotPassword" className="text-sm text-[#330065]">Forgot Password?</Link>
+              <Link href="/forgot-password" className="text-sm text-[#330065]">Forgot Password?</Link>
             </div>
             <div className="flex w-full flex-col justify-center items-center gap-4 mt-3">
               <button
