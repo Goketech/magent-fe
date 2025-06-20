@@ -81,7 +81,6 @@ const LandingHero = () => {
         }}
         whileHover={{ 
           scale: 1.05,
-          backgroundColor: "#475569", // Slightly lighter slate
           transition: { duration: 0.3 }
         }}
       >

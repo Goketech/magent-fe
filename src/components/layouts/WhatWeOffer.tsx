@@ -66,7 +66,7 @@ const OfferCard: React.FC<OfferCardProps> = ({
   return (
     <motion.div
       ref={cardRef}
-      className={`${className} relative bg-gradient-to-b from-[#7B7B7B1A] from-10% via-[#15151580] via-50% to-[#15151580] to-100% rounded-xl shadow-2xl h-[400px] md:h-full overflow-hidden group flex flex-col p-[4px]`}
+      className={`${className} relative bg-gradient-to-b from-[#7B7B7B1A] from-10% via-[#15151580] via-50% to-[#15151580] to-100% rounded-xl shadow-2xl h-[400px] md:h-full overflow-hidden group flex flex-col p-[2px]`}
       // Entrance animation
       initial={{ opacity: 0, y: 50, scale: 0.95 }}
       animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 50, scale: 0.95 }}
