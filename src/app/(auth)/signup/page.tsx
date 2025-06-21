@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useRef } from "react";
 import WelcomeBox from "@/components/layouts/WelcomeBox";
 import { ChevronRight } from "lucide-react";
 import FormInput from "@/components/layouts/FormInput";
@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Loading } from "@/components/ui/loading";
 import { apiClient } from "@/utils/apiClient";
+import ReCAPTCHA from "react-google-recaptcha";
 
 function page() {
   const [email, setEmail] = useState("");
@@ -26,14 +27,17 @@ function page() {
   const [selectedRole, setSelectedRole] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [roleError, setRoleError] = useState("");
-  const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useRouter();
   const [emailError, setEmailError] = useState("");
   const [userNameError, setUserNameError] = useState("");
   const [companyNameError, setCompanyNameError] = useState("");
   const [industryError, setIndustryError] = useState("");
   const [expertiseError, setExpertiseError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaError, setCaptchaError] = useState("");
+  const { toast } = useToast();
+  const navigate = useRouter();
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const clearAllErrors = () => {
     setEmailError("");
@@ -44,6 +48,7 @@ function page() {
     setCompanyNameError("");
     setIndustryError("");
     setExpertiseError("");
+    setCaptchaError("");
   };
 
   const validatePassword = (pass: string) => {
@@ -85,6 +90,18 @@ function page() {
     const newConfirmPassword = e.target.value;
     setConfirmPassword(newConfirmPassword);
     validateConfirmPassword(newConfirmPassword);
+  };
+
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
+    if (token) {
+      setCaptchaError("");
+    }
+  };
+
+  const handleCaptchaExpired = () => {
+    setCaptchaToken(null);
+    setCaptchaError("reCAPTCHA expired. Please verify again.");
   };
 
   const roleOptions = [
@@ -164,17 +181,6 @@ function page() {
 
     let hasError = false;
 
-    console.log(
-      email,
-      userName,
-      password,
-      confirmPassword,
-      role,
-      companyName,
-      industry,
-      expertise
-    );
-
     try {
       // ✅ Basic field validation
       if (!email) {
@@ -245,6 +251,11 @@ function page() {
         return;
       }
 
+      if (!captchaToken) {
+        setCaptchaError("Please complete the reCAPTCHA verification");
+        return;
+      }
+
       // ✅ Call API using apiClient
       const data = await apiClient("/auth/register", {
         method: "POST",
@@ -256,6 +267,7 @@ function page() {
           businessName: selectedRole === "Advertiser" ? companyName : undefined,
           industry: selectedRole === "Advertiser" ? industry : undefined,
           expertise: selectedRole === "Publisher" ? expertise : undefined,
+          captchaToken,
         },
       });
 
@@ -267,7 +279,7 @@ function page() {
         description: "Registration successful!",
       });
 
-      navigate.push("/login");
+      navigate.push("/dashboard");
     } catch (error: any) {
       // ✅ Handle error
       const errorMessage =
@@ -277,7 +289,10 @@ function page() {
         description: errorMessage,
       });
 
-      console.error("Registration error:", error);
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+      }
+      setCaptchaToken(null);
     } finally {
       setIsLoading(false);
     }
@@ -386,6 +401,20 @@ function page() {
                 error={confirmPasswordError}
                 showPasswordToggle
               />
+
+              <div className="flex flex-col gap-2">
+                <ReCAPTCHA
+                  ref={recaptchaRef}
+                  sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+                  onChange={handleCaptchaChange}
+                  onExpired={handleCaptchaExpired}
+                  theme="light"
+                />
+                {captchaError && (
+                  <span className="text-red-500 text-sm">{captchaError}</span>
+                )}
+              </div>
+
               <div className="flex flex-col justify-center items-center gap-4 mt-3">
                 <button
                   type="submit"
