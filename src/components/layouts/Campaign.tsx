@@ -23,6 +23,7 @@ import {
 } from "@/utils/transferCoin";
 import { capitalizeEachWord } from "@/utils/capitalize";
 import { apiClient } from "@/utils/apiClient";
+import { logEvent } from "@/utils/logEvent";
 
 const Campaign: React.FC = () => {
   const { toast } = useToast();
@@ -169,6 +170,13 @@ const Campaign: React.FC = () => {
     setCampaignCount(count);
   };
   const handleAddCampaign = async (campaignData: any) => {
+    logEvent({
+      action: "click",
+      category: "Button",
+      label: "Login",
+      value: 1,
+    });
+
     if (!jwt) {
       toast({
         variant: "destructive",

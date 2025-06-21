@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loading } from "@/components/ui/loading";
 import { apiClient } from "@/utils/apiClient";
 import ReCAPTCHA from "react-google-recaptcha";
+import { logEvent } from "@/utils/logEvent";
 
 function page() {
   const [email, setEmail] = useState("");
@@ -56,6 +57,13 @@ function page() {
         setCaptchaError("Please complete the reCAPTCHA verification");
         return;
       }
+
+      logEvent({
+        action: "click",
+        category: "Button",
+        label: "Login",
+        value: 1,
+      });
 
       const data = await apiClient("/auth/login", {
         method: "POST",
