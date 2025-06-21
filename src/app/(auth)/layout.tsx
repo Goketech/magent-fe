@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   description: "Your AI partner for smarter, faster marketing",
 };
 
-export default function RootLayout({
+export default function LoginLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
