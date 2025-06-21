@@ -279,7 +279,7 @@ function page() {
         description: "Registration successful!",
       });
 
-      navigate.push("/login");
+      navigate.push("/dashboard");
     } catch (error: any) {
       // ✅ Handle error
       const errorMessage =
