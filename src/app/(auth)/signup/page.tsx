@@ -13,6 +13,7 @@ import { Loading } from "@/components/ui/loading";
 import { apiClient } from "@/utils/apiClient";
 import ReCAPTCHA from "react-google-recaptcha";
 import { logEvent } from "@/utils/logEvent";
+import GoogleAuthButton from "@/components/GoogleAuthButton";
 
 function page() {
   const [email, setEmail] = useState("");
@@ -442,21 +443,12 @@ function page() {
                   <span>OR</span>
                   <span className="w-full h-[1px] bg-[#D7D7D7]"></span>
                 </div>
-                <button
-                  type="button"
-                  className="w-full bg-white text-[#212221] py-3 rounded-[32px] hover:bg-[#330065] hover:text-white border border-[#D7D7D7] transition-colors duration-200 flex justify-center items-center gap-2 mb-10"
-                >
-                  {" "}
-                  <span>
-                    <Image
-                      src="/google.svg"
-                      alt="google"
-                      width={20}
-                      height={20}
-                    />
-                  </span>
-                  Continue with google
-                </button>
+                <GoogleAuthButton
+                  isSignup={true}
+                  disabled={isLoading}
+                  signupData={{ role: "mvp" }}
+                  className="mb-4"
+                />
               </div>
             </form>
           </div>

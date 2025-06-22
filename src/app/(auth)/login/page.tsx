@@ -11,6 +11,7 @@ import { Loading } from "@/components/ui/loading";
 import { apiClient } from "@/utils/apiClient";
 import ReCAPTCHA from "react-google-recaptcha";
 import { logEvent } from "@/utils/logEvent";
+import GoogleAuthButton from "@/components/GoogleAuthButton";
 
 function page() {
   const [email, setEmail] = useState("");
@@ -178,6 +179,16 @@ function page() {
                     "Sign in"
                   )}
                 </button>
+                <div className="flex items-center gap-2 text-[#212221] text-sm w-full justify-center">
+                  <span className="w-full h-[1px] bg-[#D7D7D7]"></span>
+                  <span>OR</span>
+                  <span className="w-full h-[1px] bg-[#D7D7D7]"></span>
+                </div>
+                <GoogleAuthButton
+                  isSignup={false}
+                  disabled={loading}
+                  className="mb-4"
+                />
               </div>
             </form>
           </div>
