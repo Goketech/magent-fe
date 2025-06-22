@@ -81,23 +81,6 @@ function Content() {
 
   const handleDisconnectTwitter = async () => {
     try {
-      // const accessToken = localStorage.getItem("twitter_access_token");
-
-      // if (!accessToken) {
-      //   throw new Error("No access token found");
-      // }
-
-      // const response = await fetch("/api/auth/twitter/logout", {
-      //   method: "POST",
-      //   headers: {
-      //     Authorization: `Bearer ${accessToken}`,
-      //   },
-      // });
-
-      // if (!response.ok) {
-      //   throw new Error("Failed to disconnect Twitter");
-      // }
-
       localStorage.removeItem("twitter_access_token");
       updateStepData({
         socialMediaAccount: {

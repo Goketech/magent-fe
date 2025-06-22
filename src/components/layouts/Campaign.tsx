@@ -23,6 +23,7 @@ import {
 } from "@/utils/transferCoin";
 import { capitalizeEachWord } from "@/utils/capitalize";
 import { apiClient } from "@/utils/apiClient";
+import { logEvent } from "@/utils/logEvent";
 
 const Campaign: React.FC = () => {
   const { toast } = useToast();
@@ -52,52 +53,51 @@ const Campaign: React.FC = () => {
   const filters = useMemo(() => rawFilters, [rawFilters]);
 
   // Load campaigns from localStorage on component mount
-useEffect(() => {
-  const fetchCampaigns = async () => {
-    try {
-      const userCampaignsData = await apiClient("/campaign/user-campaigns", {
-        method: "GET",
-      });
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const userCampaignsData = await apiClient("/campaign/user-campaigns", {
+          method: "GET",
+        });
 
-      const campaigns: MyCampaignType[] = userCampaignsData.map(
-        (campaign: any) => ({
-          id: campaign._id,
-          campaignName: capitalizeEachWord(campaign.name),
-          campaignGoals: capitalizeEachWord(campaign.goals),
-          targetNumber: campaign.targetNumber,
-          campaignKPIs: capitalizeEachWord(campaign.kpi),
-          industry: capitalizeEachWord(campaign.industry),
-          valuePerUser: campaign.valuePerUser,
-          amount: Number(campaign.valuePerUserAmount),
-          totalLiquidity: campaign.totalLiquidity,
-          startDate: campaign.startDate,
-          endDate: campaign.endDate,
-          website: campaign.website,
-          twitter: campaign.xAccount,
-          youtube: campaign.youtube,
-          instagram: campaign.instagram,
-          telegram: campaign.telegram,
-          discord: campaign.discord,
-          otherResources: campaign.otherSocials,
-          otherInformation: campaign.otherInfo,
-          mediaFiles: campaign.media,
-          status: capitalizeEachWord(campaign.status),
-          createdAt: campaign.createdAt,
-          age: campaign.targetAudience.age,
-          gender: capitalizeEachWord(campaign.targetAudience.gender),
-          publishersCount: campaign.publisherCount,
-        })
-      );
+        const campaigns: MyCampaignType[] = userCampaignsData.map(
+          (campaign: any) => ({
+            id: campaign._id,
+            campaignName: capitalizeEachWord(campaign.name),
+            campaignGoals: capitalizeEachWord(campaign.goals),
+            targetNumber: campaign.targetNumber,
+            campaignKPIs: capitalizeEachWord(campaign.kpi),
+            industry: capitalizeEachWord(campaign.industry),
+            valuePerUser: campaign.valuePerUser,
+            amount: Number(campaign.valuePerUserAmount),
+            totalLiquidity: campaign.totalLiquidity,
+            startDate: campaign.startDate,
+            endDate: campaign.endDate,
+            website: campaign.website,
+            twitter: campaign.xAccount,
+            youtube: campaign.youtube,
+            instagram: campaign.instagram,
+            telegram: campaign.telegram,
+            discord: campaign.discord,
+            otherResources: campaign.otherSocials,
+            otherInformation: campaign.otherInfo,
+            mediaFiles: campaign.media,
+            status: capitalizeEachWord(campaign.status),
+            createdAt: campaign.createdAt,
+            age: campaign.targetAudience.age,
+            gender: capitalizeEachWord(campaign.targetAudience.gender),
+            publishersCount: campaign.publisherCount,
+          })
+        );
 
-      setUserCampaigns(campaigns);
-    } catch (error) {
-      console.error("Failed to fetch user campaigns:", error);
-    }
-  };
+        setUserCampaigns(campaigns);
+      } catch (error) {
+        console.error("Failed to fetch user campaigns:", error);
+      }
+    };
 
-  fetchCampaigns();
-}, []);
-
+    fetchCampaigns();
+  }, []);
 
   const handleFilterChange = (newFilters: FilterState) => {
     setRawFilters(newFilters);
@@ -170,6 +170,13 @@ useEffect(() => {
     setCampaignCount(count);
   };
   const handleAddCampaign = async (campaignData: any) => {
+    logEvent({
+      action: "click",
+      category: "Button",
+      label: "Login",
+      value: 1,
+    });
+
     if (!jwt) {
       toast({
         variant: "destructive",
@@ -216,18 +223,40 @@ useEffect(() => {
           description: "Failed to initiate transaction. Please try again.",
         });
         setIsCreatingCampaign(false);
+        console.log("Error creating transaction:", error);
         return;
       }
     };
 
-    // if (!transactionResponse.ok) {
-    //   toast({
-    //     variant: "destructive",
-    //     description: "Failed to initiate transaction. Please try again.",
-    //   });
-    //   setIsCreatingCampaign(false);
-    //   return;
-    // }
+    const updateTransactionStatus = async (
+      transactionId: string,
+      signature: string,
+      jwt: string | null,
+      setIsCreatingCampaign: (val: boolean) => void
+    ) => {
+      try {
+        const data = await apiClient(
+          "/transactions/update-transaction-status",
+          {
+            method: "POST",
+            body: {
+              transactionId,
+              status: "success",
+              signature,
+            },
+          }
+        );
+
+        return data;
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          description: "Failed to verify transaction. Please try again.",
+        });
+        setIsCreatingCampaign(false);
+        return;
+      }
+    };
 
     const transactionData = await createTransaction(
       amountToSend,
@@ -272,6 +301,13 @@ useEffect(() => {
         setIsCreatingCampaign(false);
         return;
       }
+
+      await updateTransactionStatus(
+        transactionId,
+        signature,
+        jwt,
+        setIsCreatingCampaign
+      );
     } catch (error) {
       console.error("Transaction Error:", error);
       toast({
@@ -284,35 +320,6 @@ useEffect(() => {
       setIsCreatingCampaign(false);
       return;
     }
-    const updateTransactionStatus = async (
-      transactionId: string,
-      signature: string,
-      jwt: string | null,
-      setIsCreatingCampaign: (val: boolean) => void
-    ) => {
-      try {
-        const data = await apiClient(
-          "/transactions/update-transaction-status",
-          {
-            method: "POST",
-            body: {
-              transactionId,
-              status: "success",
-              signature,
-            },
-          }
-        );
-
-        return data;
-      } catch (error) {
-        toast({
-          variant: "destructive",
-          description: "Failed to verify transaction. Please try again.",
-        });
-        setIsCreatingCampaign(false);
-        return;
-      }
-    };
 
     // if (!updateResponse.ok) {
     //   toast({

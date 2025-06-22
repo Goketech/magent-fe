@@ -33,14 +33,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  // Watch for wallet disconnection to clear JWT
-  useEffect(() => {
-    if (!connected) {
-      setJwt(null);
-      localStorage.removeItem("auth_token");
-    }
-  }, [connected]);
-
   const authenticate = async () => {
     if (!connected || !publicKey || !signMessage) {
       toast({
