@@ -132,7 +132,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
       <form onSubmit={handleSubmit} className="space-y-6">
         {visibleFields.map(field => (
           <DynamicField
-            key={field.id}
+            key={field._id}
             field={field}
             value={formData[field.id]}
             onChange={(value) => handleFieldChange(field.id, value)}

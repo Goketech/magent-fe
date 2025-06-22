@@ -64,7 +64,7 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
               </div>
               <div>
                 <p className="text-xs opacity-70 py-2">Total Publishers</p>
-                <p className="text-sm">{campaign?.publisherCount}</p>
+                <p className="text-sm">{campaign?.publishersCount}</p>
               </div>
             </div>
           </div>
@@ -145,7 +145,7 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Total Publisher</p>
               <p className="text-sm font-medium">
-                {`${campaign.publisherCount}` || "N/A"}
+                {`${campaign.publishersCount}` || "N/A"}
               </p>
             </div>
             <div className="flex justify-between">
@@ -199,6 +199,7 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
                 Accept
               </button>
             </div>
+            <div/>
           </div>
         </div>
 

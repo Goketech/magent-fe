@@ -31,12 +31,12 @@ export function validateFormData(fields: FormField[], data: FormSubmissionData) 
         // Sanitize HTML input
         data[field.id] = DOMPurify.sanitize(value);
         
-        if (field.validation.minLength && value.length < field.validation.minLength) {
-          errors[field.id] = `Minimum ${field.validation.minLength} characters required`;
-        }
-        if (field.validation.maxLength && value.length > field.validation.maxLength) {
-          errors[field.id] = `Maximum ${field.validation.maxLength} characters allowed`;
-        }
+        // if (field.validation.minLength && value.length < field.validation.minLength) {
+        //   errors[field.id] = `Minimum ${field.validation.minLength} characters required`;
+        // }
+        // if (field.validation.maxLength && value.length > field.validation.maxLength) {
+        //   errors[field.id] = `Maximum ${field.validation.maxLength} characters allowed`;
+        // }
         break;
         
       case 'number':

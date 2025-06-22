@@ -5,7 +5,7 @@ import { TextField } from '../form-builder/FieldComponents/TextField';
 import { RadioField } from '../form-builder/FieldComponents/RadioField';
 import { SliderField } from '../form-builder/FieldComponents/SliderField';
 import { SelectField } from '../form-builder/FieldComponents/SelectField';
-import { CheckboxField } from '../form-builder/FieldComponents/CheckBoxField';
+import { CheckboxField } from '../form-builder/FieldComponents/CheckboxField';
 // ... import other field components
 
 interface DynamicFieldProps {

@@ -1,32 +1,40 @@
 import { MdArrowBackIos } from "react-icons/md";
 import Image from "next/image";
+import { Campaign, MyCampaign } from "@/lib/types";
+import { useRouter } from "next/navigation";
+// import { MyCampaign } from "@/lib/types";
 
-interface Campaign {
-  _id: number;
-  name: string;
-  campaignName: string;
-  goals: string;
-  kpis: string;
-  industry: string;
-  status: string;
-  startDate?: number;
-  endDate?: number;
-  targetNumber?: string;
-  ageRange?: string;
-  cpc?: string;
-  totalLiquidity?: string;
-  totalPublishers?: number;
-  mediaImage?: string;
-  // Add any other optional fields you need
-}
+// interface Campaign {
+//   _id: number;
+//   name: string;
+//   campaignName: string;
+//   goals: string;
+//   kpis: string;
+//   industry: string;
+//   status: string;
+//   startDate?: number;
+//   endDate?: number;
+//   targetNumber?: string;
+//   ageRange?: string;
+//   cpc?: string;
+//   totalLiquidity?: string;
+//   totalPublishers?: number;
+//   mediaImage?: string;
+//   // Add any other optional fields you need
+// }
 
 interface CampaignDetailsProps {
-  campaign: Campaign;
+  campaign: MyCampaign;
   onBack: () => void;
   onAccept: (id: number) => void;
 }
 
-const CampaignDetails: React.FC<CampaignDetailsProps> = ({ campaign, onBack, onAccept }) => {
+const CampaignDetails: React.FC<CampaignDetailsProps> = ({
+  campaign,
+  onBack,
+  onAccept,
+}) => {
+  const router = useRouter();
   return (
     <div className="w-full p-4 bg-white rounded-md shadow">
       {/* Header with back button */}
@@ -44,7 +52,8 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({ campaign, onBack, onA
       <div
         className="rounded-lg p-4 mb-6 text-white relative overflow-hidden"
         style={{
-          backgroundImage: "url('/details.png'), linear-gradient(#330065, #330065)",
+          backgroundImage:
+            "url('/details.png'), linear-gradient(#330065, #330065)",
           backgroundSize: "contain",
           backgroundRepeat: "repeat",
           backgroundBlendMode: "overlay",
@@ -52,25 +61,33 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({ campaign, onBack, onA
       >
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-xl font-semibold mb-1">{campaign.name}</h2>
-            <div className="grid grid-cols-3 gap-10 mt-2">
+            <h2 className="text-xl font-semibold mb-1">
+              {campaign.campaignName}
+            </h2>
+            <div className="grid grid-cols-4 gap-10 mt-2">
               <div>
                 <p className="text-xs opacity-70 py-2">Campaign Goal</p>
-                <p className="text-sm">{campaign.goals}</p>
+                <p className="text-sm">{campaign.campaignGoals}</p>
               </div>
               <div>
                 <p className="text-xs opacity-70 py-2">Campaign KPIs</p>
-                <p className="text-sm">{campaign.kpis}</p>
+                <p className="text-sm">
+                  {campaign.campaignKPIs === "" ? "N/A" : campaign.campaignKPIs}
+                </p>
               </div>
               <div>
                 <p className="text-xs opacity-70 py-2">Total Publishers</p>
-                <p className="text-sm">{campaign.totalPublishers || 12}</p>
+                <p className="text-sm">{campaign.publishersCount || 12}</p>
+              </div>
+              <div>
+                <p className="text-xs opacity-70 py-2">Target Number</p>
+                <p className="text-sm">{campaign.targetNumber}</p>
               </div>
             </div>
           </div>
-          <div className='absolute top-0 right-0'>
+          <div className="absolute top-0 right-0">
             <span className="bg-[#FCF4E7] text-[#DD900D] text-xs px-6 py-2 rounded-bl-md">
-              {campaign.status || 'Pending'}
+              {campaign.status || "Pending"}
             </span>
           </div>
         </div>
@@ -85,14 +102,41 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({ campaign, onBack, onA
             {[
               { label: "Campaign Name", value: campaign.campaignName },
               { label: "Industry", value: campaign.industry },
-              { label: "Campaign Goal", value: campaign.goals },
-              { label: "Campaign KPIs", value: campaign.kpis },
-              { label: "Target Number", value: campaign.targetNumber || '1000' },
-              { label: "Target Audience", value: campaign.ageRange || 'Age 18-34' },
-              { label: "Campaign Duration", value: campaign.name }, // This seems incorrect - should probably be duration?
-              { label: "Value Per User", value: `CPC: $${campaign.cpc || '0.75'} per engagement` },
-              { label: "Total Liquidity", value: campaign.totalLiquidity || '$1,000 USDC' },
-              { label: "Total Publishers", value: campaign.totalPublishers || '12' },
+              { label: "Campaign Goal", value: campaign.campaignGoals },
+              {
+                label: "Campaign KPIs",
+                value:
+                  campaign.campaignKPIs === "" ? "N/A" : campaign.campaignKPIs,
+              },
+              {
+                label: "Target Number",
+                value: campaign.targetNumber || "1000",
+              },
+              { label: "Target Audience", value: campaign.age },
+              {
+                label: "Campaign Duration",
+                value:
+                  campaign.createdAt && campaign.endDate
+                    ? `${new Date(campaign.createdAt).toLocaleDateString(
+                        "en-US",
+                        { month: "short", day: "numeric" }
+                      )} - ${new Date(campaign.endDate).toLocaleDateString(
+                        "en-US",
+                        { month: "short", day: "numeric" }
+                      )}`
+                    : "N/A",
+              }, // This seems incorrect - should probably be duration?
+              {
+                label: "Value Per User",
+                value: `CPC: $${
+                  campaign.valuePerUser || "0.75"
+                } per engagement`,
+              },
+              {
+                label: "Total Liquidity",
+                value: campaign.totalLiquidity || "$1,000 USDC",
+              },
+              { label: "Total Publishers", value: campaign.publishersCount },
             ].map((item, index) => (
               <div key={index} className="flex justify-between">
                 <p className="text-sm text-gray-600">{item.label}</p>
@@ -102,11 +146,21 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({ campaign, onBack, onA
           </div>
 
           <div className="mt-6">
-            <button 
-              className="bg-purple-800 text-white px-6 py-2 rounded-md text-sm hover:bg-purple-900 transition-colors"
+            <button
+              className="bg-purple-800 text-white px-6 py-2 rounded-md text-sm hover:bg-red-900 transition-colors"
               onClick={() => onAccept(campaign._id)}
             >
               Accept
+            </button>
+          </div>
+          <div className="mt-6">
+            <button
+              className="bg-purple-800 text-white px-6 py-2 rounded-md text-sm hover:bg-red-900 transition-colors"
+              onClick={() =>
+                router.push(`/form/?campaignId=${campaign.id}`)
+              }
+            >
+              Create Form
             </button>
           </div>
         </div>
@@ -115,8 +169,8 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({ campaign, onBack, onA
         <div>
           <h3 className="text-lg font-medium mb-4">Media</h3>
           <div className="bg-gray-100 rounded-lg overflow-hidden">
-            <Image 
-              src={campaign.mediaImage || "/details-image.png"} 
+            <Image
+              src={campaign.mediaImage || "/details-image.png"}
               alt="Campaign media"
               width={355}
               height={207}
@@ -125,9 +179,12 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({ campaign, onBack, onA
           </div>
           <div className="flex mt-4 gap-2">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-12 w-12 bg-gray-200 rounded-md overflow-hidden">
-                <Image 
-                  src={campaign.mediaImage || "/details-image.png"} 
+              <div
+                key={i}
+                className="h-12 w-12 bg-gray-200 rounded-md overflow-hidden"
+              >
+                <Image
+                  src={campaign.mediaImage || "/details-image.png"}
                   alt="Campaign thumbnail"
                   width={48}
                   height={48}

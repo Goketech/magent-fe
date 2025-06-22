@@ -54,7 +54,7 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
                 name={field.id}
                 type="checkbox"
                 value={option.value}
-                checked={value.includes(String(option.value))}
+                // checked={value.includes(String(option.value))}
                 onChange={handleChange}
                 disabled={disabled}
                 className={`
@@ -62,7 +62,7 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({
                   ${disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"}
                   ${error ? "border-red-500" : ""}
                 `}
-                required={field.required && value.length === 0}
+                // required={field.required && value.length === 0}
               />
               <label
                 htmlFor={`${field.id}-${index}`}

@@ -41,8 +41,8 @@ export const TextField: React.FC<TextFieldProps> = ({
           disabled={disabled}
           className={`${baseClassName} resize-vertical min-h-[100px]`}
           rows={field.config.rows || 4}
-          minLength={field.validation.minLength}
-          maxLength={field.validation.maxLength}
+          // minLength={field.validation.minLength}
+          // maxLength={field.validation.maxLength}
           style={field.config.style}
         />
       );
@@ -58,11 +58,11 @@ export const TextField: React.FC<TextFieldProps> = ({
         required={field.required}
         disabled={disabled}
         className={baseClassName}
-        minLength={field.validation.minLength}
-        maxLength={field.validation.maxLength}
-        min={field.type === 'number' ? field.validation.min : undefined}
-        max={field.type === 'number' ? field.validation.max : undefined}
-        pattern={field.validation.pattern}
+        // minLength={field.validation.minLength}
+        // maxLength={field.validation.maxLength}
+        // min={field.type === 'number' ? field.validation.min : undefined}
+        // max={field.type === 'number' ? field.validation.max : undefined}
+        // pattern={field.validation.pattern}
         style={field.config.style}
       />
     );

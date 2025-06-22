@@ -73,6 +73,7 @@ export interface ConditionalLogic {
 
 export interface FormField {
   id: string;
+  _id?: string;
   type: FieldType;
   label: string;
   placeholder?: string;
