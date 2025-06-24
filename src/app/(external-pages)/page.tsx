@@ -1,11 +1,20 @@
 "use client";
 import { useState, FormEvent } from "react";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loading } from "@/components/ui/loading";
 import OfferCard from "@/components/layouts/OfferCard";
 import { useToast } from "@/hooks/use-toast";
 import { Check } from "lucide-react";
+import LandingHero from "@/components/layouts/LandingHero";
+import WhatWeOffer from "@/components/layouts/WhatWeOffer";
+import WhyMagent from "@/components/layouts/WhyMagent";
+// import Pricing from "@/components/layouts/Pricing";
+import CustomerMarket from "@/components/layouts/CustomerMarket";
+import Newsletter from "@/components/layouts/Newsletter";
+import News from "@/components/layouts/News";
 
 export default function Home() {
   const { toast } = useToast();
@@ -78,8 +87,15 @@ export default function Home() {
 
   return (
     <div className="max-w-screen-2xl 2xl:mx-auto">
-      <div className="min-h-screen flex flex-col md:flex-row gap-[60px] md:gap-0 md:justify-between px-[20px] mt-[40px] md:mt-0 md:px-[80px] items-center">
-        <div className="max-w-[581px] text-white ">
+      <div className="min-h-screen gap-[60px] px-[20px] mt-[40px] space-y-[30px] md:space-y-[50px]">
+        <LandingHero />
+        <WhatWeOffer/>
+        <WhyMagent/>
+        {/* <Pricing/> */}
+        <CustomerMarket/>
+        <News/>
+        <Newsletter/>
+        {/* <div className="max-w-[581px] text-white ">
           <h1 className="text-[30px] md:text-[60px] font-[800] leading-[38.4px] md:leading-[72px]">
             Your AI partner for smarter, faster <br className="md:hidden" />{" "}
             marketing
@@ -90,8 +106,8 @@ export default function Home() {
             engagement, save time, and drive results—all with the power of AI at
             your fingertips.
           </p>
-        </div>
-        <div className="w-full md:w-[464px] relative p-[0.5px] rounded-[12px] bg-gradient-border shadow-2xl shadow-[#AEDDFF]">
+        </div> */}
+        {/* <div className="w-full md:w-[464px] relative p-[0.5px] rounded-[12px] bg-gradient-border shadow-2xl shadow-[#AEDDFF]">
           <form
             className="rounded-[12px] text-white bg-background px-[20px] py-[24px]"
             onSubmit={handleSubmit}
@@ -131,9 +147,9 @@ export default function Home() {
               {loading ? <Loading width="20" height="40" /> : "Join Waitlist"}
             </Button>
           </form>
-        </div>
+        </div> */}
       </div>
-      <div className="px-[20px] md:px-[80px] mb-[160px]">
+      {/* <div className="px-[20px] md:px-[80px] mb-[160px]">
         <span className="text-[13px] font-[600] leading-19.5px] px-[12px] py-[2px] bg-[#FFFFFF] rounded-[32px]">
           What we offer
         </span>
@@ -211,7 +227,7 @@ export default function Home() {
             text="Why switch across multiple tabs, when you can integrate, execute, view, optimize and manage every digital marketing activities all in one place."
           />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
