@@ -8,11 +8,11 @@ export function validateFormData(fields: FormField[], data: FormSubmissionData) 
   const errors: Record<string, string> = {};
   
   for (const field of fields) {
-    const value = data[field.id];
+    const value = data[field._id];
     
     // Required field validation
     if (field.required && (!value || value === '')) {
-      errors[field.id] = `${field.label} is required`;
+      errors[field._id] = `${field.label} is required`;
       continue;
     }
     
@@ -22,14 +22,14 @@ export function validateFormData(fields: FormField[], data: FormSubmissionData) 
     switch (field.type) {
       case 'email':
         if (!validator.isEmail(value)) {
-          errors[field.id] = 'Please enter a valid email address';
+          errors[field._id] = 'Please enter a valid email address';
         }
         break;
         
       case 'text':
       case 'textarea':
         // Sanitize HTML input
-        data[field.id] = DOMPurify.sanitize(value);
+        data[field._id] = DOMPurify.sanitize(value);
         
         // if (field.validation.minLength && value.length < field.validation.minLength) {
         //   errors[field.id] = `Minimum ${field.validation.minLength} characters required`;
@@ -43,13 +43,13 @@ export function validateFormData(fields: FormField[], data: FormSubmissionData) 
       case 'slider':
         const numValue = Number(value);
         if (isNaN(numValue)) {
-          errors[field.id] = 'Please enter a valid number';
+          errors[field._id] = 'Please enter a valid number';
         } else {
           if (field.validation.min !== undefined && numValue < field.validation.min) {
-            errors[field.id] = `Minimum value is ${field.validation.min}`;
+            errors[field._id] = `Minimum value is ${field.validation.min}`;
           }
           if (field.validation.max !== undefined && numValue > field.validation.max) {
-            errors[field.id] = `Maximum value is ${field.validation.max}`;
+            errors[field._id] = `Maximum value is ${field.validation.max}`;
           }
         }
         break;

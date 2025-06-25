@@ -47,6 +47,7 @@ export interface MyCampaign extends BaseCampaign {
   twitter?: string;
   instagram?: string;
   media?: File[];
+  feedbackFormId?: string;
   kpis?: string; // Optional in MyCampaign
 }
 

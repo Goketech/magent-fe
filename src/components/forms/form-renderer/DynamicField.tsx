@@ -6,7 +6,6 @@ import { RadioField } from '../form-builder/FieldComponents/RadioField';
 import { SliderField } from '../form-builder/FieldComponents/SliderField';
 import { SelectField } from '../form-builder/FieldComponents/SelectField';
 import { CheckboxField } from '../form-builder/FieldComponents/CheckboxField';
-// ... import other field components
 
 interface DynamicFieldProps {
   field: FormField;
@@ -21,6 +20,16 @@ export const DynamicField: React.FC<DynamicFieldProps> = ({
   onChange,
   error
 }) => {
+  // Debug logging - remove this once you find the issue
+  console.log(`Field ${field._id}:`, {
+    type: field.type,
+    label: field.label,
+    value: value,
+    valueType: typeof value,
+    options: field.options,
+    field: field
+  });
+
   const commonProps = {
     field,
     value,
@@ -50,6 +59,7 @@ export const DynamicField: React.FC<DynamicFieldProps> = ({
     // case 'number':
     //   return <NumberField {...commonProps} />;
     default:
+      console.warn(`Unsupported field type: ${field.type}`);
       return <div>Unsupported field type: {field.type}</div>;
   }
 };

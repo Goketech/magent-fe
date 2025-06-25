@@ -46,8 +46,10 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
   });
 
   const addField = useCallback((fieldType: FieldType) => {
+    const uuid = generateUUID();
     const newField: FormField = {
-      id: generateUUID(),
+      id: uuid,
+      _id: uuid,
       type: fieldType,
       label: `New ${fieldType} Field`,
       required: false,
@@ -193,7 +195,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
                 <button
                   onClick={handleSave}
                   disabled={!state.title.trim()}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-2 bg-[330065] text-white rounded-md hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                 >
                   Publish Form
                 </button>

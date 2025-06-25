@@ -33,7 +33,7 @@ export const TextField: React.FC<TextFieldProps> = ({
     if (field.type === 'textarea') {
       return (
         <textarea
-          id={field.id}
+          id={field._id}
           value={value || ''}
           onChange={handleChange}
           placeholder={field.placeholder || field.config.placeholder}
@@ -50,7 +50,7 @@ export const TextField: React.FC<TextFieldProps> = ({
 
     return (
       <input
-        id={field.id}
+        id={field._id}
         type={field.type === 'email' ? 'email' : field.type === 'number' ? 'number' : 'text'}
         value={value || ''}
         onChange={handleChange}
@@ -70,7 +70,7 @@ export const TextField: React.FC<TextFieldProps> = ({
 
   return (
     <div className="mb-4">
-      <label htmlFor={field.id} className="block text-sm font-medium text-gray-700 mb-1">
+      <label htmlFor={field._id} className="block text-sm font-medium text-gray-700 mb-1">
         {field.label}
         {field.required && <span className="text-red-500 ml-1">*</span>}
       </label>

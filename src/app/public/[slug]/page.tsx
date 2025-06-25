@@ -56,6 +56,7 @@ export default function PublicFormPage(props: PublicFormPageProps) {
 
     fetchForm();
   }, [slug]);
+  console.log("form", form);
 
   const handleSubmit = async (data: FormSubmissionData) => {
     try {

@@ -74,6 +74,7 @@ const Campaign: React.FC = () => {
             totalLiquidity: campaign.totalLiquidity,
             startDate: campaign.startDate,
             endDate: campaign.endDate,
+            feedbackFormId: campaign.feedbackFormId,
             website: campaign.website,
             twitter: campaign.xAccount,
             youtube: campaign.youtube,
@@ -90,6 +91,7 @@ const Campaign: React.FC = () => {
             publishersCount: campaign.publisherCount,
           })
         );
+        console.log(userCampaignsData)
 
         setUserCampaigns(campaigns);
       } catch (error) {
@@ -99,6 +101,7 @@ const Campaign: React.FC = () => {
 
     fetchCampaigns();
   }, []);
+  console.log(userCampaigns)
 
   const handleFilterChange = (newFilters: FilterState) => {
     setRawFilters(newFilters);

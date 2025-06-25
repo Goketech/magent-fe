@@ -42,10 +42,10 @@ export const RadioField: React.FC<RadioFieldProps> = ({
         
         <div className="space-y-2">
           {options.map((option, index) => (
-            <div key={`${field.id}-${index}`} className="flex items-center">
+            <div key={`${field._id}-${index}`} className="flex items-center">
               <input
-                id={`${field.id}-${index}`}
-                name={field.id}
+                id={`${field._id}-${index}`}
+                name={field._id}
                 type="radio"
                 value={option.value}
                 checked={value === option.value}
@@ -59,7 +59,7 @@ export const RadioField: React.FC<RadioFieldProps> = ({
                 required={field.required}
               />
               <label
-                htmlFor={`${field.id}-${index}`}
+                htmlFor={`${field._id}-${index}`}
                 className={`
                   ml-3 block text-sm text-gray-900
                   ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
