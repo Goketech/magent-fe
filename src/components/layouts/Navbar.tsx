@@ -272,6 +272,7 @@ const Navbar = () => {
             exit="hidden"
           >
             <div className="flex flex-col items-center justify-center h-full space-y-8">
+              {/* Home Link */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -286,11 +287,42 @@ const Navbar = () => {
                 </Link>
               </motion.div>
 
-              <motion.div
-                className="flex gap-0.5"
+              {/* Menu Items from Desktop Data */}
+              {menuData.map((menu, index) => (
+                <motion.div
+                  key={menu.title}
+                  className="flex flex-col items-center space-y-3"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 + (index + 1) * 0.1 }}
+                >
+                  {/* Menu Title */}
+                  <h3 className="text-xl font-semibold text-primary">
+                    {menu.title}
+                  </h3>
+                  
+                  {/* Menu Items */}
+                  <div className="flex flex-col items-center space-y-2">
+                    {menu.items.map((item) => (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className="text-white hover:text-primary transition-colors duration-200 text-center"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+
+              {/* Social Media Buttons */}
+              {/* <motion.div
+                className="flex gap-2 flex-wrap justify-center"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
+                transition={{ delay: 0.1 + (menuData.length + 1) * 0.1 }}
               >
                 <Link href="https://discord.gg/r42PDfh2Xc">
                   <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px]">
@@ -312,12 +344,13 @@ const Navbar = () => {
                     <span>Linkedin</span>
                   </Button>
                 </Link>
-              </motion.div>
+              </motion.div> */}
 
-              <motion.div
+              {/* Contact Sales */}
+              {/* <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.1 + (menuData.length + 2) * 0.1 }}
               >
                 <Link
                   href="mailto:hellomagent@gmail.com"
@@ -326,30 +359,25 @@ const Navbar = () => {
                 >
                   Contact Sales
                 </Link>
-              </motion.div>
+              </motion.div> */}
 
+              {/* Auth Buttons */}
               <motion.div
+                className="flex flex-col items-center space-y-4"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
+                transition={{ delay: 0.1 + (menuData.length + 3) * 0.1 }}
               >
                 <Link href="/login">
-                  <Button className="bg-[#242424] px-[16px] py-[12px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px] border border-white">
-                    Login
-                  </Button>
-                </Link>
-              </motion.div>
-
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Link href="/signup">
-                  <Button className="bg-[#242424] px-[16px] py-[12px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px] border border-white">
-                    Sign Up
-                  </Button>
-                </Link>
+                <Button className="bg-white px-[3rem] py-[10px] rounded-md text-[#010101] font-[500] text-[14px] leading-[21px] border border-white">
+                  Login
+                </Button>
+              </motion.div>
+            </Link>
               </motion.div>
             </div>
           </motion.div>
