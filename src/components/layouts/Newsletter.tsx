@@ -1,6 +1,9 @@
 import React, { useRef, useState } from "react";
 import { motion, useInView, Variants } from "framer-motion";
-// import NewsletterCubes from './NewsletterCubes'; // Import the new component
+import { useToast } from "@/hooks/use-toast";
+
+import { apiClient } from "@/utils/apiClient";
+
 
 const ArrowRightIcon: React.FC<{ className?: string }> = ({
   className = "w-5 h-5",
@@ -20,25 +23,48 @@ const ArrowRightIcon: React.FC<{ className?: string }> = ({
 );
 
 const Newsletter: React.FC = () => {
+  const { toast } = useToast();
+
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Basic email validation
+
     if (email && email.includes("@")) {
-      console.log("Newsletter signup:", email);
-      setSubmitted(true);
-      // Here you would typically send the email to a backend service
-      // For now, we just log it and show a success message.
-      setTimeout(() => {
-        setSubmitted(false);
-        setEmail("");
-      }, 3000);
+      try {
+        // Call your API
+        await apiClient("/newsletter/register", {
+          method: "POST",
+          body: { email },
+        });
+
+        // Show success toast
+        toast({
+          variant: "success",
+          description: "You have successfully subscribed to the newsletter!",
+        });
+
+        // Reset after 3s
+        setSubmitted(true);
+        setTimeout(() => {
+          setSubmitted(false);
+          setEmail("");
+        }, 3000);
+      } catch (error) {
+        console.error("Error registering for newsletter:", error);
+        toast({
+          variant: "destructive",
+          description: "Something went wrong. Please try again.",
+        });
+      }
     } else {
-      alert("Please enter a valid email address.");
+      toast({
+        variant: "destructive",
+        description: "Please enter a valid email address.",
+      });
     }
   };
 

@@ -8,6 +8,7 @@ interface BaseCampaign {
   status: string;
   startDate?: number;
   endDate?: number;
+  createdAt?: number;
   targetNumber?: string;
   totalLiquidity?: string;
   mediaImage?: string;
@@ -19,6 +20,8 @@ export interface Campaign extends BaseCampaign {
   campaignGoals: string;
   kpis: string;
   ageRange?: string;
+  valuePerUser: string;
+  valuePerUserAmount: number;
   cpc?: string;
   totalPublishers?: number;
   advertiser: unknown; // This is the key distinguishing property
@@ -28,11 +31,13 @@ export interface Campaign extends BaseCampaign {
 export interface MyCampaign extends BaseCampaign {
   campaignName: string;
   campaignGoals: string;
+  campaignKPIs?: string;
   age?: string;
   gender?: string;
-  valuePerUser?: string;
+  valuePerUser: string;
   website?: string;
-  publisherCount? : number;
+  publishersCount? : number;
+  publisherCount?: number;
   valuePerUserAmount:number;
   amount?: string;
   targetAudience?: {
@@ -43,14 +48,16 @@ export interface MyCampaign extends BaseCampaign {
   twitter?: string;
   instagram?: string;
   media?: File[];
+  feedbackFormId?: string;
+  feedbackFormUrl?: string;
   kpis?: string; // Optional in MyCampaign
 }
 
 // Simple type guard functions
-export function isCampaign(campaign: Campaign | MyCampaign): campaign is Campaign {
-  return 'advertiser' in campaign;
-}
+// export function isCampaign(campaign: Campaign | MyCampaign): campaign is Campaign {
+//   return 'advertiser' in campaign;
+// }
 
-export function isMyCampaign(campaign: Campaign | MyCampaign): campaign is MyCampaign {
-  return !('advertiser' in campaign);
-}
+// export function isMyCampaign(campaign: Campaign | MyCampaign): campaign is MyCampaign {
+//   return !('advertiser' in campaign);
+// }

@@ -10,7 +10,6 @@ import MyCampaignDetails from "./MyCampaignDetails";
 import EmptyState from "./EmptyState";
 import {
   Campaign as CampaignType,
-  isCampaign,
   MyCampaign as MyCampaignType,
 } from "../../lib/types";
 import { useAuth } from "@/context/AuthProvider";
@@ -43,8 +42,10 @@ const Campaign: React.FC = () => {
     "marketplace"
   );
   const [selectedCampaign, setSelectedCampaign] = useState<
-    CampaignType | MyCampaignType | null
+    CampaignType | null
   >(null);
+  const [selectedUserCampaign, setSelectedUserCampaign] =
+    useState<MyCampaignType | null>(null);
   const [createCampaign, setCreateCampaign] = useState<boolean>(false);
   const [userCampaigns, setUserCampaigns] = useState<MyCampaignType[]>([]);
   const [isCreatingCampaign, setIsCreatingCampaign] = useState(false);
@@ -73,6 +74,8 @@ const Campaign: React.FC = () => {
             totalLiquidity: campaign.totalLiquidity,
             startDate: campaign.startDate,
             endDate: campaign.endDate,
+            feedbackFormId: campaign.feedbackFormId,
+            feedbackFormUrl: campaign.feedbackFormUrl,
             website: campaign.website,
             twitter: campaign.xAccount,
             youtube: campaign.youtube,
@@ -89,6 +92,7 @@ const Campaign: React.FC = () => {
             publishersCount: campaign.publisherCount,
           })
         );
+        console.log(userCampaignsData)
 
         setUserCampaigns(campaigns);
       } catch (error) {
@@ -103,10 +107,15 @@ const Campaign: React.FC = () => {
     setRawFilters(newFilters);
   };
 
-  const handleViewDetails = (campaign: CampaignType | MyCampaignType | any) => {
+  const handleViewDetails = (campaign: CampaignType | any) => {
+    setSelectedUserCampaign(null);
     setSelectedCampaign(campaign);
   };
-  console.log("Selected Campaign:", selectedCampaign);
+  const handleViewDetailsUserCampaign = (campaign: MyCampaignType | any) => {
+    setSelectedCampaign;
+    setSelectedUserCampaign(campaign);
+  };
+  // console.log("Selected Campaign:", selectedUserCampaign);
 
   const handleCreateCampaign = () => {
     setCreateCampaign(true);
@@ -119,6 +128,11 @@ const Campaign: React.FC = () => {
   const handleBack = () => {
     setSelectedCampaign(null);
   };
+
+  const handleBackUserCampaign = () => {
+    setSelectedUserCampaign(null);
+  };
+  
 
   const handleAccept = (id: number) => {
     // console.log(`Accepting campaign ${id}`);
@@ -412,55 +426,59 @@ const Campaign: React.FC = () => {
     // Exit create campaign view
     setCreateCampaign(false);
   };
+  // if (!selectedCampaign) return null;
+
 
   return (
     <div className="container mx-auto px-2 mt-[-2.5rem]">
-      {selectedCampaign ? (
-        isCampaign(selectedCampaign) ? (
-          <CampaignDetails
-            campaign={selectedCampaign}
-            onBack={handleBack}
-            onAccept={handleAccept}
-          />
-        ) : (
-          <MyCampaignDetails campaign={selectedCampaign} onBack={handleBack} />
-        )
-      ) : createCampaign ? (
-        <CreateCampaign
-          handleGoBack={handleCreateBack}
-          onCampaignCreate={handleAddCampaign}
-        />
+  {selectedCampaign ? (
+    <MyCampaignDetails
+      campaign={selectedCampaign}
+      onBack={handleBack}
+    />
+  ) : selectedUserCampaign ? (
+    <CampaignDetails
+      campaign={selectedUserCampaign}
+      onBack={handleBackUserCampaign}
+      onAccept={handleAccept}
+    />
+  ) : createCampaign ? (
+    <CreateCampaign
+      handleGoBack={handleCreateBack}
+      onCampaignCreate={handleAddCampaign}
+    />
+  ) : (
+    <>
+      <CampaignHead
+        handleCreateCampaign={handleCreateCampaign}
+        activeView={activeView}
+        setActiveView={setActiveView}
+      />
+      {(activeView === "marketplace" && campaignCount > 0) ||
+      (activeView === "myCampaigns" && userCampaigns.length > 0) ? (
+        <CampaignFilter onFilterChange={handleFilterChange} />
       ) : (
-        <>
-          <CampaignHead
-            handleCreateCampaign={handleCreateCampaign}
-            activeView={activeView}
-            setActiveView={setActiveView}
-          />
-          {(activeView === "marketplace" && campaignCount > 0) ||
-          (activeView === "myCampaigns" && userCampaigns.length > 0) ? (
-            <CampaignFilter onFilterChange={handleFilterChange} />
-          ) : (
-            ""
-          )}
-          {activeView === "marketplace" ? (
-            <CampaignLists
-              activeFilters={filters}
-              onViewDetails={handleViewDetails}
-              onCampaignCountChange={handleCampaignCountChange}
-            />
-          ) : userCampaigns.length === 0 ? (
-            <EmptyState onCreateCampaign={handleCreateCampaign} />
-          ) : (
-            <MyCampaignLists
-              activeFilters={filters}
-              onViewDetails={handleViewDetails}
-              campaigns={userCampaigns}
-            />
-          )}
-        </>
+        ""
       )}
-    </div>
+      {activeView === "marketplace" ? (
+        <CampaignLists
+          activeFilters={filters}
+          onViewDetails={handleViewDetails}
+          onCampaignCountChange={handleCampaignCountChange}
+        />
+      ) : userCampaigns.length === 0 ? (
+        <EmptyState onCreateCampaign={handleCreateCampaign} />
+      ) : (
+        <MyCampaignLists
+          activeFilters={filters}
+          onViewDetails={handleViewDetailsUserCampaign}
+          campaigns={userCampaigns}
+        />
+      )}
+    </>
+  )}
+</div>
+
   );
 };
 

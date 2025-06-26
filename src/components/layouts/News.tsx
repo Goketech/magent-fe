@@ -117,7 +117,8 @@ const News: React.FC = () => {
   };
   
   const sliderSettings = {
-    // dots: true,
+    dots: true,
+    arrows: true,
     infinite: true,
     speed: 3000,
     slidesToShow: 3,
@@ -125,7 +126,6 @@ const News: React.FC = () => {
     autoplay: true,
     autoplaySpeed: 1000,
     pauseOnHover: true,
-    arrows: false,
     responsive: [
       {
         breakpoint: 1024, 
