@@ -50,7 +50,10 @@ export default function FormBuilderClientWrapper({
       description: "Form Published successfully!",
     });
     
-    console.log("Form saved:", response);
+    toast({
+          variant: "success",
+          description: "Form saved successfully.",
+        });
     
     
   } catch (error) {
@@ -64,8 +67,6 @@ export default function FormBuilderClientWrapper({
 }, [toast]); // Add toast to dependencies if it comes from a hook
 
   const handlePreview = useCallback(() => {
-    console.log("Preview triggered");
-    // Could navigate to preview page if desired
   }, []);
 
   // Handle case where no campaignId is provided

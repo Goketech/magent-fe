@@ -4,7 +4,6 @@ import { useToast } from "@/hooks/use-toast";
 
 import { apiClient } from "@/utils/apiClient";
 
-// import NewsletterCubes from './NewsletterCubes'; // Import the new component
 
 const ArrowRightIcon: React.FC<{ className?: string }> = ({
   className = "w-5 h-5",
@@ -62,7 +61,10 @@ const Newsletter: React.FC = () => {
         });
       }
     } else {
-      alert("Please enter a valid email address.");
+      toast({
+        variant: "destructive",
+        description: "Please enter a valid email address.",
+      });
     }
   };
 

@@ -48,7 +48,6 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
 
   useEffect(() => {
     const fetchFormAnalytics = async () => {
-      console.log(campaign);
       try {
         setIsLoading(true); // Add this
         const data = await apiClient(`/form/${campaign.feedbackFormId}/analytics`, {
@@ -56,7 +55,10 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
         });
         setFormAnalytics(data);
       } catch (error: unknown) {
-        console.log("Analytics not available yet");
+        toast({
+          variant: "destructive",
+          description: "Analytics not available yet",
+        });
         setFormAnalytics(null);
       } finally {
         setIsLoading(false); // Change this from setLoading(false)
@@ -73,7 +75,6 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
       </div>
     );
   }
-  console.log('ANALYTICS', formAnalytics);
 
   const handleViewAnalytics = () => {
     setShowAnalytics(!showAnalytics);

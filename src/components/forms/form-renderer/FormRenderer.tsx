@@ -160,7 +160,6 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
     setIsSubmitting(false);
   }
   };
-  console.log(formData)
 
   const visibleFields = getVisibleFields(fields, formData);
   const completedFields = visibleFields.filter((field) => {

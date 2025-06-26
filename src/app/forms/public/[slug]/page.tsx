@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { FormRenderer } from '@/components/forms/form-renderer/FormRenderer';
 import { Form, FormField, FormSubmissionData } from '@/lib/form.types';
 import { apiClient } from '@/utils/apiClient';
+import { useToast } from '@/hooks/use-toast';
 
 interface PublicFormPageProps {
   // Remove props since we're now fetching client-side
@@ -14,6 +15,7 @@ interface PublicFormPageProps {
 export default function PublicFormPage(props: PublicFormPageProps) {
   const params = useParams();
   const slug = params?.slug as string;
+  const { toast } = useToast();
   
   const [form, setForm] = useState<Form | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +39,10 @@ export default function PublicFormPage(props: PublicFormPageProps) {
         
         setForm(formData);
       } catch (err) {
-        console.error('Error fetching form:', err);
+        toast({
+          variant: "destructive",
+          description: 'Error fetching form:',
+        });
         
         // Handle specific error cases
         if (err instanceof Error) {
@@ -56,7 +61,6 @@ export default function PublicFormPage(props: PublicFormPageProps) {
 
     fetchForm();
   }, [slug]);
-  console.log("form", form);
 
   const handleSubmit = async (data: FormSubmissionData) => {
     try {
@@ -66,12 +70,16 @@ export default function PublicFormPage(props: PublicFormPageProps) {
         body: data
       });
 
-      alert('Form submitted successfully!');
-      console.log('Form submitted:', response);
+      toast({
+          variant: "success",
+          description: "Form submitted successfully!",
+        });
       // Or show a success message/redirect
     } catch (error) {
-      console.error('Error submitting form:', error);
-      alert('Error submitting form. Please try again.');
+      toast({
+        variant: "destructive",
+        description: error instanceof Error ? error.message : "Error submitting form. Please try again.",
+      })
     }
   };
 
