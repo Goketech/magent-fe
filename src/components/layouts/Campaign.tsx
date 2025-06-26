@@ -75,6 +75,7 @@ const Campaign: React.FC = () => {
             startDate: campaign.startDate,
             endDate: campaign.endDate,
             feedbackFormId: campaign.feedbackFormId,
+            feedbackFormUrl: campaign.feedbackFormUrl,
             website: campaign.website,
             twitter: campaign.xAccount,
             youtube: campaign.youtube,
@@ -101,7 +102,6 @@ const Campaign: React.FC = () => {
 
     fetchCampaigns();
   }, []);
-  console.log(userCampaigns)
 
   const handleFilterChange = (newFilters: FilterState) => {
     setRawFilters(newFilters);

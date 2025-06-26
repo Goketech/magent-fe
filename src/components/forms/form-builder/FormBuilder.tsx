@@ -1,13 +1,15 @@
 // components/form-builder/FormBuilder.tsx
-import React, { useState, useCallback } from 'react';
-import { generateUUID, getDefaultConfig } from '@/utils/formHelpers';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { FormField, FormBuilderState, FieldType } from '@/lib/form.types';
-import { FieldList } from './FieldComponents/Sidebar/FieldList';
-import { FieldEditor } from './FieldEditor';
-import { FormPreview } from '../shared/FormPreview';
-import { FormCanvas } from './FormCanvas';
+import React, { useState, useCallback } from "react";
+import { generateUUID, getDefaultConfig } from "@/utils/formHelpers";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { FormField, FormBuilderState, FieldType } from "@/lib/form.types";
+import { FieldList } from "./FieldComponents/Sidebar/FieldList";
+import { FieldEditor } from "./FieldEditor";
+import { FormPreview } from "../shared/FormPreview";
+import { FormCanvas } from "./FormCanvas";
+import { useRouter  } from "next/navigation";
+import { MdArrowBackIos } from "react-icons/md";
 
 interface FormBuilderProps {
   initialFields?: FormField[];
@@ -30,11 +32,11 @@ interface ExtendedFormBuilderState extends FormBuilderState {
 
 export const FormBuilder: React.FC<FormBuilderProps> = ({
   initialFields = [],
-  initialTitle = '',
-  initialDescription = '',
+  initialTitle = "",
+  initialDescription = "",
   campaignId,
   onSave,
-  onPreview
+  onPreview,
 }) => {
   const [state, setState] = useState<ExtendedFormBuilderState>({
     fields: initialFields,
@@ -42,56 +44,64 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
     isDragging: false,
     previewMode: false,
     title: initialTitle,
-    description: initialDescription
+    description: initialDescription,
   });
 
-  const addField = useCallback((fieldType: FieldType) => {
-    const uuid = generateUUID();
-    const newField: FormField = {
-      id: uuid,
-      _id: uuid,
-      type: fieldType,
-      label: `New ${fieldType} Field`,
-      required: false,
-      order: state.fields.length,
-      validation: {},
-      config: getDefaultConfig(fieldType)
-    };
 
-    setState(prev => ({
-      ...prev,
-      fields: [...prev.fields, newField],
-      selectedFieldId: newField.id
-    }));
-  }, [state.fields.length]);
+  const addField = useCallback(
+    (fieldType: FieldType) => {
+      const uuid = generateUUID();
+      const newField: FormField = {
+        id: uuid,
+        _id: uuid,
+        type: fieldType,
+        label: `New ${fieldType} Field`,
+        required: false,
+        order: state.fields.length,
+        validation: {},
+        config: getDefaultConfig(fieldType),
+      };
 
-  const updateField = useCallback((fieldId: string, updates: Partial<FormField>) => {
-    setState(prev => ({
-      ...prev,
-      fields: prev.fields.map(field => 
-        field.id === fieldId ? { ...field, ...updates } : field
-      )
-    }));
-  }, []);
+      setState((prev) => ({
+        ...prev,
+        fields: [...prev.fields, newField],
+        selectedFieldId: newField.id,
+      }));
+    },
+    [state.fields.length]
+  );
+
+  const updateField = useCallback(
+    (fieldId: string, updates: Partial<FormField>) => {
+      setState((prev) => ({
+        ...prev,
+        fields: prev.fields.map((field) =>
+          field.id === fieldId ? { ...field, ...updates } : field
+        ),
+      }));
+    },
+    []
+  );
 
   const deleteField = useCallback((fieldId: string) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      fields: prev.fields.filter(field => field.id !== fieldId),
-      selectedFieldId: prev.selectedFieldId === fieldId ? null : prev.selectedFieldId
+      fields: prev.fields.filter((field) => field.id !== fieldId),
+      selectedFieldId:
+        prev.selectedFieldId === fieldId ? null : prev.selectedFieldId,
     }));
   }, []);
 
   const reorderFields = useCallback((dragIndex: number, hoverIndex: number) => {
-    setState(prev => {
+    setState((prev) => {
       const dragField = prev.fields[dragIndex];
       const newFields = [...prev.fields];
       newFields.splice(dragIndex, 1);
       newFields.splice(hoverIndex, 0, dragField);
-      
+
       return {
         ...prev,
-        fields: newFields.map((field, index) => ({ ...field, order: index }))
+        fields: newFields.map((field, index) => ({ ...field, order: index })),
       };
     });
   }, []);
@@ -101,26 +111,36 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
       title: state.title,
       description: state.description,
       campaignId,
-      fields: state.fields
+      fields: state.fields,
     };
     onSave(formData);
   }, [state.title, state.description, state.fields, campaignId, onSave]);
 
-  const updateFormInfo = useCallback((field: 'title' | 'description', value: string) => {
-    setState(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  }, []);
+  const updateFormInfo = useCallback(
+    (field: "title" | "description", value: string) => {
+      setState((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    },
+    []
+  );
+  const router = useRouter();
+
 
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="flex h-screen bg-gray-50">
+        <div className="flex items-center mb-4">
+          
+        </div>
         {/* Sidebar */}
         <div className="w-80 bg-white border-r border-gray-200 overflow-y-auto">
           {/* Form Info Section */}
           <div className="p-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Form Information</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Form Information
+            </h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -129,7 +149,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
                 <input
                   type="text"
                   value={state.title}
-                  onChange={(e) => updateFormInfo('title', e.target.value)}
+                  onChange={(e) => updateFormInfo("title", e.target.value)}
                   placeholder="Enter form title"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
@@ -140,7 +160,9 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
                 </label>
                 <textarea
                   value={state.description}
-                  onChange={(e) => updateFormInfo('description', e.target.value)}
+                  onChange={(e) =>
+                    updateFormInfo("description", e.target.value)
+                  }
                   placeholder="Enter form description"
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
@@ -162,12 +184,14 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
 
           {/* Field List */}
           <FieldList onAddField={addField} />
-          
+
           {/* Field Editor */}
           {state.selectedFieldId && (
             <FieldEditor
-              field={state.fields.find(f => f.id === state.selectedFieldId)!}
-              onUpdate={(updates) => updateField(state.selectedFieldId!, updates)}
+              field={state.fields.find((f) => f.id === state.selectedFieldId)!}
+              onUpdate={(updates) =>
+                updateField(state.selectedFieldId!, updates)
+              }
               onDelete={() => deleteField(state.selectedFieldId!)}
             />
           )}
@@ -175,10 +199,13 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
 
         {/* Main Canvas */}
         <div className="flex-1 overflow-y-auto">
+          
           <div className="p-6">
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Form Builder</h1>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Form Builder
+                </h1>
                 {state.title && (
                   <p className="text-sm text-gray-600 mt-1">
                     Editing: {state.title}
@@ -187,10 +214,15 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => setState(prev => ({ ...prev, previewMode: !prev.previewMode }))}
+                  onClick={() =>
+                    setState((prev) => ({
+                      ...prev,
+                      previewMode: !prev.previewMode,
+                    }))
+                  }
                   className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
                 >
-                  {state.previewMode ? 'Edit' : 'Preview'}
+                  {state.previewMode ? "Edit" : "Preview"}
                 </button>
                 <button
                   onClick={handleSave}
@@ -207,7 +239,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
                 {/* Form Header in Preview */}
                 <div className="mb-6 p-6 bg-white rounded-lg border border-gray-200">
                   <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                    {state.title || 'Untitled Form'}
+                    {state.title || "Untitled Form"}
                   </h2>
                   {state.description && (
                     <p className="text-gray-600">{state.description}</p>
@@ -219,7 +251,9 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
               <FormCanvas
                 fields={state.fields}
                 selectedFieldId={state.selectedFieldId}
-                onSelectField={(fieldId) => setState(prev => ({ ...prev, selectedFieldId: fieldId }))}
+                onSelectField={(fieldId) =>
+                  setState((prev) => ({ ...prev, selectedFieldId: fieldId }))
+                }
                 onReorderFields={reorderFields}
               />
             )}

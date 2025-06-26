@@ -287,7 +287,6 @@ const Navbar = () => {
                 </Link>
               </motion.div>
 
-              {/* Menu Items from Desktop Data */}
               {menuData.map((menu, index) => (
                 <motion.div
                   key={menu.title}
@@ -297,7 +296,7 @@ const Navbar = () => {
                   transition={{ delay: 0.1 + (index + 1) * 0.1 }}
                 >
                   {/* Menu Title */}
-                  <h3 className="text-xl font-semibold text-primary">
+                  <h3 className="text-xl font-semibold text-gray-500">
                     {menu.title}
                   </h3>
                   
@@ -316,50 +315,6 @@ const Navbar = () => {
                   </div>
                 </motion.div>
               ))}
-
-              {/* Social Media Buttons */}
-              {/* <motion.div
-                className="flex gap-2 flex-wrap justify-center"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + (menuData.length + 1) * 0.1 }}
-              >
-                <Link href="https://discord.gg/r42PDfh2Xc">
-                  <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px]">
-                    <span>Discord</span>
-                  </Button>
-                </Link>
-                <Link href="https://x.com/magenthq">
-                  <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px]">
-                    <span>X</span>
-                  </Button>
-                </Link>
-                <Link href="https://www.instagram.com/magenthq/">
-                  <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px]">
-                    <span>Instagram</span>
-                  </Button>
-                </Link>
-                <Link href="https://www.linkedin.com/company/magenthq">
-                  <Button className="bg-[#242424] px-[12px] py-[8px] rounded-[32px] text-white font-[500] text-[14px] leading-[21px]">
-                    <span>Linkedin</span>
-                  </Button>
-                </Link>
-              </motion.div> */}
-
-              {/* Contact Sales */}
-              {/* <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + (menuData.length + 2) * 0.1 }}
-              >
-                <Link
-                  href="mailto:hellomagent@gmail.com"
-                  className="text-2xl font-bold text-primary"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Contact Sales
-                </Link>
-              </motion.div> */}
 
               {/* Auth Buttons */}
               <motion.div
