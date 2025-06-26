@@ -69,7 +69,7 @@ const MyCampaignList: React.FC<MyCampaignListProps> = ({
           "N/A"
         )}
       </td>
-      <td className="py-3 px-4 text-xs">{campaign.publisherCount || 0}</td>
+      <td className="py-3 px-4 text-xs">{campaign.publishersCount || 0}</td>
       <td className="py-3 px-4 text-xs">
         <span
           className={`px-[10px] py-2 rounded-md bg-[#FCF4E7] text-[#DD900D] `}
