@@ -37,6 +37,7 @@ export interface MyCampaign extends BaseCampaign {
   valuePerUser: string;
   website?: string;
   publishersCount? : number;
+  publisherCount?: number;
   valuePerUserAmount:number;
   amount?: string;
   targetAudience?: {
