@@ -1,5 +1,14 @@
-import React from "react";
-import { Send, Bot, User, Clock } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Send,
+  Bot,
+  User,
+  Clock,
+  Pause,
+  Play,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 
 type Message = {
   id: number;
@@ -7,6 +16,7 @@ type Message = {
   text: string;
   timestamp: string;
   audioUrl?: string | null;
+  duration?: number;
 };
 
 interface ChatBoxProps {
@@ -14,14 +24,250 @@ interface ChatBoxProps {
   isTyping: boolean;
   messagesEndRef: React.RefObject<HTMLDivElement | null>;
   audioUrl?: string | null;
+  duration?: number;
 }
 
-function ChatBox({
-  messages,
-  isTyping,
-  messagesEndRef,
+// Individual Audio Player Component
+function AudioPlayer({
   audioUrl,
-}: ChatBoxProps) {
+  messageDuration,
+}: {
+  audioUrl: string;
+  messageDuration?: number;
+}) {
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(1);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !audioUrl) return;
+
+    const updateTime = () => {
+      if (audio.currentTime && !isNaN(audio.currentTime)) {
+        setCurrentTime(audio.currentTime);
+      }
+    };
+
+    const updateDuration = () => {
+      if (
+        audio.duration &&
+        !isNaN(audio.duration) &&
+        isFinite(audio.duration)
+      ) {
+        setDuration(audio.duration);
+        setIsLoaded(true);
+        setError(null);
+      } else if (messageDuration && messageDuration > 0) {
+        // Fallback to message duration if audio duration not available
+        setDuration(messageDuration);
+        setIsLoaded(true);
+        setError(null);
+      }
+    };
+
+    const handleLoadedMetadata = () => {
+      console.log("Audio metadata loaded:", audio.duration);
+      updateDuration();
+    };
+
+    const handleCanPlay = () => {
+      console.log("Audio can play:", audio.duration);
+      updateDuration();
+    };
+
+    const handleError = (e: Event) => {
+      console.error("Audio error:", e);
+      setError("Failed to load audio");
+      setIsLoaded(false);
+    };
+
+    const handleLoadStart = () => {
+      console.log("Audio load started");
+      setError(null);
+    };
+
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setCurrentTime(0);
+    };
+
+    audio.addEventListener("timeupdate", updateTime);
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.addEventListener("canplay", handleCanPlay);
+    audio.addEventListener("error", handleError);
+    audio.addEventListener("loadstart", handleLoadStart);
+    audio.addEventListener("ended", handleEnded);
+
+    // Reset states
+    setCurrentTime(0);
+    setDuration(0);
+    setIsLoaded(false);
+    setIsPlaying(false);
+
+    // If we have a message duration, use it immediately
+    if (messageDuration && messageDuration > 0) {
+      setDuration(messageDuration);
+      setIsLoaded(true);
+    }
+
+    return () => {
+      audio.removeEventListener("timeupdate", updateTime);
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("canplay", handleCanPlay);
+      audio.removeEventListener("error", handleError);
+      audio.removeEventListener("loadstart", handleLoadStart);
+      audio.removeEventListener("ended", handleEnded);
+    };
+  }, [audioUrl, messageDuration]);
+
+  const togglePlay = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    try {
+      if (isPlaying) {
+        audio.pause();
+        setIsPlaying(false);
+      } else {
+        await audio.play();
+        setIsPlaying(true);
+      }
+    } catch (error) {
+      console.error("Error playing audio:", error);
+    }
+  };
+
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const time = parseFloat(e.target.value);
+    const audio = audioRef.current;
+    if (audio && isLoaded) {
+      audio.currentTime = time;
+      setCurrentTime(time);
+    }
+  };
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseFloat(e.target.value);
+    setVolume(newVolume);
+    const audio = audioRef.current;
+    if (audio) {
+      audio.volume = newVolume;
+      if (newVolume === 0) {
+        audio.muted = true;
+        setIsMuted(true);
+      } else {
+        audio.muted = false;
+        setIsMuted(false);
+      }
+    }
+  };
+
+  const toggleMute = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const newMuted = !isMuted;
+    audio.muted = newMuted;
+    setIsMuted(newMuted);
+  };
+
+  const formatTime = (time: number) => {
+    if (!time || isNaN(time) || !isFinite(time)) return "0:00";
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60)
+      .toString()
+      .padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  };
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="w-full max-w-md p-4 border rounded-[20px] shadow bg-red-50 border-red-200 mt-2">
+        <div className="text-red-600 text-sm">{error}</div>
+        <div className="text-xs text-gray-500 mt-1">URL: {audioUrl}</div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="w-[340px] px-4 py-2 flex items-center gap-2 rounded-full relative"
+      style={{
+        background: "#f2f3f5",
+        color: "black",
+      }}
+    >
+      <audio
+        ref={audioRef}
+        src={audioUrl}
+        preload="metadata"
+        crossOrigin="anonymous"
+      />
+
+      <button
+        onClick={togglePlay}
+        disabled={!isLoaded}
+        title={isLoaded ? "Play/Pause" : "Loading..."}
+        className="text-black"
+      >
+        {isPlaying ? (
+          <Pause size={16} className="fill-black" />
+        ) : (
+          <Play size={16} className="fill-black" />
+        )}
+      </button>
+
+      <span className="text-sm text-black whitespace-nowrap">
+        {formatTime(currentTime)} / {formatTime(duration)}
+      </span>
+
+      <input
+        type="range"
+        min={0}
+        max={duration || 0}
+        step="0.1"
+        value={currentTime}
+        onChange={handleSeek}
+        disabled={!isLoaded}
+        className="flex-1 h-[4px] accent-black"
+      />
+
+      <div className="relative flex items-center group w-full">
+        <button
+          onClick={toggleMute}
+          className="text-black z-10"
+          title="Mute / Unmute"
+        >
+          {isMuted || volume === 0 ? (
+            <VolumeX size={16} className="fill-black" />
+          ) : (
+            <Volume2 size={16} className="fill-black" />
+          )}
+        </button>
+
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step="0.01"
+          value={volume}
+          onChange={handleVolumeChange}
+          className="absolute right-[-12px] w-[60px] h-[4px] opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out bg-transparent accent-gray-500"
+          title="Volume"
+        />
+      </div>
+    </div>
+  );
+}
+
+function ChatBox({ messages, isTyping, messagesEndRef }: ChatBoxProps) {
   return (
     <div className="flex flex-1 flex-col gap-6 w-full p-6 md:p-8 overflow-y-auto scrollbar-hide">
       {messages.map((message) => (
@@ -32,7 +278,7 @@ function ChatBox({
           }`}
         >
           <div
-            className={`flex items-start gap-3 max-w-[85%] ${
+            className={`flex items-start gap-3 max-w-[70%] ${
               message.sender === "user" ? "flex-row-reverse" : "flex-row"
             }`}
           >
@@ -61,7 +307,13 @@ function ChatBox({
                 }`}
               >
                 <p className="text-sm leading-relaxed">{message.text}</p>
-                {message.audioUrl && <audio src={message.audioUrl} controls />}
+                {message.audioUrl && (
+                  <AudioPlayer
+                    audioUrl={message.audioUrl}
+                    messageDuration={message.duration}
+                  />
+                  // <audio src={message.audioUrl} controls />
+                )}
               </div>
 
               {/* Timestamp */}

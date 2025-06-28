@@ -13,6 +13,7 @@ type ChatMessage = {
   sender: string;
   timestamp: string;
   audioUrl?: string | null;
+  duration?: number;
 };
 
 const Research = () => {
@@ -25,103 +26,16 @@ const Research = () => {
   const [transcript, setTranscript] = useState("");
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioChunks = useRef<Blob[]>([]);
-
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  // const handleSubmit = async () => {
-  //   if (!inputText.trim()) return;
-
-  //   const token = localStorage.getItem("access_token");
-  //   // if (!token) {
-  //   //   toast({
-  //   //     variant: "destructive",
-  //   //     description: "Please sign in.",
-  //   //   });
-  //   //   return;
-  //   // }
-
-  //   setIsModalOpen(true);
-
-  //   // Add user message
-  //   const userMessage: Message = {
-  //     user: "user",
-  //     text: inputText,
-  //     action: "NONE",
-  //   };
-
-  //   // setMessages((prev) => [...prev, userMessage]);
-  //   setIsLoading(true);
-  //   setHasSubmitted(true);
-  //   setInputText("");
-
-  //   try {
-  //     /* eslint-disable  @typescript-eslint/no-explicit-any */
-  //     //   const response: any = await fetch(
-  //     //     "https://www.api.hellomagent.com/api/ai/query",
-  //     //     {
-  //     //       method: "POST",
-
-  //     //       headers: {
-  //     //         "Content-Type": "application/json",
-  //     //         Authorization: `Bearer ${token}`,
-  //     //       },
-  //     //       body: JSON.stringify({ input: inputText }),
-  //     //     }
-  //     //   );
-
-  //     //   if (response.status === 401) {
-  //     //     toast({
-  //     //       variant: "destructive",
-  //     //       description: "Please sign in.",
-  //     //     });
-  //     //     setHasSubmitted(false);
-  //     //     localStorage.removeItem("access_token");
-  //     //     return;
-  //     //   }
-
-  //     //   console.log(response);
-
-  //     //   const reader = response.body.getReader();
-  //     //   const decoder = new TextDecoder("utf-8");
-  //     let result = "";
-
-  //     //   while (true) {
-  //     //     const { done, value } = await reader.read();
-  //     //     if (done) break;
-
-  //     //     // Decode chunk and process it
-  //     //     const chunk = decoder.decode(value, { stream: true });
-  //     //     result += chunk;
-
-  //     //     try {
-  //     //       // Parse chunk as JSON
-  //     //       const parsedChunk = JSON.parse(chunk);
-
-  //     //       // Update UI with intermediate agent response
-  //     //       setMessages((prev) => [...prev, ...parsedChunk]);
-  //     //       /* eslint-disable  @typescript-eslint/no-unused-vars */
-  //     //     } catch (e) {
-  //     //       // Handle case where the chunk is not complete JSON
-  //     //       console.warn("Chunk not yet complete:", chunk);
-  //     //     }
-  //     //   }
-
-  //     // Final data processing if needed
-  //     console.log("Final response:", result);
-  //     // Add agent response
-  //   } catch (error) {
-  //     console.error("Error sending message:", error);
-  //     toast({
-  //       variant: "destructive",
-  //       description: "Failed to send message. Please try again.",
-  //     });
-  //     setHasSubmitted(false);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const animationRef = useRef<number | null>(null);
+  const [duration, setDuration] = useState<number>(0);
+  const recordingStartTime = useRef<number>(0);
 
   const handleKeyPress = (e: any) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -191,73 +105,207 @@ const Research = () => {
   };
 
   const startRecording = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder.current = new MediaRecorder(stream);
-    audioChunks.current = [];
-
-    mediaRecorder.current.ondataavailable = (event) => {
-      audioChunks.current.push(event.data);
-    };
-
-    mediaRecorder.current.onstop = async () => {
-      const audioBlob = new Blob(audioChunks.current, { type: "audio/webm" });
-      const url = URL.createObjectURL(audioBlob);
-
-      setHasStartChat(true);
-      setIsTyping(true);
-
-      // Add user message with audio immediately
-      const message: ChatMessage = {
-        id: Date.now(),
-        text: "",
-        sender: "user",
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        audioUrl: url,
-      };
-      setMessages((prev) => [...prev, message]);
-
-      // Then send to Whisper API
-      const formData = new FormData();
-      formData.append("file", audioBlob, "recording.webm");
-
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      
+      // Record start time for duration calculation
+      recordingStartTime.current = Date.now();
+      
+      // Use audio/wav for better browser compatibility
+      const options = { mimeType: 'audio/webm;codecs=opus' };
+      let mediaRecorderInstance;
+      
       try {
-        const response = await fetch("/api/whisper", {
-          method: "POST",
-          body: formData,
-        });
+        mediaRecorderInstance = new MediaRecorder(stream, options);
+      } catch (e) {
+        // Fallback if webm is not supported
+        mediaRecorderInstance = new MediaRecorder(stream);
+      }
+      
+      mediaRecorder.current = mediaRecorderInstance;
+      audioChunks.current = [];
 
-        const data = await response.json();
-        console.log(data.text);
-        const botMessage: ChatMessage = {
-          id: Date.now() + 1,
-          text: data.text,
-          sender: "bot",
+      mediaRecorder.current.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunks.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.current.onstop = async () => {
+        // Calculate duration from recording time
+        const recordingDuration = (Date.now() - recordingStartTime.current) / 1000;
+        
+        const audioBlob = new Blob(audioChunks.current, { 
+          type: mediaRecorder.current?.mimeType || "audio/webm" 
+        });
+        const url = URL.createObjectURL(audioBlob);
+
+        setHasStartChat(true);
+        setIsTyping(true);
+
+        // Add user message with audio and calculated duration
+        const message: ChatMessage = {
+          id: Date.now(),
+          text: "",
+          sender: "user",
           timestamp: new Date().toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
           }),
+          audioUrl: url,
+          duration: recordingDuration, // Use calculated duration
         };
-        setMessages((prev) => [...prev, botMessage]);
-      } catch (error) {
-        console.error("Whisper API error:", error);
-      } finally {
-        setIsTyping(false);
-      }
-    };
+        setMessages((prev) => [...prev, message]);
 
-    mediaRecorder.current.start();
-    setRecording(true);
+        // Send to whisper API
+        const formData = new FormData();
+        formData.append("file", audioBlob, "recording.webm");
+
+        try {
+          const response = await fetch("/api/whisper", {
+            method: "POST",
+            body: formData,
+          });
+
+          const data = await response.json();
+          console.log(data.text);
+          const botMessage: ChatMessage = {
+            id: Date.now() + 1,
+            text: data.text,
+            sender: "bot",
+            timestamp: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          };
+          setMessages((prev) => [...prev, botMessage]);
+        } catch (error) {
+          console.error("Whisper API error:", error);
+          // Add error message
+          const errorMessage: ChatMessage = {
+            id: Date.now() + 1,
+            text: "Sorry, I couldn't process your audio. Please try again.",
+            sender: "bot",
+            timestamp: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          };
+          setMessages((prev) => [...prev, errorMessage]);
+        } finally {
+          setIsTyping(false);
+        }
+      };
+
+      audioContextRef.current = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
+      analyserRef.current = audioContextRef.current.createAnalyser();
+      const source = audioContextRef.current.createMediaStreamSource(stream);
+
+      analyserRef.current.fftSize = 256;
+      source.connect(analyserRef.current);
+
+      mediaRecorder.current.start(100); // Collect data every 100ms
+      setRecording(true);
+    } catch (error) {
+      console.error("Error starting recording:", error);
+      toast({
+        title: "Recording Error",
+        description: "Could not access microphone. Please check permissions.",
+        variant: "destructive",
+      });
+    }
   };
 
   const stopRecording = () => {
-    if (mediaRecorder.current) {
+    if (mediaRecorder.current && mediaRecorder.current.state !== "inactive") {
       mediaRecorder.current.stop();
+      setRecording(false);
+      
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      // Stop all tracks to release the mic
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      }
     }
-    setRecording(false);
   };
+
+  const visualize = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const analyser = analyserRef.current;
+
+    if (!ctx || !analyser) return;
+
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    const draw = () => {
+      if (!recording) return;
+
+      animationRef.current = requestAnimationFrame(draw);
+
+      analyser.getByteFrequencyData(dataArray);
+
+      // Clear canvas with transparent background
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const barWidth = 3;
+      let barHeight;
+      let x = 0;
+
+      for (let i = 0; i < bufferLength && x < canvas.width; i++) {
+        barHeight = (dataArray[i] / 255) * canvas.height * 0.6;
+
+        ctx.fillStyle = "black";
+        ctx.fillRect(x, (canvas.height - barHeight) / 2, barWidth, barHeight);
+
+        x += barWidth + 2;
+      }
+    };
+
+    draw();
+  };
+
+  useEffect(() => {
+    if (recording) {
+      // Wait a tick to ensure canvas is rendered and sized
+      setTimeout(() => {
+        visualize();
+      }, 0);
+    }
+  }, [recording]);
+
+  useEffect(() => {
+    const updateCanvasSize = () => {
+      const canvas = canvasRef.current;
+      const textarea = textareaRef.current;
+
+      if (canvas && textarea) {
+        // Set canvas size to match textarea dimensions
+        canvas.width = textarea.offsetWidth;
+        canvas.height = textarea.offsetHeight;
+      }
+    };
+
+    // Initial sizing
+    updateCanvasSize();
+
+    // Update on window resize
+    window.addEventListener("resize", updateCanvasSize);
+
+    return () => {
+      window.removeEventListener("resize", updateCanvasSize);
+    };
+  }, [recording]);
 
   return (
     <div className="flex flex-col gap-10 h-full items-center justify-center w-full m-auto">
@@ -267,6 +315,7 @@ const Research = () => {
           isTyping={isTyping}
           messagesEndRef={messagesEndRef}
           audioUrl={audioUrl}
+          duration={duration}
         />
       )}
       <div>
@@ -290,7 +339,8 @@ const Research = () => {
           </p>
         )}
 
-        <div className="relative mx-auto lg:mx-0  md:w-[600px] lg:w-[800px]">
+        <div className="relative mx-auto lg:mx-0 md:w-[600px] lg:w-[800px]">
+          {/* Textarea */}
           <textarea
             style={{ overflowX: "hidden", overflowY: "hidden" }}
             ref={textareaRef}
@@ -298,20 +348,44 @@ const Research = () => {
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={handleKeyPress}
             rows={1}
-            className="w-full outline-[#D7D7D7] rounded-[20px] resize-none p-4 md:p-7 text-[#212221] text-base border-[0.5px] border-[#D7D7D7] bg-[#F6F6F6] max-h-[200px]"
-            placeholder="Ask anything..."
+            className={`w-full outline-[#D7D7D7] rounded-[20px]  resize-none p-4 md:p-7 text-[#212221] text-base border-[0.5px] border-[#D7D7D7] bg-[#F6F6F6] max-h-[200px] transition-opacity duration-200 ${
+              recording ? "opacity-60 cursor-not-allowed" : ""
+            }`}
+            placeholder={recording ? "" : "Ask anything..."}
+            disabled={recording}
           ></textarea>
-          <div className="flex gap-3 items-center absolute bottom-5 right-5">
-            <button className="mt-1 w-25 h-25 rounded-full p-2 flex items-center justify-center hover:bg-primary hover:text-white transition">
+
+          {/* Waveform Canvas Overlay */}
+          {recording && (
+            <div className="absolute left-0 top-0 w-full h-full pointer-events-none flex px-10 items-center justify-center overflow-hidden">
+              <canvas
+                ref={canvasRef}
+                className="w-full h-full"
+                style={{
+                  display: "block",
+                  background: "transparent",
+                }}
+              />
+            </div>
+          )}
+
+          {/* Controls */}
+          <div className="flex gap-3 items-center absolute bottom-5 right-5 z-20">
+            <button className="mt-1 w-25 h-25 rounded-full p-2 flex items-center justify-center hover:bg-primary hover:text-white transition bg-white border border-gray-300 shadow-sm">
               {recording ? (
-                <button onClick={stopRecording}>Stop</button>
+                <button
+                  onClick={stopRecording}
+                  className="text-red-500 font-medium text-xs"
+                >
+                  Stop
+                </button>
               ) : (
                 <MicIcon size={22} onClick={startRecording} />
               )}
             </button>
             <Button
               onClick={handleSendMessage}
-              disabled={!inputText}
+              disabled={!inputText || recording}
               className="w-25 h-25 bg-[#D7D7D7] rounded-full p-2 flex items-center justify-center bg-primary disabled:cursor-not-allowed hover:bg-primary transition"
             >
               <MoveUp className="text-white" size={100} />
@@ -331,7 +405,7 @@ const Research = () => {
               ].map((text, index) => (
                 <p
                   key={index}
-                  onClick={() => handleSampleClick(text)}
+                  onClick={() => !recording && handleSampleClick(text)}
                   className="cursor-pointer px-[10px] py-[8px] border-[0.5px] border-[#D7D7D7] rounded-[32px] hover:bg-primary/90 hover:text-primary-foreground"
                 >
                   {text}
@@ -346,7 +420,7 @@ const Research = () => {
               ].map((text, index) => (
                 <p
                   key={index}
-                  onClick={() => handleSampleClick(text)}
+                  onClick={() => !recording && handleSampleClick(text)}
                   className="cursor-pointer px-[10px] py-[8px] border-[0.5px] border-[#D7D7D7] rounded-[32px] hover:bg-primary/90 hover:text-primary-foreground"
                 >
                   {text}
