@@ -101,6 +101,9 @@ body {
 select {
   color: black;
 }
+.slick-dots li.slick-active div {
+  background-color: #330065;
+}
 
 select option:not(:checked) {
   color: rgb(252, 168, 182);

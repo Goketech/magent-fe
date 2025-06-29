@@ -57,13 +57,7 @@ const footerLinkSections = [
   {
     title: "Legal",
     links: [
-      "Connect",
-      "Marketing",
-      "AI Powered Sales",
-      "Platform Integration",
-      "Own-to-Earn",
-      "Research",
-      "Reports",
+      "Privacy Policy",
     ],
   },
 ];
@@ -168,7 +162,7 @@ const Footer: React.FC = () => {
                 {section.links.map((link) => (
                   <motion.li key={link} variants={itemVariants}>
                     <a
-                      href="#"
+                      href="/privacy_and_policy"
                       className="text-neutral-400 hover:text-purple-300 transition-colors text-sm"
                     >
                       {link}
