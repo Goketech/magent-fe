@@ -61,6 +61,14 @@ body {
     --chart-5: 340 75% 55%;
   }
 }
+.custom-repeating-gradient {
+  background-image: repeating-linear-gradient(
+    to bottom left,
+    #010101 0%,
+  #4F40C1 50%,
+  #010101 100%
+  );
+}
 
 @layer base {
   * {

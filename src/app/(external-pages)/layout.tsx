@@ -26,7 +26,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${pulicSans.className} antialiased bg-background text-foreground`}
+        className={`${pulicSans.className} antialiased t text-foreground h-screen w-full`}
+        style={{
+    height: "auto",
+    backgroundImage: "linear-gradient(to bottom left, #010101 0px, #4F40C1 12000px)"
+  }}
       >
         <Navbar />
         {children}

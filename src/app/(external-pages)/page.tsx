@@ -76,7 +76,7 @@ export default function Home() {
   // };
 
   return (
-    <div className="max-w-screen-2xl 2xl:mx-auto">
+    <div className="max-w-screen-2xl 2xl:mx-auto ">
       <div className="min-h-screen gap-[60px] px-[20px] mt-[40px] space-y-[30px] md:space-y-[50px]">
         <LandingHero />
         <WhatWeOffer/>

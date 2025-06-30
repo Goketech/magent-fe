@@ -21,46 +21,47 @@ const footerLinkSections = [
   {
     title: "Product",
     links: [
-      "Connect",
-      "Marketing",
-      "AI Powered Sales",
-      "Platform Integration",
-      "Own-to-Earn",
-      "Research",
-      "Reports",
+      { name: "Connect", href: "/connect" },
+      { name: "Marketing", href: "/marketing" },
+      { name: "AI Powered Sales", href: "/ai-sales" },
+      { name: "Platform Integration", href: "/integration" },
+      { name: "Own-to-Earn", href: "/own-to-earn" },
+      { name: "Research", href: "/research" },
+      { name: "Reports", href: "/reports" },
     ],
   },
   {
     title: "Resources",
     links: [
-      "Connect",
-      "Marketing",
-      "AI Powered Sales",
-      "Platform Integration",
-      "Own-to-Earn",
-      "Research",
-      "Reports",
+      { name: "Connect", href: "/connect" },
+      { name: "Marketing", href: "/marketing" },
+      { name: "AI Powered Sales", href: "/ai-sales" },
+      { name: "Platform Integration", href: "/integration" },
+      { name: "Own-to-Earn", href: "/own-to-earn" },
+      { name: "Research", href: "/research" },
+      { name: "Reports", href: "/reports" },
     ],
   },
   {
     title: "Company",
     links: [
-      "Connect",
-      "Marketing",
-      "AI Powered Sales",
-      "Platform Integration",
-      "Own-to-Earn",
-      "Research",
-      "Reports",
+      { name: "Connect", href: "/connect" },
+      { name: "Marketing", href: "/marketing" },
+      { name: "AI Powered Sales", href: "/ai-sales" },
+      { name: "Platform Integration", href: "/integration" },
+      { name: "Own-to-Earn", href: "/own-to-earn" },
+      { name: "Research", href: "/research" },
+      { name: "Reports", href: "/reports" },
     ],
   },
   {
     title: "Legal",
     links: [
-      "Privacy Policy",
-    ],
+      { name: "Privacy Policy", href: "/privacy_policy" }
+    ]
   },
 ];
+
 
 const Footer: React.FC = () => {
   const sectionRef = useRef(null);
@@ -160,12 +161,12 @@ const Footer: React.FC = () => {
               </h3>
               <ul className="space-y-2.5">
                 {section.links.map((link) => (
-                  <motion.li key={link} variants={itemVariants}>
+                  <motion.li key={link.name} variants={itemVariants}>
                     <a
-                      href="/privacy_and_policy"
+                      href={link.href}
                       className="text-neutral-400 hover:text-purple-300 transition-colors text-sm"
                     >
-                      {link}
+                      {link.name}
                     </a>
                   </motion.li>
                 ))}
