@@ -281,6 +281,7 @@ function page() {
       });
 
       // ✅ Handle success
+      localStorage.setItem("wallet_connected_address", data.user.walletAddress);
       localStorage.setItem("auth_token", JSON.stringify(data.token));
 
       toast({
