@@ -124,6 +124,7 @@ const News: React.FC = () => {
     slidesToShow: 3,
     slidesToScroll: 1,
     autoplay: true,
+    waitForAnimate: false,
     autoplaySpeed: 1000,
     pauseOnHover: true,
     responsive: [
@@ -144,13 +145,13 @@ const News: React.FC = () => {
     ],
     appendDots: (dots: React.ReactNode) => (
       <div style={{ bottom: "-40px" }}>
-        <ul style={{ margin: "0px" }}> {dots} </ul>
+        <ul style={{ margin: "0px"}}> {dots} </ul>
       </div>
     ),
     customPaging: () => (
-      <div className="w-2.5 h-2.5 bg-neutral-600 rounded-full transition-colors duration-300 hover:bg-neutral-400 slick-active:bg-purple-500">
-      </div>
-    )
+  <div className="w-2.5 h-2.5 rounded-full transition-colors duration-300 bg-neutral-400" />
+)
+
   };
 
   return (

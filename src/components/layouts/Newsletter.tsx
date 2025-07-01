@@ -4,7 +4,6 @@ import { useToast } from "@/hooks/use-toast";
 
 import { apiClient } from "@/utils/apiClient";
 
-
 const ArrowRightIcon: React.FC<{ className?: string }> = ({
   className = "w-5 h-5",
 }) => (
@@ -54,10 +53,12 @@ const Newsletter: React.FC = () => {
           setEmail("");
         }, 3000);
       } catch (error) {
-        console.error("Error registering for newsletter:", error);
+        // console.error("Error registering for newsletter:", error);
+        const errorMessage =
+          error instanceof Error ? error.message : "An unknown error occurred";
         toast({
           variant: "destructive",
-          description: "Something went wrong. Please try again.",
+          description: errorMessage,
         });
       }
     } else {
