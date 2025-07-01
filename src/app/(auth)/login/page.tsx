@@ -71,6 +71,7 @@ function page() {
         body: { email, password, captchaToken },
       });
 
+      localStorage.setItem("wallet_connected_address", data.user.walletAddress);
       localStorage.setItem("auth_token", data.token);
 
       toast({

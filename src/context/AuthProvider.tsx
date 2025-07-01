@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("auth_token");
+    const storedToken = localStorage.getItem("wallet_connected_address");
     if (storedToken) {
       setJwt(storedToken);
     }
@@ -45,51 +45,45 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       setIsAuthenticating(true);
-      const response = await apiClient(
-        "/auth/get-nonce",
-        {
-          method: "POST",
-          token: jwt || undefined,
-          body: { publicKey: publicKey.toBase58() },
-        }
-      );
+      const response = await apiClient("/auth/get-nonce", {
+        method: "POST",
+        token: jwt || undefined,
+        body: { publicKey: publicKey.toBase58() },
+      });
 
-      if (!response.ok) {
+      if (!response.nonce) {
         toast({
           variant: "destructive",
           description: "Failed to connect wallet",
         });
-        throw new Error("Failed to get nonce");
+        return;
       }
 
-      const { nonce } = await response.json();
+      const { nonce } = await response;
       const signedMessage = await signMessage(new TextEncoder().encode(nonce));
       const signature = bs58.encode(signedMessage);
 
-      const verifyRes = await apiClient(
-        "/auth/verify-signature",
-        {
-          method: "POST",
-          token: jwt || undefined,
-          body: { publicKey: publicKey.toBase58(), signature },
-        }
-      );
+      const verifyRes = await apiClient("/auth/verify-signature", {
+        method: "POST",
+        token: jwt || undefined,
+        body: { publicKey: publicKey.toBase58(), signature },
+      });
 
-      if (!verifyRes.ok) {
+      if (!verifyRes.token) {
         toast({
           variant: "destructive",
           description: "Signature verification failed",
         });
-        throw new Error("Signature verification failed");
+        return;
       }
 
-      const { token } = await verifyRes.json();
+      const { token } = await verifyRes;
       setJwt(token);
-      localStorage.setItem("auth_token", token);
+      localStorage.setItem("wallet_connected_address", token);
 
       toast({
         variant: "success",
-        description: "Wallet connected and authenticated successfully!",
+        description: "Wallet connected successfully!",
       });
     } catch (error) {
       console.error("Authentication failed:", error);
