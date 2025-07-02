@@ -58,7 +58,6 @@ Marketing teams are drowning in data but starving for insights. Magent cuts thro
 ### Prerequisites
 - Node.js 22+
 - npm
-- Supabase Account
 
 ### Installation
 
