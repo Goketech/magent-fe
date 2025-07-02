@@ -1,6 +1,6 @@
-// app/api/auth/twitter/callback/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { twitterAuth } from '@/utils/xAuth';
+export const runtime = "edge";
 
 export async function POST(request: NextRequest) {
   try {
