@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { apiClient } from "@/utils/apiClient";
 
+export const runtime = "edge";
+
 export async function POST(request: NextRequest) {
   try {
     const { publicKey, signature } = await request.json();

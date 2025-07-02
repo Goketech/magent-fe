@@ -1,3 +1,4 @@
+export const runtime = "edge";
 import { NextRequest, NextResponse } from "next/server";
 
 const LINKEDIN_API_URL = "https://api.linkedin.com/v2/userinfo";
