@@ -23,6 +23,7 @@ interface GoogleAuthData {
     email: string;
     name: string;
     picture?: string;
+    publisherCampaigns?: any[]; // Adjust type as needed
   };
   isNewUser: boolean;
 }
@@ -57,9 +58,12 @@ export const useGoogleAuth = () => {
           signupData,
         },
       });
-
+      console.log('Google auth response:', data);
       // Store auth token
       localStorage.setItem('auth_token', data.token);
+      localStorage.setItem('wallet_connected_address', data.user.id);
+      localStorage.setItem('email', data.user.email);
+      localStorage.setItem("publisher_campaign", JSON.stringify(data.user.publisherCampaigns || []));
 
       // Show success message
       toast({

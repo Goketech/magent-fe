@@ -11,7 +11,7 @@ const AVAILABLE_FIELDS: { label: string; type: FieldType }[] = [
   { label: 'Checkbox', type: 'checkbox' },
   { label: 'Select', type: 'select' },
   { label: 'Slider', type: 'slider' },
-//   { label: 'Date', type: 'date' },
+  { label: 'Date', type: 'date' },
 //   { label: 'File', type: 'file' },
 //   { label: 'Rating', type: 'rating' }
 ];
