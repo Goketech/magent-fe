@@ -1,6 +1,6 @@
 "use client";
 import { ReactTyped } from "react-typed";
-import { MicIcon, MoveUp } from "lucide-react";
+import { AudioLines, MicIcon, MoveUp, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -36,6 +36,7 @@ const Research = () => {
   const animationRef = useRef<number | null>(null);
   const [duration, setDuration] = useState<number>(0);
   const recordingStartTime = useRef<number>(0);
+  const [voiceChatEnabled, setVoiceChatEnabled] = useState(false);
 
   const handleKeyPress = (e: any) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -108,21 +109,21 @@ const Research = () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
-      
+
       // Record start time for duration calculation
       recordingStartTime.current = Date.now();
-      
+
       // Use audio/wav for better browser compatibility
-      const options = { mimeType: 'audio/webm;codecs=opus' };
+      const options = { mimeType: "audio/webm;codecs=opus" };
       let mediaRecorderInstance;
-      
+
       try {
         mediaRecorderInstance = new MediaRecorder(stream, options);
       } catch (e) {
         // Fallback if webm is not supported
         mediaRecorderInstance = new MediaRecorder(stream);
       }
-      
+
       mediaRecorder.current = mediaRecorderInstance;
       audioChunks.current = [];
 
@@ -134,10 +135,11 @@ const Research = () => {
 
       mediaRecorder.current.onstop = async () => {
         // Calculate duration from recording time
-        const recordingDuration = (Date.now() - recordingStartTime.current) / 1000;
-        
-        const audioBlob = new Blob(audioChunks.current, { 
-          type: mediaRecorder.current?.mimeType || "audio/webm" 
+        const recordingDuration =
+          (Date.now() - recordingStartTime.current) / 1000;
+
+        const audioBlob = new Blob(audioChunks.current, {
+          type: mediaRecorder.current?.mimeType || "audio/webm",
         });
         const url = URL.createObjectURL(audioBlob);
 
@@ -222,7 +224,7 @@ const Research = () => {
     if (mediaRecorder.current && mediaRecorder.current.state !== "inactive") {
       mediaRecorder.current.stop();
       setRecording(false);
-      
+
       if (audioContextRef.current) {
         audioContextRef.current.close();
       }
@@ -307,6 +309,14 @@ const Research = () => {
     };
   }, [recording]);
 
+  const handleVoiceChat = () => {
+    setVoiceChatEnabled(true);
+  };
+
+  const stopVoiceChat = () => {
+    setVoiceChatEnabled(false);
+  };
+
   return (
     <div className="flex flex-col gap-10 h-full items-center justify-center w-full m-auto">
       {hasStartChat && (
@@ -351,8 +361,8 @@ const Research = () => {
             className={`w-full outline-[#D7D7D7] rounded-[20px]  resize-none p-4 md:p-7 text-[#212221] text-base border-[0.5px] border-[#D7D7D7] bg-[#F6F6F6] max-h-[200px] transition-opacity duration-200 ${
               recording ? "opacity-60 cursor-not-allowed" : ""
             }`}
-            placeholder={recording ? "" : "Ask anything..."}
-            disabled={recording}
+            placeholder={recording || voiceChatEnabled ? "" : "Ask anything..."}
+            disabled={recording || voiceChatEnabled}
           ></textarea>
 
           {/* Waveform Canvas Overlay */}
@@ -369,27 +379,55 @@ const Research = () => {
             </div>
           )}
 
+          {voiceChatEnabled && (
+            <div className="absolute left-0 top-0 w-full h-full pointer-events-none flex px-10 items-center justify-center overflow-hidden">
+              <p>Voice chat has started</p>
+            </div>
+          )}
+
           {/* Controls */}
           <div className="flex gap-3 items-center absolute bottom-5 right-5 z-20">
-            <button className="mt-1 w-25 h-25 rounded-full p-2 flex items-center justify-center hover:bg-primary hover:text-white transition bg-white border border-gray-300 shadow-sm">
+            <button
+              className={`mt-1 w-25 h-25 rounded-full p-2 flex items-center justify-center hover:bg-primary hover:text-white transition bg-white border border-gray-300 shadow-sm ${
+                voiceChatEnabled ? "hidden" : ""
+              }`}
+            >
               {recording ? (
-                <button
-                  onClick={stopRecording}
-                  className="text-red-500 font-medium text-xs"
-                >
-                  Stop
-                </button>
+                <X size={22} onClick={stopRecording} />
               ) : (
                 <MicIcon size={22} onClick={startRecording} />
               )}
             </button>
-            <Button
-              onClick={handleSendMessage}
-              disabled={!inputText || recording}
-              className="w-25 h-25 bg-[#D7D7D7] rounded-full p-2 flex items-center justify-center bg-primary disabled:cursor-not-allowed hover:bg-primary transition"
-            >
-              <MoveUp className="text-white" size={100} />
-            </Button>
+            {inputText && !recording && !voiceChatEnabled ? (
+              <Button
+                onClick={handleSendMessage}
+                className={` bg-[#D7D7D7] rounded-full p-[10px] flex items-center font-bold justify-center bg-primary text-white hover:bg-white hover:text-black transition ${
+                  voiceChatEnabled ? "hidden" : ""
+                }`}
+              >
+                <MoveUp size={22} />
+              </Button>
+            ) : (
+              <>
+                {voiceChatEnabled ? (
+                  <button
+                    onClick={stopVoiceChat}
+                    className={`mt-1 w-25 h-25 rounded-full p-2 flex items-center justify-center hover:bg-primary hover:text-white transition bg-white border border-gray-300 shadow-sm`}
+                  >
+                    <X size={22} />
+                  </button>
+                ) : (
+                  <Button
+                    onClick={handleVoiceChat}
+                    className={` bg-[#D7D7D7] rounded-full p-[10px] flex items-center font-bold justify-center bg-primary text-white hover:bg-white hover:text-black transition ${
+                      recording ? "hidden" : ""
+                    }`}
+                  >
+                    <AudioLines size={22} />
+                  </Button>
+                )}
+              </>
+            )}
           </div>
         </div>
         {!hasStartChat && (
