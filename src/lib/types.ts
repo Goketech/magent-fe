@@ -1,6 +1,6 @@
 // In your types.ts file
 interface BaseCampaign {
-  _id: number;
+  _id: string;
   id: string;
   name: string;
   goals: string;

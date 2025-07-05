@@ -28,7 +28,7 @@ interface FormAnalytics {
 interface CampaignDetailsProps {
   campaign: MyCampaign;
   onBack: () => void;
-  onAccept: (id: number) => void;
+  onAccept: (id: string) => void;
 }
 
 const CampaignDetails: React.FC<CampaignDetailsProps> = ({
@@ -45,20 +45,34 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
   );
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+   const getStatusBadgeClass = (status: any) => {
+    switch (status) {
+      case "Active":
+        return "bg-[#E6F4EB] text-[#009137]";
+      case "Completed":
+        return "bg-[#EBE6F0] text-[#330065]";
+      case "Pending":
+        return "bg-[#FCF4E7] text-[#DD900D]";
+      case "Inactive":
+        return "bg-gray-100 text-gray-600";
+      default:
+        return "bg-gray-100 text-gray-600";
+    }
+  };
 
   useEffect(() => {
     const fetchFormAnalytics = async () => {
       try {
         setIsLoading(true); // Add this
-        const data = await apiClient(`/form/${campaign.feedbackFormId}/analytics`, {
+        const data = await apiClient(`/form/${"jsjsj"}/analytics`, {
           method: "GET",
         });
         setFormAnalytics(data);
       } catch (error: unknown) {
-        toast({
-          variant: "destructive",
-          description: "Analytics not available yet",
-        });
+        // toast({
+        //   variant: "destructive",
+        //   description: "Analytics not available yet",
+        // });
         setFormAnalytics(null);
       } finally {
         setIsLoading(false); // Change this from setLoading(false)
@@ -156,8 +170,8 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
             </div>
           </div>
           <div className="absolute top-0 right-0">
-            <span className="bg-[#FCF4E7] text-[#DD900D] text-xs px-6 py-2 rounded-bl-md">
-              {campaign.status || "Pending"}
+            <span className={`${getStatusBadgeClass(campaign.status)} text-xs px-6 py-2 rounded-bl-md`}>
+              {campaign.status}
             </span>
           </div>
         </div>
@@ -215,14 +229,14 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
             ))}
           </div>
 
-          <div className="mt-6">
+          {/* <div className="mt-6">
             <button
               className="bg-[#330065] text-white px-6 py-2 rounded-md text-sm hover:bg-purple-500 transition-colors"
               onClick={() => onAccept(campaign._id)}
             >
               Accept
             </button>
-          </div>
+          </div> */}
 
           <div className="mt-6">
             {formAnalytics ? (
@@ -278,7 +292,7 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
               </div>
             ) : (
               <button
-                className="bg-[#330065] text-white px-6 py-2 rounded-md text-sm hover:bg-red-900 transition-colors"
+                className="bg-[#330065] text-white px-6 py-2 rounded-md text-sm hover:bg-purple-900 transition-colors"
                 onClick={handleCreateForm}
                 disabled={isLoading}
               >

@@ -69,7 +69,6 @@ const Page = () => {
         return;
       }
 
-      console.log(response);
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder("utf-8");

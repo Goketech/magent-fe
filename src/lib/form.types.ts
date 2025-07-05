@@ -21,6 +21,8 @@ export interface ValidationRules {
   max?: number;
   pattern?: string;
   customMessage?: string;
+  minDate?: string; // For date fields
+  maxDate?: string; // For date fields
 }
 
 export interface FieldConfig {
@@ -28,6 +30,10 @@ export interface FieldConfig {
   placeholder?: string;
   defaultValue?: any;
   helpText?: string;
+  dateFormat?: 'date' | 'datetime-local' | 'time'; // For date fields
+  minDate?: string; // For date fields
+  maxDate?: string; // For date fields
+  showFormatHint?:string;
   
   // Options for radio, checkbox, select
   options?: Array<{

@@ -119,7 +119,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
     }
 
     if (!validation || !validation.isValid) {
-      console.log("Validation failed:", validation); // Debug log
+      // console.log("Validation failed:", validation); // Debug log
       if (validation && validation.errors) {
         setErrors(validation.errors);
         setSubmitError("Please fix the errors above before submitting.");
@@ -145,7 +145,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
 
 
     // ✅ If successful
-    console.log("Form submitted successfully:", response);
+    // console.log("Form submitted successfully:", response);
     setFormData({});
     setErrors({});
     setIsSubmitted(true); // show success state

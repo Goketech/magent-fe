@@ -18,7 +18,7 @@ import { MyCampaign  } from '@/lib/types';
 
 interface CampaignListProps {
   campaign: MyCampaign;
-  onAccept: (id: number) => void;
+  onAccept: (id: string) => void;
   onViewDetails: (campaign: MyCampaign) => void;
 }
 
