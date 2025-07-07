@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("wallet_connected_address");
-    if (storedToken) {
+    if (storedToken && storedToken !== "null") {
       setJwt(storedToken);
     }
   }, []);

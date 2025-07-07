@@ -7,7 +7,7 @@ import { capitalizeEachWord } from "@/utils/capitalize";
 
 
 export interface Campaign {
-  _id: number;
+  _id: string;
   name: string;
   campaignName: string;
   goals: string;
@@ -16,16 +16,17 @@ export interface Campaign {
   endDate: number;
   startDate :number;
   industry: string;
-  status: 'Active' | 'completed' | 'Pending' | "Inactive";
+  status: 'Active' | 'completed' | 'Pending' | "Inactive"| "Joined";
 }
 
 interface CampaignListProps {
   campaign: Campaign;
-  onAccept: (id: number) => void;
+  onAccept: (id: string) => void;
   onViewDetails: (campaign: Campaign) => void;
+  isJoined?: boolean;
 }
 
-const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewDetails }) => {
+const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewDetails, isJoined }) => {
   const [showOptions, setShowOptions] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   
@@ -92,13 +93,21 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
       <td className="py-3 px-4 text-xs">
         <div className="flex items-center gap-2">
           <button 
-            className="rounded-md bg-[#330065] flex gap-3 items-center text-white px-4 py-1.5 text-xs hover:bg-purple-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={handleAccept}
-            disabled={campaign?.status == 'completed' || campaign?.status === 'Inactive'}
-          >
-            <MdOutlineCheckCircle size={20}/>
-            Accept
-          </button>
+  className={`rounded-md flex gap-3 items-center px-4 py-1.5 text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+    isJoined 
+      ? 'bg-green-600 text-white hover:bg-green-700' 
+      : 'bg-[#330065] text-white hover:bg-purple-800'
+  }`}
+  onClick={handleAccept}
+  disabled={
+    campaign?.status === 'completed' || 
+    campaign?.status === 'Inactive' || 
+    isJoined
+  }
+>
+  <MdOutlineCheckCircle size={20}/>
+  {isJoined ? 'Joined' : 'Accept'}
+</button>
           <div>
             <div className="relative">
             <button 

@@ -134,7 +134,7 @@ const Campaign: React.FC = () => {
   };
   
 
-  const handleAccept = (id: number) => {
+  const handleAccept = (id: string) => {
     // console.log(`Accepting campaign ${id}`);
     // accept logic
   };

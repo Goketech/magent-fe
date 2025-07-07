@@ -72,7 +72,11 @@ function page() {
       });
 
       localStorage.setItem("wallet_connected_address", data.user.walletAddress);
+      localStorage.setItem("email", data.user.email);
       localStorage.setItem("auth_token", data.token);
+      localStorage.setItem("publisher_campaign", JSON.stringify(data.user.publisherCampaigns || []));
+
+
 
       toast({
         title: "Login Successful",
