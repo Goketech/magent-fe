@@ -1,17 +1,55 @@
 import { MdArrowBackIos } from "react-icons/md";
-import { MyCampaign } from "@/lib/types"; 
+import { MyCampaign } from "@/lib/types";
 import { capitalizeEachWord } from "@/utils/capitalize";
-
+import React, { useState } from "react";
+import AcceptModal from "@/components/ui/AcceptModal";
 
 interface MyCampaignDetailsProps {
   campaign: MyCampaign;
   onBack: () => void;
+  isJoined?: boolean;
 }
 
 const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
   campaign,
   onBack,
 }) => {
+  const [copied, setCopied] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+  
+
+  const publisherCampaigns = JSON.parse(
+    localStorage.getItem("publisher_campaign") || "[]"
+  );
+  const checkIfCampaignIsJoined = (campaignId: string): boolean => {
+    return publisherCampaigns.some((pc: any) => pc.campaignId === campaignId);
+  };
+
+const handleCopyLink = async () => {
+  try {
+    const publisherCampaigns = JSON.parse(
+      localStorage.getItem("publisher_campaign") || "[]"
+    );
+    
+    // Get the first referral code (since it's unique to the user)
+    const referralCode = publisherCampaigns[0]?.referralCode;
+    
+    const urlWithReferral = referralCode 
+      ? `${campaign.feedbackFormUrl}?ref=${referralCode}`
+      : campaign.feedbackFormUrl;
+      
+    await navigator.clipboard.writeText(urlWithReferral || "");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  } catch (err) {
+    console.error("Failed to copy: ", err);
+  }
+};
+const handleAccept = () => {
+  setIsModalOpen(true);
+};
+  const isJoined = checkIfCampaignIsJoined(campaign._id);
+  
   return (
     <div className="w-full p-4 bg-white rounded-md shadow">
       <div className="flex items-center mb-4">
@@ -189,17 +227,68 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
             </div>
             <div className="flex justify-end">
               <button
-                className="rounded-2xl bg-[#330065] flex gap-3 items-center text-white px-4 py-1.5 text-xs hover:bg-purple-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                // onClick={handleAccept}
+                className={`rounded-2xl flex gap-3 items-center px-4 py-1.5 text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                  isJoined
+                    ? "bg-green-600 text-white hover:bg-green-700"
+                    : "bg-[#330065] text-white hover:bg-purple-800"
+                }`}
+                onClick={handleAccept}
                 disabled={
-                  campaign?.status == "completed" ||
-                  campaign?.status === "Inactive"
+                  campaign?.status === "completed" ||
+                  campaign?.status === "Inactive" ||
+                  isJoined
                 }
               >
-                Accept
+                {isJoined ? "Joined" : "Accept"}
               </button>
             </div>
-            <div/>
+            <div>
+              {
+                isJoined && (
+                  <button
+                className="bg-gray-600 text-white px-6 py-2 rounded-md text-sm hover:bg-gray-700 transition-colors flex items-center gap-2"
+                onClick={handleCopyLink}
+              >
+                {copied ? (
+                  <>
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                    Copy Form Link
+                  </>
+                )}
+              </button>
+                )
+              }
+            </div>
+            <div />
           </div>
         </div>
 
@@ -236,6 +325,12 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
           )}
         </div>
       </div>
+      <AcceptModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            campaign={campaign}
+            // onJoinSuccess={handleJoinSuccess}
+          />
     </div>
   );
 };

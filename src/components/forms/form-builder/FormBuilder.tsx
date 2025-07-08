@@ -227,7 +227,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({
                 <button
                   onClick={handleSave}
                   disabled={!state.title.trim()}
-                  className="px-4 py-2 bg-[330065] text-white rounded-md hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-2 bg-[330065] text-white rounded-md hover:bg-purple-700 bg-purple-600 disabled:bg-purple-400 disabled:cursor-not-allowed transition-colors"
                 >
                   Publish Form
                 </button>

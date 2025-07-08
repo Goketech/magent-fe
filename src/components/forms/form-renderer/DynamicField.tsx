@@ -6,6 +6,7 @@ import { RadioField } from '../form-builder/FieldComponents/RadioField';
 import { SliderField } from '../form-builder/FieldComponents/SliderField';
 import { SelectField } from '../form-builder/FieldComponents/SelectField';
 import { CheckboxField } from '../form-builder/FieldComponents/CheckboxField';
+import { DateField } from '../form-builder/FieldComponents/DateField';
 
 interface DynamicFieldProps {
   field: FormField;
@@ -50,8 +51,8 @@ export const DynamicField: React.FC<DynamicFieldProps> = ({
       return <CheckboxField {...commonProps} />;
     case 'select':
       return <SelectField {...commonProps} />;
-    // case 'date':
-    //   return <DateField {...commonProps} />;
+    case 'date':
+      return <DateField {...commonProps} />;
     // case 'file':
     //   return <FileField {...commonProps} />;
     // case 'rating':

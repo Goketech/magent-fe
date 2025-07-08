@@ -11,9 +11,9 @@ interface ApiOptions {
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+
 export const apiClient = async (path: string, options: ApiOptions = {}) => {
   const { method = 'GET', body, token } = options;
-
   let authToken = token;
   if (!authToken && typeof window !== 'undefined') {
     const stored = localStorage.getItem('auth_token');
@@ -25,36 +25,30 @@ export const apiClient = async (path: string, options: ApiOptions = {}) => {
       }
     }
   }
-
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
   };
-
   if (authToken) {
     headers['Authorization'] = `Bearer ${authToken}`;
   }
-
   const res = await fetch(`${BASE_URL}${path}`, {
     method,
     headers,
     ...(body && { body: JSON.stringify(body) }),
   });
-
   if (res.status === 401) {
-    
     throw new Error('Unauthorized - redirecting');
   }
-
   let data;
   try {
     data = await res.json();
   } catch {
     data = {};
   }
-
   if (!res.ok) {
-    throw new Error(data.message || 'API request failed');
+    // Check for both 'error' and 'message' properties
+    const errorMessage = data.error || data.message || 'API request failed';
+    throw new Error(errorMessage);
   }
-
   return data;
 };
