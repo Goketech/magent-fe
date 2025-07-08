@@ -9,6 +9,7 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
+import Image from "next/image";
 
 type Message = {
   id: number;
@@ -287,13 +288,13 @@ function ChatBox({ messages, isTyping, messagesEndRef }: ChatBoxProps) {
               className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg ${
                 message.sender === "user"
                   ? "bg-gradient-to-br from-blue-500 to-purple-600"
-                  : "bg-gradient-to-br from-emerald-500 to-teal-600"
+                  : "bg-gradient-to-br from-white to-gray-50"
               }`}
             >
               {message.sender === "user" ? (
-                <User className="w-5 h-5 text-white" />
+                <User width={20} height={20} className="text-white" />
               ) : (
-                <Bot className="w-5 h-5 text-white" />
+                <Image src="/magent.svg" alt="logo" width={19} height={20}  />
               )}
             </div>
 
@@ -336,8 +337,8 @@ function ChatBox({ messages, isTyping, messagesEndRef }: ChatBoxProps) {
       {isTyping && (
         <div className="flex justify-start w-full">
           <div className="flex items-start gap-3 max-w-[85%]">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg bg-gradient-to-br from-emerald-500 to-teal-600">
-              <Bot className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg bg-gradient-to-br from-white to-gray-50">
+              <Image src="/magent.svg" alt="logo" width={19} height={20} />
             </div>
             <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-md px-5 py-4 shadow-md">
               <div className="flex items-center gap-1">
