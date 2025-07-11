@@ -16,7 +16,6 @@ interface FormRendererProps {
   showProgress?: boolean;
 }
 
-// Helper function for conditional logic - moved to top for proper hoisting
 function shouldShowField(field: FormField, formData: FormSubmissionData): boolean {
   if (!field.conditional) return true;
 
@@ -90,65 +89,55 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    setSubmitError("");
+  e.preventDefault();
+  setSubmitError("");
 
-    toast({
-      variant: "success",
-      description: "Form submission started",
-    });
+  toast({
+    variant: "success",
+    description: "Form submission started",
+  });
 
+  const visibleFields = getVisibleFields(fields, formData);
 
-    const visibleFields = getVisibleFields(fields, formData);
-    
-    // Basic validation check
-    if (visibleFields.length === 0) {
-      setSubmitError("No fields available to submit");
-      return;
-    }
+  // Basic validation check
+  if (visibleFields.length === 0) {
+    setSubmitError("No fields available to submit");
+    return;
+  }
 
-    // Validate form data
-    let validation;
-    try {
-      validation = validateFormData(visibleFields, formData);
-    } catch (error) {
-      console.error("Validation error:", error);
+  // Validate form data
+  let validation;
+  try {
+    validation = validateFormData(visibleFields, formData);
+  } catch (error) {
+    console.error("Validation error:", error);
+    setSubmitError("Form validation failed. Please check your inputs.");
+    return;
+  }
+
+  if (!validation || !validation.isValid) {
+    if (validation && validation.errors) {
+      setErrors(validation.errors);
+      setSubmitError("Please fix the errors above before submitting.");
+
+      // Scroll to first error
+      const firstErrorField = Object.keys(validation.errors)[0];
+      const errorElement = document.getElementById(firstErrorField);
+      errorElement?.scrollIntoView({ behavior: "smooth", block: "center" });
+    } else {
       setSubmitError("Form validation failed. Please check your inputs.");
-      return;
     }
+    return;
+  }
 
-    if (!validation || !validation.isValid) {
-      // console.log("Validation failed:", validation); // Debug log
-      if (validation && validation.errors) {
-        setErrors(validation.errors);
-        setSubmitError("Please fix the errors above before submitting.");
+  setIsSubmitting(true);
 
-        // Scroll to first error
-        const firstErrorField = Object.keys(validation.errors)[0];
-        const errorElement = document.getElementById(firstErrorField);
-        errorElement?.scrollIntoView({ behavior: "smooth", block: "center" });
-      } else {
-        setSubmitError("Form validation failed. Please check your inputs.");
-      }
-      return;
-    }
+  try {
+    await onSubmit(formData);
 
-    setIsSubmitting(true);
-    
-    try {
-    // ✅ Make the POST request
-    const response = await apiClient(`/form/public/${slug}/submit`, {
-      method: "POST",
-      body: formData,
-    });
-
-
-    // ✅ If successful
-    // console.log("Form submitted successfully:", response);
     setFormData({});
     setErrors({});
-    setIsSubmitted(true); // show success state
+    setIsSubmitted(true);
   } catch (error) {
     console.error("Error submitting form:", error);
     setSubmitError(
@@ -159,7 +148,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   } finally {
     setIsSubmitting(false);
   }
-  };
+};
 
   const visibleFields = getVisibleFields(fields, formData);
   const completedFields = visibleFields.filter((field) => {

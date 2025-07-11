@@ -1,5 +1,4 @@
 'use client';
-export const runtime = 'edge';
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
@@ -90,6 +89,7 @@ const handleSubmit = async (data: FormSubmissionData) => {
       ...data,
       referralCode: finalReferralCode || null,
     };
+
 
 
     const response = await apiClient(`/form/public/${slug}/submit`, {
