@@ -5,3 +5,6 @@ compatibility_flags = ["nodejs_compat"]
 
 main = ".vercel/output/static/_worker.js/index.js"
 assets = { directory = ".vercel/output/static", binding = "ASSETS" }
+
+[observability]
+enabled = true
