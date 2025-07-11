@@ -142,14 +142,11 @@ const DashbaordNav = () => {
 
     try {
       setIsLoading(true);
-      const response = await apiClient(
-        "/auth/login",
-        {
-          method: "POST",
-          token: undefined,
-          body: formData.signin,
-        }
-      );
+      const response = await apiClient("/auth/login", {
+        method: "POST",
+        token: undefined,
+        body: formData.signin,
+      });
 
       const data = await response.json();
       localStorage.setItem("access_token", data.token);
@@ -179,14 +176,11 @@ const DashbaordNav = () => {
 
     try {
       setIsLoading(true);
-      const response = await apiClient(
-        "/auth/register",
-        {
-          method: "POST",
-          token: undefined,
-          body: JSON.stringify(formData.signup),
-        }
-      );
+      const response = await apiClient("/auth/register", {
+        method: "POST",
+        token: undefined,
+        body: JSON.stringify(formData.signup),
+      });
 
       const data = await response.json();
 
@@ -221,6 +215,10 @@ const DashbaordNav = () => {
       setIsAuthenticated(false);
       window.location.href = "/dashboard";
       localStorage.removeItem("access_token");
+      localStorage.removeItem("wallet_connected_address");
+      localStorage.removeItem("email");
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("publisher_campaign");
       /* eslint-disable  @typescript-eslint/no-explicit-any */
     } catch (err: any) {
       toast({
