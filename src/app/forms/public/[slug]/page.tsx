@@ -1,5 +1,5 @@
-'use client';
-export const runtime = 'edge';
+"use client";
+export const runtime = "edge";
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
@@ -16,7 +16,6 @@ export default function PublicFormPage(props: PublicFormPageProps) {
   const params = useParams();
   const slug = params?.slug as string;
   const { toast } = useToast();
-  
 
   const [form, setForm] = useState<Form | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -24,12 +23,11 @@ export default function PublicFormPage(props: PublicFormPageProps) {
   const [referralCode, setReferralCode] = useState<string | null>(null);
 
   useEffect(() => {
-  // Extract referral code on client side
-  const searchParams = new URLSearchParams(window.location.search);
-  const refCode = searchParams.get("ref");
-  setReferralCode(refCode);
-}, []);
-
+    // Extract referral code on client side
+    const searchParams = new URLSearchParams(window.location.search);
+    const refCode = searchParams.get("ref");
+    setReferralCode(refCode);
+  }, []);
 
   useEffect(() => {
     const fetchForm = async () => {
@@ -71,47 +69,44 @@ export default function PublicFormPage(props: PublicFormPageProps) {
         setLoading(false);
       }
     };
-    
 
     fetchForm();
   }, [slug]);
 
-const handleSubmit = async (data: FormSubmissionData) => {
-  try {
-    let finalReferralCode = referralCode;
+  const handleSubmit = async (data: FormSubmissionData) => {
+    try {
+      let finalReferralCode = referralCode;
 
-    // Fallback: re-read it in case state wasn't set yet
-    if (!finalReferralCode) {
-      const searchParams = new URLSearchParams(window.location.search);
-      finalReferralCode = searchParams.get("ref");
+      // Fallback: re-read it in case state wasn't set yet
+      if (!finalReferralCode) {
+        const searchParams = new URLSearchParams(window.location.search);
+        finalReferralCode = searchParams.get("ref");
+      }
+
+      const submissionData = {
+        submissionData: data,
+        referralCode: finalReferralCode || null,
+      };
+
+      const response = await apiClient(`/form/public/${slug}/submit`, {
+        method: "POST",
+        body: submissionData,
+      });
+
+      toast({
+        variant: "success",
+        description: "Form submitted successfully!",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Error submitting form. Please try again.",
+      });
     }
-
-    const submissionData = {
-      ...data,
-      referralCode: finalReferralCode || null,
-    };
-
-
-    const response = await apiClient(`/form/public/${slug}/submit`, {
-      method: 'POST',
-      body: submissionData
-    });
-
-    toast({
-      variant: "success",
-      description: "Form submitted successfully!",
-    });
-  } catch (error) {
-    toast({
-      variant: "destructive",
-      description:
-        error instanceof Error
-          ? error.message
-          : "Error submitting form. Please try again.",
-    });
-  }
-};
-
+  };
 
   // Loading state
   if (loading) {
