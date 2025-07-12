@@ -4,7 +4,6 @@ import { FormField, FormSubmissionData } from "@/lib/form.types";
 import { DynamicField } from "./DynamicField";
 import { validateFormData } from "@/utils/validation";
 import { useParams } from "next/navigation";
-import { apiClient } from "@/utils/apiClient";
 import { useToast } from "@/hooks/use-toast";
 
 interface FormRendererProps {
