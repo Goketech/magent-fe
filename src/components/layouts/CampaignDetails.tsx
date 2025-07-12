@@ -28,13 +28,11 @@ interface FormAnalytics {
 interface CampaignDetailsProps {
   campaign: MyCampaign;
   onBack: () => void;
-  onAccept: (id: string) => void;
 }
 
 const CampaignDetails: React.FC<CampaignDetailsProps> = ({
   campaign,
   onBack,
-  onAccept,
 }) => {
   const router = useRouter();
   const { toast } = useToast();
@@ -64,7 +62,7 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
     const fetchFormAnalytics = async () => {
       try {
         setIsLoading(true); // Add this
-        const data = await apiClient(`/form/${"jsjsj"}/analytics`, {
+        const data = await apiClient(`/form/${campaign.feedbackFormId}/analytics`, {
           method: "GET",
         });
         setFormAnalytics(data);

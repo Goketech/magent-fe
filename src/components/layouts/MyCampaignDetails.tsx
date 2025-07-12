@@ -3,53 +3,80 @@ import { MyCampaign } from "@/lib/types";
 import { capitalizeEachWord } from "@/utils/capitalize";
 import React, { useState } from "react";
 import AcceptModal from "@/components/ui/AcceptModal";
+import { useToast } from "@/hooks/use-toast";
 
 interface MyCampaignDetailsProps {
   campaign: MyCampaign;
   onBack: () => void;
-  isJoined?: boolean;
+  isCampaignJoined: (campaignId: string) => boolean;
+  handleJoinSuccess?: (campaignId: string, joinResponse: any) => void;
 }
 
 const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
   campaign,
   onBack,
+  isCampaignJoined,
+  handleJoinSuccess,
 }) => {
   const [copied, setCopied] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-  
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const publisherCampaigns = JSON.parse(
-    localStorage.getItem("publisher_campaign") || "[]"
-  );
-  const checkIfCampaignIsJoined = (campaignId: string): boolean => {
-    return publisherCampaigns.some((pc: any) => pc.campaignId === campaignId);
-  };
+  const { toast } = useToast();
+
+  const isJoined = isCampaignJoined(campaign._id);
+  // const checkIfCampaignIsJoined = (campaignId: string): boolean => {
+  //   return publisherCampaigns.some((pc: any) => pc.campaignId === campaignId);
+  // };
 
 const handleCopyLink = async () => {
   try {
+    // Check if feedback form URL exists
+    if (!campaign.feedbackFormUrl) {
+      toast({
+        variant: "destructive",
+        description: "No forms yet, check back later.",
+      });
+      return;
+    }
+
     const publisherCampaigns = JSON.parse(
       localStorage.getItem("publisher_campaign") || "[]"
     );
-    
-    // Get the first referral code (since it's unique to the user)
-    const referralCode = publisherCampaigns[0]?.referralCode;
-    
-    const urlWithReferral = referralCode 
+    console.log("Publisher Campaigns: ", publisherCampaigns);
+    const matchingCampaign = publisherCampaigns.find(
+      (c: any) => c.campaignId === campaign._id
+    );
+
+    const referralCode = matchingCampaign?.referralCode;
+
+    const urlWithReferral = referralCode
       ? `${campaign.feedbackFormUrl}?ref=${referralCode}`
       : campaign.feedbackFormUrl;
-      
-    await navigator.clipboard.writeText(urlWithReferral || "");
+
+    await navigator.clipboard.writeText(urlWithReferral);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   } catch (err) {
     console.error("Failed to copy: ", err);
+    toast({
+      variant: "destructive",
+      description: "Failed to copy link.",
+    });
   }
 };
-const handleAccept = () => {
-  setIsModalOpen(true);
-};
-  const isJoined = checkIfCampaignIsJoined(campaign._id);
-  
+  const handleAccept = () => {
+    const localStored = localStorage.getItem("wallet_connected_address");
+    // Check if wallet is connected (either publicKey exists or stored address exists)
+    if (localStored && localStored !== "null") {
+      setIsModalOpen(true);
+    } else {
+      toast({
+        variant: "destructive",
+        description: "Please Connect Your wallet to accept the campaign.",
+      });
+    }
+  };
+
   return (
     <div className="w-full p-4 bg-white rounded-md shadow">
       <div className="flex items-center mb-4">
@@ -102,7 +129,7 @@ const handleAccept = () => {
               </div>
               <div>
                 <p className="text-xs opacity-70 py-2">Total Publishers</p>
-                <p className="text-sm">{campaign?.publishersCount}</p>
+                <p className="text-sm">{campaign?.publisherCount}</p>
               </div>
             </div>
           </div>
@@ -183,7 +210,7 @@ const handleAccept = () => {
             <div className="flex justify-between">
               <p className="text-sm text-gray-600">Total Publisher</p>
               <p className="text-sm font-medium">
-                {`${campaign.publishersCount}` || "N/A"}
+                {`${campaign.publisherCount}` || "N/A"}
               </p>
             </div>
             <div className="flex justify-between">
@@ -243,50 +270,48 @@ const handleAccept = () => {
               </button>
             </div>
             <div>
-              {
-                isJoined && (
-                  <button
-                className="bg-gray-600 text-white px-6 py-2 rounded-md text-sm hover:bg-gray-700 transition-colors flex items-center gap-2"
-                onClick={handleCopyLink}
-              >
-                {copied ? (
-                  <>
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                      />
-                    </svg>
-                    Copy Form Link
-                  </>
-                )}
-              </button>
-                )
-              }
+              {isJoined && (
+                <button
+                  className="bg-gray-600 text-white px-6 py-2 rounded-md text-sm hover:bg-gray-700 transition-colors flex items-center gap-2"
+                  onClick={handleCopyLink}
+                >
+                  {copied ? (
+                    <>
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                        />
+                      </svg>
+                      Copy Form Link
+                    </>
+                  )}
+                </button>
+              )}
             </div>
             <div />
           </div>
@@ -326,11 +351,11 @@ const handleAccept = () => {
         </div>
       </div>
       <AcceptModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            campaign={campaign}
-            // onJoinSuccess={handleJoinSuccess}
-          />
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        campaign={campaign}
+        onJoinSuccess={handleJoinSuccess}
+      />
     </div>
   );
 };

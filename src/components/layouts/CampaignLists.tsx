@@ -20,20 +20,21 @@ interface CampaignListsProps {
   activeFilters?: FilterState;
   onViewDetails: (campaign: Campaign | MyCampaignType) => void;
   onCampaignCountChange?: (count: number) => void;
+  isJoined:Record<string, "joined" | undefined>;
+  handleJoinSuccess?: (
+    campaignId: string,
+    joinResponse: any
+  ) => void;
 }
 
-interface PublisherCampaign {
-  campaignId: string;
-  referralCode: string;
-  joinedAt: string;
-  _id: string;
-}
 
 const EMPTY_ARRAY: Campaign[] = [];
 
 const CampaignLists: React.FC<CampaignListsProps> = ({
   initialCampaigns = EMPTY_ARRAY,
   onCampaignCountChange,
+  handleJoinSuccess,
+  isJoined,
   itemsPerPage = 10,
   onViewDetails,
   activeFilters = {
@@ -50,9 +51,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
   const [totalPages, setTotalPages] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
   const [isEmpty, setIsEmpty] = useState<boolean>(false);
-  const [publisherCampaigns, setPublisherCampaigns] = useState<
-    PublisherCampaign[]
-  >([]);
+
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     direction: "asc" | "desc";
@@ -61,20 +60,16 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
   const [selectedCampaign, setSelectedCampaign] = useState<
     Campaign | MyCampaignType | null
   >(null);
+
   const { toast } = useToast();
 
   // Load publisher campaigns from localStorage
-  useEffect(() => {
-    const storedCampaigns = JSON.parse(
-      localStorage.getItem("publisher_campaign") || "[]"
-    ) as PublisherCampaign[];
-    setPublisherCampaigns(storedCampaigns);
-  }, []);
+
 
   // Helper function to check if campaign is already joined
-  const isCampaignJoined = (campaignId: string): boolean => {
-    return publisherCampaigns.some((pc) => pc.campaignId === campaignId);
-  };
+  // const isCampaignJoined = (campaignId: string): boolean => {
+  //   return publisherCampaigns.some((pc) => pc.campaignId === campaignId);
+  // };
 
   // Filter campaigns based on activeFilters
   const filteredCampaigns = useMemo(() => {
@@ -217,30 +212,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
     setIsModalOpen(true);
   };
 
-const handleJoinSuccess = (campaignId: string, joinResponse: any) => {
-  // Update the specific campaign's status to "Joined"
-  
 
-  // Update publisher campaigns in localStorage and state
-  const newPublisherCampaign: PublisherCampaign = {
-    campaignId: campaignId,
-    referralCode: joinResponse.referralCode || "",
-    joinedAt: new Date().toISOString(),
-    _id: joinResponse._id || "",
-  };
-
-  const updatedPublisherCampaigns = [
-    ...publisherCampaigns,
-    newPublisherCampaign,
-  ];
-  
-  // UPDATE STATE FIRST, THEN LOCALSTORAGE
-  setPublisherCampaigns(updatedPublisherCampaigns);
-  localStorage.setItem(
-    "publisher_campaign",
-    JSON.stringify(updatedPublisherCampaigns)
-  );
-};
   // console.log("Publisher Campaigns:", publisherCampaigns);
 
   const handleSort = (key: string) => {
@@ -426,37 +398,38 @@ const handleJoinSuccess = (campaignId: string, joinResponse: any) => {
           </div>
         ) : (
           <>
-            <table className="min-w-full">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  {headers.map((header) => (
-                    <th
-                      key={header.id}
-                      className={`py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
-                        header.sortable ? "cursor-pointer hover:bg-gray-50" : ""
-                      }`}
-                      onClick={() => header.sortable && handleSort(header.id)}
-                    >
-                      <div className="flex items-center">
-                        {header.label}
-                        {header.sortable && getSortIcon(header.id)}
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {displayedCampaigns.map((campaign) => (
-                  <CampaignList
-                    key={campaign._id}
-                    campaign={campaign}
-                    onAccept={() => handleAcceptCampaign(campaign)}
-                    onViewDetails={onViewDetails}
-                    isJoined={isCampaignJoined(campaign._id)}
-                  />
-                ))}
-              </tbody>
-            </table>
+            
+<table className="min-w-full">
+  <thead>
+    <tr className="border-b border-gray-200">
+      {headers.map((header) => (
+        <th
+          key={header.id}
+          className={`py-3 px-2 md:px-4 text-left text-[10px] md:text-xs font-medium text-gray-500 uppercase tracking-wider ${
+            header.sortable ? "cursor-pointer hover:bg-gray-50" : ""
+          }`}
+          onClick={() => header.sortable && handleSort(header.id)}
+        >
+          <div className="flex items-center">
+            {header.label}
+            {header.sortable && getSortIcon(header.id)}
+          </div>
+        </th>
+      ))}
+    </tr>
+  </thead>
+  <tbody>
+    {displayedCampaigns.map((campaign) => (
+      <CampaignList
+        key={campaign._id}
+        campaign={campaign}
+        onAccept={() => handleAcceptCampaign(campaign)}
+        onViewDetails={onViewDetails}
+        isJoined={isJoined[campaign._id] === "joined"}
+      />
+    ))}
+  </tbody>
+</table>
             <div className="flex justify-center mt-6 space-x-2">
               {renderPagination()}
             </div>
