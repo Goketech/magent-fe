@@ -30,15 +30,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const storedToken = localStorage.getItem("wallet_connected_address");
     if (
       storedToken &&
-      storedToken !== "null" &&
-      storedToken !== "undefined" &&
-      publicKey &&
-      publicKey.toBase58() === storedToken &&
-      connected
+      storedToken !== "null"
     ) {
       setJwt(storedToken);
     }
-  }, []);
+  }, [connected]);
 
   const authenticate = async () => {
     if (!connected || !publicKey || !signMessage) {
