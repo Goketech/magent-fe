@@ -1,40 +1,70 @@
 "use client";
+export const runtime = "edge";
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { FormRenderer } from "@/components/forms/form-renderer/FormRenderer";
-import { Form, FormField, FormSubmissionData } from "@/lib/form.types";
-import { apiClient } from "@/utils/apiClient";
-import { useToast } from "@/hooks/use-toast";
+import dynamic from "next/dynamic";
 
-interface PublicFormPageProps {
-  // Remove props since we're now fetching client-side
+// Dynamic imports to avoid SSR issues
+const FormRenderer = dynamic(() => 
+  import("@/components/forms/form-renderer/FormRenderer").then(mod => ({ default: mod.FormRenderer })),
+  { ssr: false }
+);
+
+interface Form {
+  title: string;
+  description?: string;
+  fields: any[];
+  settings?: {
+    theme?: any;
+    customCss?: string;
+  };
 }
 
-export default function PublicFormPage(props: PublicFormPageProps) {
+interface FormSubmissionData {
+  [key: string]: any;
+}
+
+import { apiClient } from "@/utils/apiClient";
+
+export default function PublicFormPage() {
   const params = useParams();
   const slug = params?.slug as string;
-  const { toast } = useToast();
 
   const [form, setForm] = useState<Form | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [authToken, setAuthToken] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
+  // Check if we're on the client side
   useEffect(() => {
-    // Extract referral code on client side
-    const searchParams = new URLSearchParams(window.location.search);
-    const refCode = searchParams.get("ref");
-    setReferralCode(refCode);
+    setIsClient(true);
   }, []);
 
   useEffect(() => {
-    const fetchForm = async () => {
-      if (!slug) {
-        setError("Form slug not provided");
-        setLoading(false);
-        return;
+    if (!isClient) return;
+
+    // Get referral code from URL
+    const searchParams = new URLSearchParams(window.location.search);
+    const refCode = searchParams.get("ref");
+    setReferralCode(refCode);
+
+    // Get auth token from localStorage
+    try {
+      const stored = localStorage.getItem("auth_token");
+      if (stored) {
+        setAuthToken(JSON.parse(stored));
       }
+    } catch (e) {
+      console.warn("Failed to parse auth token:", e);
+    }
+  }, [isClient]);
+
+  useEffect(() => {
+    const fetchForm = async () => {
+      if (!slug || !isClient) return;
 
       try {
         setLoading(true);
@@ -42,21 +72,15 @@ export default function PublicFormPage(props: PublicFormPageProps) {
 
         const formData = await apiClient(`/form/public/${slug}`, {
           method: "GET",
+          token: authToken ?? undefined,
         });
 
         setForm(formData);
       } catch (err) {
-        toast({
-          variant: "destructive",
-          description: "Error fetching form:",
-        });
-
-        // Handle specific error cases
+        console.error("Error fetching form:", err);
+        
         if (err instanceof Error) {
-          if (
-            err.message.includes("404") ||
-            err.message.includes("not found")
-          ) {
+          if (err.message.includes("404")) {
             setError("Form not found or no longer available");
           } else {
             setError("Failed to load form");
@@ -70,14 +94,14 @@ export default function PublicFormPage(props: PublicFormPageProps) {
     };
 
     fetchForm();
-  }, [slug]);
+  }, [slug, authToken, isClient]);
 
   const handleSubmit = async (data: FormSubmissionData) => {
     try {
       let finalReferralCode = referralCode;
 
-      // Fallback: re-read it in case state wasn't set yet
-      if (!finalReferralCode) {
+      // Fallback: re-read referral code
+      if (!finalReferralCode && typeof window !== 'undefined') {
         const searchParams = new URLSearchParams(window.location.search);
         finalReferralCode = searchParams.get("ref");
       }
@@ -87,23 +111,17 @@ export default function PublicFormPage(props: PublicFormPageProps) {
         referralCode: finalReferralCode || null,
       };
 
-      const response = await apiClient(`/form/public/${slug}/submit`, {
+      await apiClient(`/form/public/${slug}/submit`, {
         method: "POST",
         body: submissionData,
       });
 
-      toast({
-        variant: "success",
-        description: "Form submitted successfully!",
-      });
+      // Show success message (replace with your toast implementation)
+      alert("Form submitted successfully!");
     } catch (error) {
-      toast({
-        variant: "destructive",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Error submitting form. Please try again.",
-      });
+      console.error("Form submission error:", error);
+      // Show error message (replace with your toast implementation)
+      alert(error instanceof Error ? error.message : "Error submitting form. Please try again.");
     }
   };
 
@@ -147,12 +165,14 @@ export default function PublicFormPage(props: PublicFormPageProps) {
             )}
           </div>
 
-          <FormRenderer
-            fields={form.fields}
-            onSubmit={handleSubmit}
-            theme={form.settings?.theme}
-            customCss={form.settings?.customCss}
-          />
+          {isClient && (
+            <FormRenderer
+              fields={form.fields}
+              onSubmit={handleSubmit}
+              theme={form.settings?.theme}
+              customCss={form.settings?.customCss}
+            />
+          )}
         </div>
       </div>
     </div>

@@ -78,19 +78,19 @@ const handleCopyLink = async () => {
   };
 
   return (
-    <div className="w-full p-4 bg-white rounded-md shadow">
-      <div className="flex items-center mb-4">
+    <div className="w-full p-3 sm:p-4 bg-white rounded-md shadow">
+      <div className="flex items-center mb-3 sm:mb-4">
         <button
           onClick={onBack}
-          className="flex items-center text-gray-600 hover:text-gray-900 text-sm"
+          className="flex items-center text-gray-600 hover:text-gray-900 text-xs sm:text-sm"
         >
-          <MdArrowBackIos size={16} className="mr-1" />
+          <MdArrowBackIos size={14} className="mr-1 sm:size-4" />
           Back
         </button>
       </div>
 
       <div
-        className="rounded-lg p-4 mb-6 text-white relative overflow-hidden"
+        className="rounded-lg p-3 sm:p-4 mb-4 sm:mb-6 text-white relative overflow-hidden"
         style={{
           backgroundImage:
             "url('/details.png'), linear-gradient(#330065, #330065)",
@@ -99,21 +99,21 @@ const handleCopyLink = async () => {
           backgroundBlendMode: "overlay",
         }}
       >
-        <div className="flex justify-between items-center">
-          <div>
-            <h2 className="text-xl font-semibold mb-1">
+        <div className="flex justify-between items-start">
+          <div className="pr-4">
+            <h2 className="text-base sm:text-xl font-semibold mb-1">
               {capitalizeEachWord(campaign.name || "")}
             </h2>
-            <div className="grid grid-cols-4 gap-10 mt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-10 mt-2 sm:mt-2">
               <div>
-                <p className="text-xs opacity-70 py-2">Campaign Goal</p>
-                <p className="text-sm">
+                <p className="text-xs opacity-70 py-1 sm:py-2">Campaign Goal</p>
+                <p className="text-xs sm:text-sm">
                   {capitalizeEachWord(campaign?.goals || "")}
                 </p>
               </div>
               <div>
-                <p className="text-xs opacity-70 py-2">Campaign KPIs</p>
-                <p className="text-sm">
+                <p className="text-xs opacity-70 py-1 sm:py-2">Campaign KPIs</p>
+                <p className="text-xs sm:text-sm">
                   {capitalizeEachWord(
                     "kpis" in campaign
                       ? campaign.kpis === ""
@@ -124,54 +124,54 @@ const handleCopyLink = async () => {
                 </p>
               </div>
               <div>
-                <p className="text-xs opacity-70 py-2">Target Number</p>
-                <p className="text-sm">{campaign?.targetNumber}</p>
+                <p className="text-xs opacity-70 py-1 sm:py-2">Target Number</p>
+                <p className="text-xs sm:text-sm">{campaign?.targetNumber}</p>
               </div>
               <div>
-                <p className="text-xs opacity-70 py-2">Total Publishers</p>
-                <p className="text-sm">{campaign?.publisherCount}</p>
+                <p className="text-xs opacity-70 py-1 sm:py-2">Total Publishers</p>
+                <p className="text-xs sm:text-sm">{campaign?.publisherCount}</p>
               </div>
             </div>
           </div>
           <div className="absolute top-0 right-0">
-            <span className="bg-[#EBE6F0] text-[#330065] text-xs px-6 py-2 rounded-bl-md">
+            <span className="bg-[#EBE6F0] text-[#330065] text-xs px-3 sm:px-6 py-1 sm:py-2 rounded-bl-md">
               {capitalizeEachWord(campaign?.status || "")}
             </span>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
         <div>
-          <h3 className="text-lg font-medium mb-4">Campaign Overview</h3>
-          <div className="space-y-4">
-            <div className="flex justify-between">
-              <p className="text-sm text-gray-600">Campaign Name</p>
-              <p className="text-sm font-medium">
+          <h3 className="text-base sm:text-lg font-medium mb-3 sm:mb-4">Campaign Overview</h3>
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+              <p className="text-xs sm:text-sm text-gray-600">Campaign Name</p>
+              <p className="text-xs sm:text-sm font-medium">
                 {capitalizeEachWord(campaign?.name || "")}
               </p>
             </div>
-            <div className="flex justify-between">
-              <p className="text-sm text-gray-600">Industry</p>
-              <p className="text-sm font-medium">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+              <p className="text-xs sm:text-sm text-gray-600">Industry</p>
+              <p className="text-xs sm:text-sm font-medium">
                 {capitalizeEachWord(campaign?.industry || "")}
               </p>
             </div>
-            <div className="flex justify-between">
-              <p className="text-sm text-gray-600">Campaign Goal</p>
-              <p className="text-sm font-medium">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+              <p className="text-xs sm:text-sm text-gray-600">Campaign Goal</p>
+              <p className="text-xs sm:text-sm font-medium">
                 {capitalizeEachWord(campaign?.goals || "")}
               </p>
             </div>
-            <div className="flex justify-between">
-              <p className="text-sm text-gray-600">Campaign KPIs</p>
-              <p className="text-sm font-medium">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+              <p className="text-xs sm:text-sm text-gray-600">Campaign KPIs</p>
+              <p className="text-xs sm:text-sm font-medium">
                 {capitalizeEachWord(campaign?.kpis || "N/A")}
               </p>
             </div>
-            <div className="flex justify-between">
-              <p className="text-sm text-gray-600">Target Audience</p>
-              <p className="text-sm">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+              <p className="text-xs sm:text-sm text-gray-600">Target Audience</p>
+              <p className="text-xs sm:text-sm font-medium">
                 {campaign?.targetAudience?.gender == "both"
                   ? "Male and Female"
                   : campaign?.targetAudience?.gender}{" "}
@@ -179,9 +179,9 @@ const handleCopyLink = async () => {
                 {"+"})
               </p>
             </div>
-            <div className="flex justify-between">
-              <p className="text-sm text-gray-600">Campaign Duration</p>
-              <p className="text-sm font-medium">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+              <p className="text-xs sm:text-sm text-gray-600">Campaign Duration</p>
+              <p className="text-xs sm:text-sm font-medium">
                 {campaign.startDate && campaign.endDate
                   ? `${new Date(campaign.startDate).toLocaleDateString(
                       "en-US",
@@ -193,29 +193,29 @@ const handleCopyLink = async () => {
                   : "N/A"}
               </p>
             </div>
-            <div className="flex justify-between">
-              <p className="text-sm text-gray-600">Value Per User</p>
-              <p className="text-sm font-medium">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+              <p className="text-xs sm:text-sm text-gray-600">Value Per User</p>
+              <p className="text-xs sm:text-sm font-medium">
                 {`${campaign.valuePerUser?.toUpperCase()}, $${
                   campaign.valuePerUserAmount
                 } per ${campaign.goals}`}{" "}
               </p>
             </div>
-            <div className="flex justify-between">
-              <p className="text-sm text-gray-600">Total Liquidity</p>
-              <p className="text-sm font-medium">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+              <p className="text-xs sm:text-sm text-gray-600">Total Liquidity</p>
+              <p className="text-xs sm:text-sm font-medium">
                 {`$${campaign.totalLiquidity}` || "N/A"}
               </p>
             </div>
-            <div className="flex justify-between">
-              <p className="text-sm text-gray-600">Total Publisher</p>
-              <p className="text-sm font-medium">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+              <p className="text-xs sm:text-sm text-gray-600">Total Publisher</p>
+              <p className="text-xs sm:text-sm font-medium">
                 {`${campaign.publisherCount}` || "N/A"}
               </p>
             </div>
-            <div className="flex justify-between">
-              <p className="text-sm text-gray-600">Social Links</p>
-              <div className="text-sm font-medium">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+              <p className="text-xs sm:text-sm text-gray-600">Social Links</p>
+              <div className="text-xs sm:text-sm font-medium">
                 {campaign.website && (
                   <a
                     href={campaign.website}
@@ -252,9 +252,9 @@ const handleCopyLink = async () => {
                   "N/A"}
               </div>
             </div>
-            <div className="flex justify-end">
+            <div className="flex justify-center sm:justify-end">
               <button
-                className={`rounded-2xl flex gap-3 items-center px-4 py-1.5 text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`rounded-2xl flex gap-2 sm:gap-3 items-center px-3 sm:px-4 py-1.5 text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                   isJoined
                     ? "bg-green-600 text-white hover:bg-green-700"
                     : "bg-[#330065] text-white hover:bg-purple-800"
@@ -272,13 +272,13 @@ const handleCopyLink = async () => {
             <div>
               {isJoined && (
                 <button
-                  className="bg-gray-600 text-white px-6 py-2 rounded-md text-sm hover:bg-gray-700 transition-colors flex items-center gap-2"
+                  className="bg-gray-600 text-white px-4 sm:px-6 py-2 rounded-md text-xs sm:text-sm hover:bg-gray-700 transition-colors flex items-center gap-2 w-full sm:w-auto justify-center"
                   onClick={handleCopyLink}
                 >
                   {copied ? (
                     <>
                       <svg
-                        className="w-4 h-4"
+                        className="w-3 h-3 sm:w-4 sm:h-4"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -295,7 +295,7 @@ const handleCopyLink = async () => {
                   ) : (
                     <>
                       <svg
-                        className="w-4 h-4"
+                        className="w-3 h-3 sm:w-4 sm:h-4"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -313,26 +313,24 @@ const handleCopyLink = async () => {
                 </button>
               )}
             </div>
-            <div />
           </div>
         </div>
-
         <div>
-          <h3 className="text-lg font-medium mb-4">Media</h3>
+          <h3 className="text-base sm:text-lg font-medium mb-3 sm:mb-4">Media</h3>
           {campaign.media && campaign.media.length > 0 ? (
             <>
               <div className="bg-gray-100 rounded-lg overflow-hidden">
                 <img
                   src={URL.createObjectURL(campaign.media[0])}
                   alt="Campaign media"
-                  className="w-full h-64 object-cover"
+                  className="w-full h-48 sm:h-64 object-cover"
                 />
               </div>
-              <div className="flex mt-4 gap-2">
+              <div className="flex mt-3 sm:mt-4 gap-2 overflow-x-auto pb-2">
                 {campaign.media.map((file, index) => (
                   <div
                     key={index}
-                    className="h-12 w-12 bg-gray-200 rounded-md overflow-hidden"
+                    className="h-10 w-10 sm:h-12 sm:w-12 bg-gray-200 rounded-md overflow-hidden flex-shrink-0"
                   >
                     <img
                       src={URL.createObjectURL(file)}
@@ -344,7 +342,7 @@ const handleCopyLink = async () => {
               </div>
             </>
           ) : (
-            <div className="bg-gray-100 rounded-lg h-64 flex items-center justify-center text-gray-400">
+            <div className="bg-gray-100 rounded-lg h-48 sm:h-64 flex items-center justify-center text-gray-400 text-xs sm:text-sm">
               No media uploaded
             </div>
           )}
