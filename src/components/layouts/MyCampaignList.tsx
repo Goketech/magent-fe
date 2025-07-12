@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { MoreVertical } from "lucide-react";
-import { MyCampaign } from "@/lib/types"; // Updated import
+import { MyCampaign } from "@/lib/types";
+import { capitalizeEachWord } from "@/utils/capitalize";
 
 interface MyCampaignListProps {
   campaign: MyCampaign;
@@ -71,11 +72,9 @@ const MyCampaignList: React.FC<MyCampaignListProps> = ({
   </td>
   <td className="py-3 px-4 text-[10px] md:text-xs">{campaign.publisherCount || 0}</td>
   <td className="py-3 px-4 text-[10px] md:text-xs">
-    <span
-      className={`px-[10px] py-2 rounded-md bg-[#FCF4E7] text-[#DD900D] text-[10px] md:text-xs`}
-    >
-      {campaign.status}
-    </span>
+    <span className={`px-[10px] py-2 rounded-md text-[10px] md:text-xs ${getStatusBadgeClass(campaign?.status)}`}>
+        {capitalizeEachWord(campaign?.status)}
+        </span>
   </td>
   <td className="py-3 px-4 text-[10px] md:text-xs">
     <div className="flex items-center gap-2">
