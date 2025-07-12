@@ -145,70 +145,76 @@ const Navbar = () => {
           
           <div className="hidden md:flex gap-8 text-white relative md:justify-center w-full">
             {menuData.map((menu) => (
-              <div key={menu.title} className="relative">
-                <motion.button
-                  onClick={() => toggleMenu(menu.title)}
-                  className="px-[12px] py-[8px] text-white font-[500] text-xl leading-[21px] flex items-center gap-1 rounded-md transition-colors duration-200"
-                  whileHover={{ 
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                    scale: 1.02
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {menu.title}
-                  <motion.svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                    variants={chevronVariants}
-                    animate={openMenu === menu.title ? "open" : "closed"}
-                    transition={{ duration: 0.2, ease: "easeInOut" }}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </motion.svg>
-                </motion.button>
+  <div 
+    key={menu.title} 
+    className="relative"
+    onMouseEnter={() => setOpenMenu(menu.title)}
+    onMouseLeave={() => setOpenMenu(null)}
+  >
+    <motion.button
+      className="px-[12px] py-[8px] text-white font-[500] text-xl leading-[21px] flex items-center gap-1 rounded-md transition-colors duration-200"
+      whileHover={{ 
+        backgroundColor: "rgba(255, 255, 255, 0.05)",
+        scale: 1.02
+      }}
+      whileTap={{ scale: 0.98 }}
+    >
+      {menu.title}
+      <motion.svg
+        className="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        viewBox="0 0 24 24"
+        variants={chevronVariants}
+        animate={openMenu === menu.title ? "open" : "closed"}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M19 9l-7 7-7-7"
+        />
+      </motion.svg>
+    </motion.button>
 
-                <AnimatePresence>
-                  {openMenu === menu.title && (
-                    <motion.div
-                      className="absolute top-[110%] mt-2 w-44 bg-[#1a1a1a] rounded-md shadow-lg border border-white/10 z-50 overflow-hidden"
-                      variants={dropdownVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      style={{ originY: 0 }}
-                    >
-                      {menu.items.map((item) => (
-                        <motion.div key={item.name} variants={itemVariants}>
-                          <Link
-                            href={item.href}
-                            className="block px-4 py-3 text-sm text-white"
-                            onClick={() => setOpenMenu(null)}
-                          >
-                            <motion.div
-                              whileHover={{ 
-                                backgroundColor: "#333",
-                                x: 4,
-                                transition: { duration: 0.2 }
-                              }}
-                              className="rounded px-2 py-1 -mx-2 -my-1"
-                            >
-                              {item.name}
-                            </motion.div>
-                          </Link>
-                        </motion.div>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
+    <AnimatePresence>
+      {openMenu === menu.title && (
+        <motion.div
+          className="absolute top-[110%] mt-2 w-44 bg-[#1a1a1a] rounded-md shadow-lg border border-white/10 z-50 overflow-hidden"
+          variants={dropdownVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          style={{ originY: 0 }}
+          onMouseEnter={() => setOpenMenu(menu.title)}
+          onMouseLeave={() => setOpenMenu(null)}
+        >
+          {menu.items.map((item) => (
+            <motion.div key={item.name} variants={itemVariants}>
+              <Link
+                href={item.href}
+                className="block px-4 py-3 text-sm text-white"
+                onClick={() => setOpenMenu(null)}
+              >
+                <motion.div
+                  whileHover={{ 
+                    backgroundColor: "#333",
+                    x: 4,
+                    transition: { duration: 0.2 }
+                  }}
+                  className="rounded px-2 py-1 -mx-2 -my-1"
+                >
+                  {item.name}
+                </motion.div>
+              </Link>
+            </motion.div>
+          ))}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </div>
+))}
           </div>
           
           {/* Desktop Contact Button */}

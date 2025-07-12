@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { FormField } from "@/lib/form.types";
 import { useCallback } from "react";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { apiClient } from "@/utils/apiClient";
@@ -30,6 +31,7 @@ export default function FormBuilderClientWrapper({
 }: Props) {
   const router = useRouter();
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
 const handleSave = useCallback(
   async (formData: {
@@ -38,6 +40,8 @@ const handleSave = useCallback(
     campaignId: string;
     fields: FormField[];
   }) => {
+    setIsLoading(true); // Start loading
+    
     try {
       // First API call - create form
       const response = await apiClient("/form", {
@@ -107,10 +111,13 @@ const handleSave = useCallback(
         variant: "destructive",
         description: errorMessage,
       });
+    } finally {
+      setIsLoading(false); // End loading regardless of success or failure
     }
   },
   [toast]
 );
+
 
   const handlePreview = useCallback(() => {}, []);
 
@@ -158,6 +165,7 @@ const handleSave = useCallback(
       initialDescription={initialDescription}
       campaignId={campaignId}
       onSave={handleSave}
+      isLoading={isLoading}
       onPreview={handlePreview}
     />
   );

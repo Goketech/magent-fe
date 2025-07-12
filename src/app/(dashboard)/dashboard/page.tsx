@@ -56,7 +56,7 @@ useEffect(() => {
   if (loading || redirecting) return <LoadingState />;
 
   return (
-    <div className="bg-[#F2F2F2] md:bg-white">
+    <div className="">
       {isAuthenticated && <DashboardContent />}
     </div>
   );

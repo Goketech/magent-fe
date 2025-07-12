@@ -10,7 +10,7 @@ body {
   :root {
     --background: 0, 0%, 0%, 1;
     --foreground: 120, 1%, 13%, 1;
-    --card: 0 0% 100%;
+    /* --card: 0 0% 100%; */
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
@@ -34,6 +34,7 @@ body {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+  
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;

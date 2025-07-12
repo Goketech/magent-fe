@@ -57,6 +57,8 @@ const AcceptModal: React.FC<AcceptModalProps> = ({
           },
         });
 
+        console.log("Join Response: ", joinResponse);
+
         // Show success toast
         toast({
           variant: "success",

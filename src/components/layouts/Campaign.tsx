@@ -10,7 +10,7 @@ import MyCampaignDetails from "./MyCampaignDetails";
 import EmptyState from "./EmptyState";
 import {
   Campaign as CampaignType,
-  MyCampaign as MyCampaignType,
+  MyCampaign as MyCampaignType, PublisherCampaign
 } from "../../lib/types";
 import { useAuth } from "@/context/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
@@ -50,10 +50,68 @@ const Campaign: React.FC = () => {
   const [userCampaigns, setUserCampaigns] = useState<MyCampaignType[]>([]);
   const [isCreatingCampaign, setIsCreatingCampaign] = useState(false);
   const [campaignCount, setCampaignCount] = useState(0);
+  // const [joinedStatuses, setJoinedStatuses] = useState<Record<string, "joined">>({});
+
+    const [publisherCampaigns, setPublisherCampaigns] = useState<
+      PublisherCampaign[]
+    >([]);
+  
 
   const filters = useMemo(() => rawFilters, [rawFilters]);
 
   // Load campaigns from localStorage on component mount
+useEffect(() => {
+  const stored = localStorage.getItem("publisher_campaign");
+  const campaigns: PublisherCampaign[] = stored ? JSON.parse(stored) : [];
+
+  // Add "joined" status to existing entries if not present
+  const patched = campaigns.map((c) => ({
+    ...c,
+    status: c.status || "joined", // default to 'joined' if missing
+  }));
+
+  setPublisherCampaigns(patched);
+
+  // Update localStorage with patched values
+  localStorage.setItem("publisher_campaign", JSON.stringify(patched));
+}, []);
+
+  console.log("publisherCampaigns: ", publisherCampaigns);
+const joinedStatuses = useMemo(() => {
+  const map: Record<string, "joined"> = {};
+  publisherCampaigns.forEach((pc) => {
+    if (pc.status === "joined") {
+      map[pc.campaignId] = "joined";
+    }
+  });
+  return map;
+}, [publisherCampaigns]);
+  const handleJoinSuccess = (campaignId: string, joinResponse: any) => {
+    // Update the specific campaign's status to "Joined"
+    
+    const status = joinResponse.status;
+    // Update publisher campaigns in localStorage and state
+    const newPublisherCampaign: PublisherCampaign = {
+      campaignId: campaignId,
+      referralCode: joinResponse.referralCode || "",
+      joinedAt: new Date().toISOString(),
+      _id: joinResponse._id || "",
+      status,
+    };
+  
+    const updatedPublisherCampaigns = [
+      ...publisherCampaigns,
+      newPublisherCampaign,
+    ];
+    
+    // UPDATE STATE FIRST, THEN LOCALSTORAGE
+    setPublisherCampaigns(updatedPublisherCampaigns);
+    localStorage.setItem(
+      "publisher_campaign",
+      JSON.stringify(updatedPublisherCampaigns)
+    );
+  
+  };
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
@@ -102,6 +160,9 @@ const Campaign: React.FC = () => {
 
     fetchCampaigns();
   }, []);
+  
+  const isCampaignJoined = (campaignId: string) =>
+  joinedStatuses[campaignId] === "joined";
 
   const handleFilterChange = (newFilters: FilterState) => {
     setRawFilters(newFilters);
@@ -133,11 +194,6 @@ const Campaign: React.FC = () => {
     setSelectedUserCampaign(null);
   };
   
-
-  const handleAccept = (id: string) => {
-    // console.log(`Accepting campaign ${id}`);
-    // accept logic
-  };
 
   /**
    * Uploads a File to Cloudinary, returns the secure URL.
@@ -335,14 +391,6 @@ const Campaign: React.FC = () => {
       return;
     }
 
-    // if (!updateResponse.ok) {
-    //   toast({
-    //     variant: "destructive",
-    //     description: "Failed to verify transaction. Please try again.",
-    //   });
-    //   setIsCreatingCampaign(false);
-    //   return;
-    // }
     const newCampaign: MyCampaignType = {
       id: userCampaigns.length + 1,
       ...campaignData,
@@ -435,12 +483,13 @@ const Campaign: React.FC = () => {
     <MyCampaignDetails
       campaign={selectedCampaign}
       onBack={handleBack}
+      handleJoinSuccess={handleJoinSuccess}
+      isCampaignJoined ={isCampaignJoined}
     />
   ) : selectedUserCampaign ? (
     <CampaignDetails
       campaign={selectedUserCampaign}
       onBack={handleBackUserCampaign}
-      onAccept={handleAccept}
     />
   ) : createCampaign ? (
     <CreateCampaign
@@ -465,6 +514,9 @@ const Campaign: React.FC = () => {
           activeFilters={filters}
           onViewDetails={handleViewDetails}
           onCampaignCountChange={handleCampaignCountChange}
+          handleJoinSuccess={handleJoinSuccess}
+          isJoined={joinedStatuses}
+          
         />
       ) : userCampaigns.length === 0 ? (
         <EmptyState onCreateCampaign={handleCreateCampaign} />
