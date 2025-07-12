@@ -27,6 +27,7 @@ export interface Campaign extends BaseCampaign {
   advertiser: unknown; // This is the key distinguishing property
 }
 
+
 // User's own campaign type (without advertiser)
 export interface MyCampaign extends BaseCampaign {
   campaignName: string;
@@ -61,3 +62,12 @@ export interface MyCampaign extends BaseCampaign {
 // export function isMyCampaign(campaign: Campaign | MyCampaign): campaign is MyCampaign {
 //   return !('advertiser' in campaign);
 // }
+
+
+export interface PublisherCampaign {
+  campaignId: string;
+  referralCode: string;
+  joinedAt: string;
+  _id: string;
+  status?: string; // Optional status field
+}

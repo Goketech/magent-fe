@@ -53,11 +53,6 @@ const MyCampaignLists: React.FC<CampaignListsProps> = ({
         );
       }
       
-    //   if (activeFilters.status) {// Filter by status
-    //     result = result.filter(campaign => 
-    //       campaign.status.toLowerCase() === activeFilters.status.toLowerCase()
-    //     );
-    //   }
       
       // Filter by goals
       if (activeFilters.goals) {
@@ -307,33 +302,33 @@ const MyCampaignLists: React.FC<CampaignListsProps> = ({
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-900"></div>
           </div>
         ) : (
-          <table className="min-w-full mb-4">
-            <thead>
-              <tr className="border-b border-gray-200">
-                {headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className={`py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${header.sortable ? 'cursor-pointer hover:bg-gray-50' : ''}`}
-                    onClick={() => header.sortable && handleSort(header.id)}
-                  >
-                    <div className="flex items-center">
-                      {header.label}
-                      {header.sortable && getSortIcon(header.id)}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className=''>
-              {displayedCampaigns.map((campaign) => (
-                <MyCampaignList
-                  key={campaign.id}
-                  campaign={campaign}
-                  onViewDetails={() => onViewDetails(campaign)}
-                />
-              ))}
-            </tbody>
-          </table>
+<table className="min-w-full mb-4">
+  <thead>
+    <tr className="border-b border-gray-200">
+      {headers.map((header) => (
+        <th
+          key={header.id}
+          className={`py-3 px-2 md:px-4 text-left text-[10px] md:text-xs font-medium text-gray-500 uppercase tracking-wider ${header.sortable ? 'cursor-pointer hover:bg-gray-50' : ''}`}
+          onClick={() => header.sortable && handleSort(header.id)}
+        >
+          <div className="flex items-center">
+            {header.label}
+            {header.sortable && getSortIcon(header.id)}
+          </div>
+        </th>
+      ))}
+    </tr>
+  </thead>
+  <tbody className=''>
+    {displayedCampaigns.map((campaign) => (
+      <MyCampaignList
+        key={campaign.id}
+        campaign={campaign}
+        onViewDetails={() => onViewDetails(campaign)}
+      />
+    ))}
+  </tbody>
+</table>
         )}
       </div>
 

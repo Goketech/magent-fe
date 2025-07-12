@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, useInView, Variants } from "framer-motion";
 import { BsTwitterX } from "react-icons/bs";
-import { FaGithub } from "react-icons/fa6";
 import { SiDiscord } from "react-icons/si";
 import { FaTelegramPlane, FaInstagram, FaLinkedin } from "react-icons/fa";
 
@@ -45,13 +44,7 @@ const footerLinkSections = [
   {
     title: "Company",
     links: [
-      { name: "Connect", href: "/connect" },
-      { name: "Marketing", href: "/marketing" },
-      { name: "AI Powered Sales", href: "/ai-sales" },
-      { name: "Platform Integration", href: "/integration" },
-      { name: "Own-to-Earn", href: "/own-to-earn" },
-      { name: "Research", href: "/research" },
-      { name: "Reports", href: "/reports" },
+      { name: "About Us", href: "/about" },
     ],
   },
   {
