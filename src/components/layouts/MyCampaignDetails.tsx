@@ -4,6 +4,7 @@ import { capitalizeEachWord } from "@/utils/capitalize";
 import React, { useState } from "react";
 import AcceptModal from "@/components/ui/AcceptModal";
 import { useToast } from "@/hooks/use-toast";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 interface MyCampaignDetailsProps {
   campaign: MyCampaign;
@@ -20,6 +21,7 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { publicKey, signMessage, connected } = useWallet();
 
   const { toast } = useToast();
 
@@ -66,7 +68,7 @@ const handleCopyLink = async () => {
   const handleAccept = () => {
     const localStored = localStorage.getItem("wallet_connected_address");
     // Check if wallet is connected (either publicKey exists or stored address exists)
-    if (localStored && localStored !== "null") {
+    if (localStored && localStored !== "null" && connected && publicKey) {
       setIsModalOpen(true);
     } else {
       toast({

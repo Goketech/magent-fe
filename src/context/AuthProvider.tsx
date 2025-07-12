@@ -28,7 +28,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("wallet_connected_address");
-    if (storedToken && storedToken !== "null") {
+    if (
+      storedToken &&
+      storedToken !== "null" &&
+      storedToken !== "undefined" &&
+      publicKey &&
+      publicKey.toBase58() === storedToken &&
+      connected
+    ) {
       setJwt(storedToken);
     }
   }, []);
@@ -47,7 +54,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsAuthenticating(true);
       const response = await apiClient("/auth/get-nonce", {
         method: "POST",
-        token: jwt || undefined,
         body: { publicKey: publicKey.toBase58() },
       });
 
@@ -65,7 +71,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       const verifyRes = await apiClient("/auth/verify-signature", {
         method: "POST",
-        token: jwt || undefined,
         body: { publicKey: publicKey.toBase58(), signature },
       });
 
