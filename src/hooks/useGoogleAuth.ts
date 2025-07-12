@@ -58,7 +58,6 @@ export const useGoogleAuth = () => {
           signupData,
         },
       });
-      console.log('Google auth response:', data);
       // Store auth token
       localStorage.setItem('auth_token', data.token);
       localStorage.setItem('wallet_connected_address', data.user.id);
@@ -99,7 +98,6 @@ export const useGoogleAuth = () => {
         client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
         callback: (response: GoogleAuthResponse) => {
           // This will be overridden by specific components
-          console.log('Google auth response:', response);
         },
         auto_select: false,
         cancel_on_tap_outside: true,

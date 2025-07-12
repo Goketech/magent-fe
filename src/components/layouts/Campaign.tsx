@@ -76,7 +76,6 @@ useEffect(() => {
   localStorage.setItem("publisher_campaign", JSON.stringify(patched));
 }, []);
 
-  console.log("publisherCampaigns: ", publisherCampaigns);
 const joinedStatuses = useMemo(() => {
   const map: Record<string, "joined"> = {};
   publisherCampaigns.forEach((pc) => {
@@ -150,7 +149,6 @@ const joinedStatuses = useMemo(() => {
             publishersCount: campaign.publisherCount,
           })
         );
-        console.log(userCampaignsData)
 
         setUserCampaigns(campaigns);
       } catch (error) {
@@ -176,7 +174,6 @@ const joinedStatuses = useMemo(() => {
     setSelectedCampaign;
     setSelectedUserCampaign(campaign);
   };
-  // console.log("Selected Campaign:", selectedUserCampaign);
 
   const handleCreateCampaign = () => {
     setCreateCampaign(true);
@@ -286,7 +283,7 @@ const joinedStatuses = useMemo(() => {
           }
         );
 
-        return transactionResponse.json();
+        return transactionResponse;
       } catch (error) {
         toast({
           variant: "destructive",
