@@ -21,15 +21,6 @@ export const DynamicField: React.FC<DynamicFieldProps> = ({
   onChange,
   error
 }) => {
-  // Debug logging - remove this once you find the issue
-  // console.log(`Field ${field._id}:`, {
-  //   type: field.type,
-  //   label: field.label,
-  //   value: value,
-  //   valueType: typeof value,
-  //   options: field.options,
-  //   field: field
-  // });
 
   const commonProps = {
     field,

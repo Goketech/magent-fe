@@ -69,8 +69,6 @@ const CampaignList: React.FC<CampaignListProps> = ({ campaign, onAccept, onViewD
     setShowOptions(false);
   };
 
-  console.log("isJoined: ", isJoined);
-
   return (
    <>
 <tr className="border-b border-gray-200 hover:bg-gray-50"

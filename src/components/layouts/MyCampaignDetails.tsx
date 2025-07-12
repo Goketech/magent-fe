@@ -42,7 +42,6 @@ const handleCopyLink = async () => {
     const publisherCampaigns = JSON.parse(
       localStorage.getItem("publisher_campaign") || "[]"
     );
-    console.log("Publisher Campaigns: ", publisherCampaigns);
     const matchingCampaign = publisherCampaigns.find(
       (c: any) => c.campaignId === campaign._id
     );

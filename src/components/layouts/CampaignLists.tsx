@@ -212,9 +212,6 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
     setIsModalOpen(true);
   };
 
-
-  // console.log("Publisher Campaigns:", publisherCampaigns);
-
   const handleSort = (key: string) => {
     let direction: "asc" | "desc" = "asc";
 
