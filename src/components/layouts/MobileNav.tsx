@@ -32,7 +32,7 @@ const MobileNav = () => {
     setShowNavItems((prev) => !prev);
   };
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.clear();
     window.location.href = "/login";
   };
 

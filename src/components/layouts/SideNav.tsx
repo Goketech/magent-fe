@@ -25,7 +25,7 @@ const SideNav = ({
 }) => {
   const { stepData, updateStepData } = useStepContext();
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.clear();
     window.location.href = "/login";
   };
   const [showConfirmLogout, setShowConfirmLogout] = useState(false);

@@ -4,6 +4,7 @@ import { capitalizeEachWord } from "@/utils/capitalize";
 import React, { useState } from "react";
 import AcceptModal from "@/components/ui/AcceptModal";
 import { useToast } from "@/hooks/use-toast";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 interface MyCampaignDetailsProps {
   campaign: MyCampaign;
@@ -20,6 +21,7 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { publicKey, signMessage, connected } = useWallet();
 
   const { toast } = useToast();
 
@@ -28,45 +30,50 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
   //   return publisherCampaigns.some((pc: any) => pc.campaignId === campaignId);
   // };
 
-const handleCopyLink = async () => {
-  try {
-    // Check if feedback form URL exists
-    if (!campaign.feedbackFormUrl) {
+  const handleCopyLink = async () => {
+    try {
+      // Check if feedback form URL exists
+      if (!campaign.feedbackFormUrl) {
+        toast({
+          variant: "destructive",
+          description: "No forms yet, check back later.",
+        });
+        return;
+      }
+
+      const publisherCampaigns = JSON.parse(
+        localStorage.getItem("publisher_campaign") || "[]"
+      );
+      const matchingCampaign = publisherCampaigns.find(
+        (c: any) => c.campaignId === campaign._id
+      );
+
+      const referralCode = matchingCampaign?.referralCode;
+
+      const urlWithReferral = referralCode
+        ? `${campaign.feedbackFormUrl}?ref=${referralCode}`
+        : campaign.feedbackFormUrl;
+
+      await navigator.clipboard.writeText(urlWithReferral);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
       toast({
         variant: "destructive",
-        description: "No forms yet, check back later.",
+        description: "Failed to copy link.",
       });
-      return;
     }
-
-    const publisherCampaigns = JSON.parse(
-      localStorage.getItem("publisher_campaign") || "[]"
-    );
-    const matchingCampaign = publisherCampaigns.find(
-      (c: any) => c.campaignId === campaign._id
-    );
-
-    const referralCode = matchingCampaign?.referralCode;
-
-    const urlWithReferral = referralCode
-      ? `${campaign.feedbackFormUrl}?ref=${referralCode}`
-      : campaign.feedbackFormUrl;
-
-    await navigator.clipboard.writeText(urlWithReferral);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  } catch (err) {
-    console.error("Failed to copy: ", err);
-    toast({
-      variant: "destructive",
-      description: "Failed to copy link.",
-    });
-  }
-};
+  };
   const handleAccept = () => {
     const localStored = localStorage.getItem("wallet_connected_address");
     // Check if wallet is connected (either publicKey exists or stored address exists)
-    if (localStored && localStored !== "null") {
+    if (
+      localStored &&
+      localStored !== "null" &&
+      connected &&
+      localStored === publicKey?.toBase58()
+    ) {
       setIsModalOpen(true);
     } else {
       toast({
