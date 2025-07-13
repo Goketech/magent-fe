@@ -172,62 +172,65 @@ const handleSubmit = async (data: FormSubmissionData) => {
 
   // Success state - render form
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-2xl mx-auto px-4">
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              {form.title}
-            </h1>
-            {form.description && (
-              <p className="text-gray-600">{form.description}</p>
-            )}
-            <div className="mt-6 p-6 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl">
-              <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center">
-                  <svg
-                    className="w-5 h-5 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-                    />
-                  </svg>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      Earn Rewards
-                    </h3>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                      Optional
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-4">
-                    Connect your wallet to be eligible for rewards when you
-                    submit this form
-                  </p>
-                  <SimpleWalletButton />
-                </div>
+    <div className="min-h-screen bg-gray-50 py-8 sm:py-12 px-4">
+  <div className="max-w-2xl mx-auto">
+    <div className="bg-white rounded-lg shadow-md px-4 py-6 sm:px-8 sm:py-8">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
+          {form.title}
+        </h1>
+        {form.description && (
+          <p className="text-gray-600 text-sm sm:text-base">{form.description}</p>
+        )}
+
+        {/* Wallet Optional Section */}
+        <div className="mt-6 p-4 sm:p-6 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:space-x-4 space-y-4 sm:space-y-0">
+            <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center">
+              <svg
+                className="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center space-x-2 mb-1">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+                  Earn Rewards
+                </h3>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  Optional
+                </span>
               </div>
+              <p className="text-sm text-gray-600 mb-3">
+                Connect your wallet to be eligible for rewards when you submit this form.
+              </p>
+              <SimpleWalletButton />
             </div>
           </div>
-
-          {isClient && (
-            <FormRenderer
-              fields={form.fields}
-              onSubmit={handleSubmit}
-              theme={form.settings?.theme}
-              customCss={form.settings?.customCss}
-            />
-          )}
         </div>
       </div>
+
+      {/* Form Rendering */}
+      {isClient && (
+        <FormRenderer
+          fields={form.fields}
+          onSubmit={handleSubmit}
+          theme={form.settings?.theme}
+          customCss={form.settings?.customCss}
+        />
+      )}
     </div>
+  </div>
+</div>
+
   );
 }
