@@ -87,14 +87,15 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
       .sort((a, b) => a.order - b.order);
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   setSubmitError("");
 
-  toast({
-    variant: "success",
-    description: "Form submission started",
-  });
+  // Remove this toast call
+  // toast({
+  //   variant: "success",
+  //   description: "Form submission started",
+  // });
 
   const visibleFields = getVisibleFields(fields, formData);
 
@@ -132,7 +133,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   setIsSubmitting(true);
 
   try {
-    await onSubmit(formData);
+    await onSubmit(formData); // This calls your PublicFormPage handleSubmit
 
     setFormData({});
     setErrors({});
@@ -148,6 +149,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
     setIsSubmitting(false);
   }
 };
+
 
   const visibleFields = getVisibleFields(fields, formData);
   const completedFields = visibleFields.filter((field) => {
@@ -179,7 +181,8 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
               </svg>
             </div>
             <h3 className="text-2xl font-bold text-gray-800 mb-3">Success!</h3>
-            <p className="text-gray-600 mb-8 leading-relaxed">Your form has been submitted successfully. Thank you for your response!</p>
+            <p className="text-gray-600 mb-8 leading-relaxed">Your feedback has been recorded. 🥳 🎉 <br/>
+You'll be notified when rewarded.</p>
             <button
               onClick={() => setIsSubmitted(false)}
               className="inline-flex items-center px-6 py-3 text-sm font-medium text-[#330065] bg-purple-50 hover:bg-purple-100 rounded-xl transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#330065] focus:ring-offset-2"
