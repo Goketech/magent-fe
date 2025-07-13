@@ -105,48 +105,45 @@ export default function PublicFormPage() {
     fetchForm();
   }, [slug, authToken, isClient]);
 
-  const handleSubmit = async (data: FormSubmissionData) => {
-    try {
-      let finalReferralCode = referralCode;
+const handleSubmit = async (data: FormSubmissionData) => {
+  try {
+    let finalReferralCode = referralCode;
 
-      // Fallback: re-read referral code
-      if (!finalReferralCode && typeof window !== "undefined") {
-        const searchParams = new URLSearchParams(window.location.search);
-        finalReferralCode = searchParams.get("ref");
-      }
-
-      const submissionData = {
-        submissionData: data,
-        referralCode: finalReferralCode || null,
-        wallet: walletAddress || null,
-      };
-
-      await apiClient(`/form/public/${slug}/submit`, {
-        method: "POST",
-        body: submissionData,
-      });
-
-      // Show success message - try different variants
-      toast({
-        variant: "success",
-        description: "Form submitted successfully!",
-      });
-    } catch (error) {
-      console.error("Form submission error:", error);
-
-      // Show error message
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Error submitting form. Please try again.",
-      });
-
-      return;
+    // Fallback: re-read referral code
+    if (!finalReferralCode && typeof window !== "undefined") {
+      const searchParams = new URLSearchParams(window.location.search);
+      finalReferralCode = searchParams.get("ref");
     }
-  };
+
+    const submissionData = {
+      submissionData: data,
+      referralCode: finalReferralCode || null,
+      wallet: walletAddress || null,
+    };
+
+    await apiClient(`/form/public/${slug}/submit`, {
+      method: "POST",
+      body: submissionData,
+    });
+
+    toast({
+      variant: "success",
+      description: "Form submitted successfully!",
+    });
+  } catch (error) {
+    console.error("Form submission error:", error);
+
+    toast({
+      variant: "destructive",
+      description:
+        error instanceof Error
+          ? error.message
+          : "Error submitting form. Please try again.",
+    });
+
+    throw error;
+  }
+};
 
   if (loading) {
     return (
