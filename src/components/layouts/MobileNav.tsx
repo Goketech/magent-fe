@@ -49,7 +49,10 @@ const MobileNav = () => {
             {activeItem?.label || "Menu"}
           </span>
         </div>
+        <div>
+
         <CustomWalletButton />
+        </div>
       </div>
       {showNavItems && (
         <div className="md:hidden fixed top-[60px] left-0 w-full bg-white shadow z-20 px-4 py-3 space-y-3">
