@@ -87,14 +87,15 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
       .sort((a, b) => a.order - b.order);
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   setSubmitError("");
 
-  toast({
-    variant: "success",
-    description: "Form submission started",
-  });
+  // Remove this toast call
+  // toast({
+  //   variant: "success",
+  //   description: "Form submission started",
+  // });
 
   const visibleFields = getVisibleFields(fields, formData);
 
@@ -132,7 +133,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   setIsSubmitting(true);
 
   try {
-    await onSubmit(formData);
+    await onSubmit(formData); // This calls your PublicFormPage handleSubmit
 
     setFormData({});
     setErrors({});
@@ -148,6 +149,7 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
     setIsSubmitting(false);
   }
 };
+
 
   const visibleFields = getVisibleFields(fields, formData);
   const completedFields = visibleFields.filter((field) => {

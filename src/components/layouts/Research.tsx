@@ -1561,7 +1561,7 @@ useEffect(() => {
           )}
 
           {/* Controls */}
-          <div className="flex gap-3 items-center absolute bottom-5 right-5 z-20">
+          <div className="flex gap-3 items-center absolute bottom-5 right-5 z-10">
             {!voiceChatEnabled && (
               <button
                 className="mt-1 w-25 h-25 rounded-full p-2 flex items-center justify-center hover:bg-primary hover:text-white transition bg-white border border-gray-300 shadow-sm"
