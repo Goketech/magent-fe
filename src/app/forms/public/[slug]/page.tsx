@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useWallet } from "@solana/wallet-adapter-react";
-import {useToast} from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { SimpleWalletButton } from "@/components/ui/SimpleWalletButton"; // adjust path as needed
 
 // Dynamic imports to avoid SSR issues
@@ -45,7 +45,7 @@ export default function PublicFormPage() {
   const [isClient, setIsClient] = useState(false);
   const { publicKey } = useWallet();
   const walletAddress = publicKey?.toString() || null;
-  const {toast} = useToast();
+  const { toast } = useToast();
 
   // Check if we're on the client side
   useEffect(() => {
@@ -105,50 +105,48 @@ export default function PublicFormPage() {
     fetchForm();
   }, [slug, authToken, isClient]);
 
-const handleSubmit = async (data: FormSubmissionData) => {
-  try {
-    let finalReferralCode = referralCode;
+  const handleSubmit = async (data: FormSubmissionData) => {
+    try {
+      let finalReferralCode = referralCode;
 
-    // Fallback: re-read referral code
-    if (!finalReferralCode && typeof window !== "undefined") {
-      const searchParams = new URLSearchParams(window.location.search);
-      finalReferralCode = searchParams.get("ref");
+      // Fallback: re-read referral code
+      if (!finalReferralCode && typeof window !== "undefined") {
+        const searchParams = new URLSearchParams(window.location.search);
+        finalReferralCode = searchParams.get("ref");
+      }
+
+      const submissionData = {
+        submissionData: data,
+        referralCode: finalReferralCode || null,
+        wallet: walletAddress || null,
+      };
+
+      await apiClient(`/form/public/${slug}/submit`, {
+        method: "POST",
+        body: submissionData,
+      });
+
+      // Show success message - try different variants
+      toast({
+        variant: "success",
+        description: "Form submitted successfully!",
+      });
+    } catch (error) {
+      console.error("Form submission error:", error);
+
+      // Show error message
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Error submitting form. Please try again.",
+      });
+
+      return;
     }
-
-    const submissionData = {
-      submissionData: data,
-      referralCode: finalReferralCode || null,
-      walletAddress: walletAddress || null,
-    };
-
-    await apiClient(`/form/public/${slug}/submit`, {
-      method: "POST",
-      body: submissionData,
-    });
-
-    // Show success message - try different variants
-    toast({
-      variant: "success",
-      description: "Form submitted successfully!",
-
-    });
-
-  } catch (error) {
-    console.error("Form submission error:", error);
-    
-    // Show error message
-    toast({
-      variant: "destructive",
-      title: "Error",
-      description: error instanceof Error 
-        ? error.message 
-        : "Error submitting form. Please try again.",
-    });
-    
-    return;
-  }
-};
-
+  };
 
   if (loading) {
     return (
@@ -188,27 +186,39 @@ const handleSubmit = async (data: FormSubmissionData) => {
               <p className="text-gray-600">{form.description}</p>
             )}
             <div className="mt-6 p-6 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-xl">
-  <div className="flex items-start space-x-4">
-    <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center">
-      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-      </svg>
-    </div>
-    <div className="flex-1 min-w-0">
-      <div className="flex items-center space-x-2 mb-2">
-        <h3 className="text-lg font-semibold text-gray-900">Earn Rewards</h3>
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-          Optional
-        </span>
-      </div>
-      <p className="text-sm text-gray-600 mb-4">
-        Connect your wallet to be eligible for rewards when you submit this form
-      </p>
-      <SimpleWalletButton />
-    </div>
-  </div>
-</div>
-
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center">
+                  <svg
+                    className="w-5 h-5 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                    />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Earn Rewards
+                    </h3>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                      Optional
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Connect your wallet to be eligible for rewards when you
+                    submit this form
+                  </p>
+                  <SimpleWalletButton />
+                </div>
+              </div>
+            </div>
           </div>
 
           {isClient && (
