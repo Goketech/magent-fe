@@ -4,7 +4,6 @@ import { capitalizeEachWord } from "@/utils/capitalize";
 import React, { useState } from "react";
 import AcceptModal from "@/components/ui/AcceptModal";
 import { useToast } from "@/hooks/use-toast";
-import { useWallet } from "@solana/wallet-adapter-react";
 
 interface MyCampaignDetailsProps {
   campaign: MyCampaign;
@@ -21,7 +20,6 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { publicKey, signMessage, connected } = useWallet();
 
   const { toast } = useToast();
 
@@ -30,50 +28,46 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
   //   return publisherCampaigns.some((pc: any) => pc.campaignId === campaignId);
   // };
 
-  const handleCopyLink = async () => {
-    try {
-      // Check if feedback form URL exists
-      if (!campaign.feedbackFormUrl) {
-        toast({
-          variant: "destructive",
-          description: "No forms yet, check back later.",
-        });
-        return;
-      }
-
-      const publisherCampaigns = JSON.parse(
-        localStorage.getItem("publisher_campaign") || "[]"
-      );
-      const matchingCampaign = publisherCampaigns.find(
-        (c: any) => c.campaignId === campaign._id
-      );
-
-      const referralCode = matchingCampaign?.referralCode;
-
-      const urlWithReferral = referralCode
-        ? `${campaign.feedbackFormUrl}?ref=${referralCode}`
-        : campaign.feedbackFormUrl;
-
-      await navigator.clipboard.writeText(urlWithReferral);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy: ", err);
+const handleCopyLink = async () => {
+  try {
+    // Check if feedback form URL exists
+    if (!campaign.feedbackFormUrl) {
       toast({
         variant: "destructive",
-        description: "Failed to copy link.",
+        description: "No forms yet, check back later.",
       });
+      return;
     }
-  };
+
+    const publisherCampaigns = JSON.parse(
+      localStorage.getItem("publisher_campaign") || "[]"
+    );
+    console.log("Publisher Campaigns: ", publisherCampaigns);
+    const matchingCampaign = publisherCampaigns.find(
+      (c: any) => c.campaignId === campaign._id
+    );
+
+    const referralCode = matchingCampaign?.referralCode;
+
+    const urlWithReferral = referralCode
+      ? `${campaign.feedbackFormUrl}?ref=${referralCode}`
+      : campaign.feedbackFormUrl;
+
+    await navigator.clipboard.writeText(urlWithReferral);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  } catch (err) {
+    console.error("Failed to copy: ", err);
+    toast({
+      variant: "destructive",
+      description: "Failed to copy link.",
+    });
+  }
+};
   const handleAccept = () => {
     const localStored = localStorage.getItem("wallet_connected_address");
     // Check if wallet is connected (either publicKey exists or stored address exists)
-    if (
-      localStored &&
-      localStored !== "null" &&
-      connected &&
-      localStored === publicKey?.toBase58()
-    ) {
+    if (localStored && localStored !== "null") {
       setIsModalOpen(true);
     } else {
       toast({
@@ -151,31 +145,31 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
         <div>
           <h3 className="text-base sm:text-lg font-medium mb-3 sm:mb-4">Campaign Overview</h3>
           <div className="space-y-3 sm:space-y-4">
-            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+            <div className="flex justify-between gap-1 sm:gap-0">
               <p className="text-xs sm:text-sm text-gray-600">Campaign Name</p>
               <p className="text-xs sm:text-sm font-medium">
                 {capitalizeEachWord(campaign?.name || "")}
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+            <div className="flex justify-between gap-1 sm:gap-0">
               <p className="text-xs sm:text-sm text-gray-600">Industry</p>
               <p className="text-xs sm:text-sm font-medium">
                 {capitalizeEachWord(campaign?.industry || "")}
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+            <div className="flex justify-between gap-1 sm:gap-0">
               <p className="text-xs sm:text-sm text-gray-600">Campaign Goal</p>
               <p className="text-xs sm:text-sm font-medium">
                 {capitalizeEachWord(campaign?.goals || "")}
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+            <div className="flex justify-between gap-1 sm:gap-0">
               <p className="text-xs sm:text-sm text-gray-600">Campaign KPIs</p>
               <p className="text-xs sm:text-sm font-medium">
                 {capitalizeEachWord(campaign?.kpis || "N/A")}
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+            <div className="flex justify-between gap-1 sm:gap-0">
               <p className="text-xs sm:text-sm text-gray-600">Target Audience</p>
               <p className="text-xs sm:text-sm font-medium">
                 {campaign?.targetAudience?.gender == "both"
@@ -185,7 +179,7 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
                 {"+"})
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+            <div className="flex justify-between gap-1 sm:gap-0">
               <p className="text-xs sm:text-sm text-gray-600">Campaign Duration</p>
               <p className="text-xs sm:text-sm font-medium">
                 {campaign.startDate && campaign.endDate
@@ -199,7 +193,7 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
                   : "N/A"}
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+            <div className="flex justify-between gap-1 sm:gap-0">
               <p className="text-xs sm:text-sm text-gray-600">Value Per User</p>
               <p className="text-xs sm:text-sm font-medium">
                 {`${campaign.valuePerUser?.toUpperCase()}, $${
@@ -207,19 +201,19 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
                 } per ${campaign.goals}`}{" "}
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+            <div className="flex justify-between gap-1 sm:gap-0">
               <p className="text-xs sm:text-sm text-gray-600">Total Liquidity</p>
               <p className="text-xs sm:text-sm font-medium">
                 {`$${campaign.totalLiquidity}` || "N/A"}
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+            <div className="flex justify-between gap-1 sm:gap-0">
               <p className="text-xs sm:text-sm text-gray-600">Total Publisher</p>
               <p className="text-xs sm:text-sm font-medium">
                 {`${campaign.publisherCount}` || "N/A"}
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0">
+            <div className="flex justify-between gap-1 sm:gap-0">
               <p className="text-xs sm:text-sm text-gray-600">Social Links</p>
               <div className="text-xs sm:text-sm font-medium">
                 {campaign.website && (
