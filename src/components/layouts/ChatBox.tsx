@@ -28,7 +28,6 @@ interface ChatBoxProps {
   duration?: number;
 }
 
-// Individual Audio Player Component
 function AudioPlayer({
   audioUrl,
   messageDuration,
@@ -199,72 +198,72 @@ function AudioPlayer({
 
   return (
     <div
-      className="w-[340px] px-4 py-2 flex items-center gap-2 rounded-full relative"
-      style={{
-        background: "#f2f3f5",
-        color: "black",
-      }}
+  className="w-full max-w-[340px] px-4 py-2 flex flex-wrap items-center gap-2 rounded-full relative bg-[#f2f3f5] text-black"
+>
+  <audio
+    ref={audioRef}
+    src={audioUrl}
+    preload="metadata"
+    crossOrigin="anonymous"
+  />
+
+  {/* Play/Pause Button */}
+  <button
+    onClick={togglePlay}
+    disabled={!isLoaded}
+    title={isLoaded ? "Play/Pause" : "Loading..."}
+    className="text-black"
+  >
+    {isPlaying ? (
+      <Pause size={16} className="fill-black" />
+    ) : (
+      <Play size={16} className="fill-black" />
+    )}
+  </button>
+
+  {/* Time display */}
+  <span className="text-xs sm:text-sm text-black whitespace-nowrap">
+    {formatTime(currentTime)} / {formatTime(duration)}
+  </span>
+
+  {/* Progress bar */}
+  <input
+    type="range"
+    min={0}
+    max={duration || 0}
+    step="0.1"
+    value={currentTime}
+    onChange={handleSeek}
+    disabled={!isLoaded}
+    className="flex-1 h-[4px] accent-black min-w-0"
+  />
+
+  {/* Volume control */}
+  <div className="relative flex items-center group">
+    <button
+      onClick={toggleMute}
+      className="text-black z-10"
+      title="Mute / Unmute"
     >
-      <audio
-        ref={audioRef}
-        src={audioUrl}
-        preload="metadata"
-        crossOrigin="anonymous"
-      />
+      {isMuted || volume === 0 ? (
+        <VolumeX size={16} className="fill-black" />
+      ) : (
+        <Volume2 size={16} className="fill-black" />
+      )}
+    </button>
 
-      <button
-        onClick={togglePlay}
-        disabled={!isLoaded}
-        title={isLoaded ? "Play/Pause" : "Loading..."}
-        className="text-black"
-      >
-        {isPlaying ? (
-          <Pause size={16} className="fill-black" />
-        ) : (
-          <Play size={16} className="fill-black" />
-        )}
-      </button>
-
-      <span className="text-sm text-black whitespace-nowrap">
-        {formatTime(currentTime)} / {formatTime(duration)}
-      </span>
-
-      <input
-        type="range"
-        min={0}
-        max={duration || 0}
-        step="0.1"
-        value={currentTime}
-        onChange={handleSeek}
-        disabled={!isLoaded}
-        className="flex-1 h-[4px] accent-black"
-      />
-
-      <div className="relative flex items-center group w-full">
-        <button
-          onClick={toggleMute}
-          className="text-black z-10"
-          title="Mute / Unmute"
-        >
-          {isMuted || volume === 0 ? (
-            <VolumeX size={16} className="fill-black" />
-          ) : (
-            <Volume2 size={16} className="fill-black" />
-          )}
-        </button>
-
-        <input
-          type="range"
-          min={0}
-          max={1}
-          step="0.01"
-          value={volume}
-          onChange={handleVolumeChange}
-          className="absolute right-[-12px] w-[60px] h-[4px] opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out bg-transparent accent-gray-500"
-          title="Volume"
-        />
-      </div>
-    </div>
+    <input
+      type="range"
+      min={0}
+      max={1}
+      step="0.01"
+      value={volume}
+      onChange={handleVolumeChange}
+      className="absolute -right-3 w-[50px] md:w-[60px] h-[4px] opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out bg-transparent accent-gray-500"
+      title="Volume"
+    />
+  </div>
+</div>
   );
 }
 
@@ -279,7 +278,7 @@ function ChatBox({ messages, isTyping, messagesEndRef }: ChatBoxProps) {
           }`}
         >
           <div
-            className={`flex items-start gap-3 max-w-[70%] ${
+            className={`flex items-start gap-3 w-full md:max-w-[70%] ${
               message.sender === "user" ? "flex-row-reverse" : "flex-row"
             }`}
           >

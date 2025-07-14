@@ -78,13 +78,13 @@ function page() {
 
 
 
+      navigate.push("/dashboard");
       toast({
         title: "Login Successful",
         description: "Welcome back!",
         variant: "success",
       });
 
-      navigate.push("/dashboard");
     } catch (error: any) {
       console.error("Error during login:", error);
       const message =
