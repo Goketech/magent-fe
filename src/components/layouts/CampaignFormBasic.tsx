@@ -153,28 +153,35 @@ const CampaignFormBasic: React.FC<CampaignFormBasicProps> = ({ formik }) => {
           </label>
         </div>
 
-        <div>
-          {/* <label htmlFor="age" className="block font-medium text-[#212221] mb-1">
-      Age <span className="text-red-500">*</span>
-    </label> */}
-          <input
-            type="number"
-            id="age"
-            name="age"
-            placeholder="Age"
-            value={formik.values.age}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            min={13}
-            max={120}
-            className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
-          />
-          {formik.touched.age && formik.errors.age && (
-            <div className="text-red-500 text-xs mt-1">
-              {formik.errors.age as string}
-            </div>
-          )}
-        </div>
+<div>
+  {/* <label htmlFor="age" className="block font-medium text-[#212221] mb-1">
+    Age Range <span className="text-red-500">*</span>
+  </label> */}
+  <select
+    id="age"
+    name="age"
+    value={formik.values.age}
+    onChange={formik.handleChange}
+    onBlur={formik.handleBlur}
+    className="w-full p-2 border border-[#D7D7D7] rounded text-[#999999]"
+  >
+    <option value="" disabled>
+      Select age range
+    </option>
+    <option value="13-17">13–17</option>
+    <option value="18-25">18–25</option>
+    <option value="26-35">26–35</option>
+    <option value="36-50">36–50</option>
+    <option value="51-65">51–65</option>
+    <option value="66+">66 and above</option>
+  </select>
+  {formik.touched.age && formik.errors.age && (
+    <div className="text-red-500 text-xs mt-1">
+      {formik.errors.age as string}
+    </div>
+  )}
+</div>
+
 
         <div>
           {/* <label htmlFor="gender" className="block font-medium text-[#212221] mb-1">

@@ -12,11 +12,12 @@ export const campaignFormSchema = Yup.object({
     .required("Target number is required")
     .positive("Target number must be positive")
     .integer("Target number must be an integer"),
-    age: Yup.number()
-    .typeError("Age must be a number")
-    .required("Age is required")
-    .min(13, "Minimum age is 13")
-    .max(120, "Maximum age is 120"),
+    age: Yup.string()
+  .required("Age range is required")
+  .oneOf(
+    ["13-17", "18-25", "26-35", "36-50", "51-65", "66+"],
+    "Select a valid age range"
+  ),
 
   gender: Yup.string()
     .required("Gender is required")
@@ -82,11 +83,12 @@ export const basicInfoSchema = Yup.object({
     .positive("Target number must be positive")
     .integer("Target number must be an integer"),
 
-  age: Yup.number()
-    .typeError("Age must be a number")
-    .required("Age is required")
-    .min(13, "Minimum age is 13")
-    .max(120, "Maximum age is 120"),
+  age: Yup.string()
+  .required("Age range is required")
+  .oneOf(
+    ["13-17", "18-25", "26-35", "36-50", "51-65", "66+"],
+    "Select a valid age range"
+  ),
 
   gender: Yup.string()
     .required("Gender is required")
