@@ -132,21 +132,16 @@ function Content() {
     }
 
     try {
-      const response = await apiClient(
-        "/twitter/sample-post",
-        {
-          method: "POST",
-          token: jwt ?? undefined,
-          body: {
-            topic:
-              inputMode === "type"
-                ? stepData.typeTopics
-                : stepData.selectTopics,
-            firstStyle: stepData.postStyle,
-            secondStyle: stepData.commentStyle,
-          },
-        }
-      );
+      const response = await apiClient("/twitter/sample-post", {
+        method: "POST",
+        token: jwt ?? undefined,
+        body: {
+          topic:
+            inputMode === "type" ? stepData.typeTopics : stepData.selectTopics,
+          firstStyle: stepData.postStyle,
+          secondStyle: stepData.commentStyle,
+        },
+      });
 
       if (!response.ok) {
         toast({
@@ -194,10 +189,9 @@ function Content() {
     const dailyPrice = 0.125;
     const days = stepData.duration;
     const amountToSend = Number((days * dailyPrice).toFixed(3));
-
-    const transactionResponse = await apiClient(
-      "/transactions/create-transaction",
-      {
+    let transactionData;
+    try {
+      transactionData = await apiClient("/transactions/create-transaction", {
         method: "POST",
         token: jwt ?? undefined,
         body: {
@@ -205,10 +199,8 @@ function Content() {
           reference: `sample_${Date.now()}`,
           amount: amountToSend,
         },
-      }
-    );
-
-    if (!transactionResponse.ok) {
+      });
+    } catch (error) {
       toast({
         variant: "destructive",
         description: "Failed to initiate transaction. Please try again.",
@@ -217,7 +209,6 @@ function Content() {
       return;
     }
 
-    const transactionData = await transactionResponse.json();
     const transactionId = transactionData.transactionId;
     let signature = "";
 
@@ -316,26 +307,21 @@ function Content() {
         return;
       }
 
-      const response = await apiClient(
-        "/twitter/schedule-post",
-        {
-          method: "POST",
-          token: jwt ?? undefined,
-          body: {
-            topic:
-              inputMode === "type"
-                ? stepData.typeTopics
-                : stepData.selectTopics,
-            minInterval: stepData.minFrequency,
-            maxInterval: stepData.maxFrequency,
-            duration: stepData.duration,
-            firstStyle: stepData.postStyle,
-            secondStyle: stepData.commentStyle,
-            accessToken: token,
-            transactionId,
-          },
-        }
-      );
+      const response = await apiClient("/twitter/schedule-post", {
+        method: "POST",
+        token: jwt ?? undefined,
+        body: {
+          topic:
+            inputMode === "type" ? stepData.typeTopics : stepData.selectTopics,
+          minInterval: stepData.minFrequency,
+          maxInterval: stepData.maxFrequency,
+          duration: stepData.duration,
+          firstStyle: stepData.postStyle,
+          secondStyle: stepData.commentStyle,
+          accessToken: token,
+          transactionId,
+        },
+      });
 
       if (!response.ok) {
         toast({

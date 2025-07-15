@@ -28,7 +28,6 @@ interface ChatBoxProps {
   duration?: number;
 }
 
-// Individual Audio Player Component
 function AudioPlayer({
   audioUrl,
   messageDuration,
@@ -198,13 +197,7 @@ function AudioPlayer({
   }
 
   return (
-    <div
-      className="w-[340px] px-4 py-2 flex items-center gap-2 rounded-full relative"
-      style={{
-        background: "#f2f3f5",
-        color: "black",
-      }}
-    >
+    <div className="w-full max-w-[340px] px-4 py-2 flex flex-wrap items-center gap-2 rounded-full relative bg-[#f2f3f5] text-black">
       <audio
         ref={audioRef}
         src={audioUrl}
@@ -212,6 +205,7 @@ function AudioPlayer({
         crossOrigin="anonymous"
       />
 
+      {/* Play/Pause Button */}
       <button
         onClick={togglePlay}
         disabled={!isLoaded}
@@ -225,10 +219,12 @@ function AudioPlayer({
         )}
       </button>
 
-      <span className="text-sm text-black whitespace-nowrap">
+      {/* Time display */}
+      <span className="text-xs sm:text-sm text-black whitespace-nowrap">
         {formatTime(currentTime)} / {formatTime(duration)}
       </span>
 
+      {/* Progress bar */}
       <input
         type="range"
         min={0}
@@ -237,10 +233,11 @@ function AudioPlayer({
         value={currentTime}
         onChange={handleSeek}
         disabled={!isLoaded}
-        className="flex-1 h-[4px] accent-black"
+        className="flex-1 h-[4px] accent-black min-w-0"
       />
 
-      <div className="relative flex items-center group w-full">
+      {/* Volume control */}
+      <div className="relative flex items-center group">
         <button
           onClick={toggleMute}
           className="text-black z-10"
@@ -260,7 +257,7 @@ function AudioPlayer({
           step="0.01"
           value={volume}
           onChange={handleVolumeChange}
-          className="absolute right-[-12px] w-[60px] h-[4px] opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out bg-transparent accent-gray-500"
+          className="absolute -right-3 w-[50px] md:w-[60px] h-[4px] opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out bg-transparent accent-gray-500"
           title="Volume"
         />
       </div>
@@ -279,7 +276,7 @@ function ChatBox({ messages, isTyping, messagesEndRef }: ChatBoxProps) {
           }`}
         >
           <div
-            className={`flex items-start gap-3 max-w-[70%] ${
+            className={`flex items-start gap-3 w-full md:max-w-[70%] ${
               message.sender === "user" ? "flex-row-reverse" : "flex-row"
             }`}
           >
@@ -294,7 +291,7 @@ function ChatBox({ messages, isTyping, messagesEndRef }: ChatBoxProps) {
               {message.sender === "user" ? (
                 <User width={20} height={20} className="text-white" />
               ) : (
-                <Image src="/magent.svg" alt="logo" width={19} height={20}  />
+                <Image src="/magent.svg" alt="logo" width={19} height={20} />
               )}
             </div>
 

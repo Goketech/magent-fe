@@ -5,7 +5,7 @@ export const runtime = "edge";
 
 export async function GET() {
   try {
-    const response = twitterAuth.getAuthUrl();
+    const response = await twitterAuth.getAuthUrl();
 
     return NextResponse.json(response);
   } catch (error) {
