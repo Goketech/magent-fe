@@ -211,6 +211,8 @@ const DashbaordNav = () => {
       localStorage.removeItem("email");
       localStorage.removeItem("auth_token");
       localStorage.removeItem("publisher_campaign");
+      localStorage.removeItem("cached_campaigns");
+
       /* eslint-disable  @typescript-eslint/no-explicit-any */
     } catch (err: any) {
       toast({

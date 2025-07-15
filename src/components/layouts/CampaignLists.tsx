@@ -20,13 +20,9 @@ interface CampaignListsProps {
   activeFilters?: FilterState;
   onViewDetails: (campaign: Campaign | MyCampaignType) => void;
   onCampaignCountChange?: (count: number) => void;
-  isJoined:Record<string, "joined" | undefined>;
-  handleJoinSuccess?: (
-    campaignId: string,
-    joinResponse: any
-  ) => void;
+  isJoined: Record<string, "joined" | undefined>;
+  handleJoinSuccess?: (campaignId: string, joinResponse: any) => void;
 }
-
 
 const EMPTY_ARRAY: Campaign[] = [];
 
@@ -65,19 +61,12 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
 
   // Load publisher campaigns from localStorage
 
-
-  // Helper function to check if campaign is already joined
-  // const isCampaignJoined = (campaignId: string): boolean => {
-  //   return publisherCampaigns.some((pc) => pc.campaignId === campaignId);
-  // };
-
   // Filter campaigns based on activeFilters
   const filteredCampaigns = useMemo(() => {
     let result = Array.isArray(allCampaigns) ? [...allCampaigns] : [];
 
     if (activeFilters) {
       // Apply filters only if they are not empty
-      // Filter by industry
       if (activeFilters.industry) {
         result = result.filter(
           (campaign) =>
@@ -162,6 +151,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
       });
 
       setAllCampaigns(data.campaigns);
+      localStorage.setItem("cached_campaigns", JSON.stringify(data.campaigns));
       if (data.campaigns.length === 0) {
         setIsEmpty(true);
         setLoading(false);
@@ -182,9 +172,15 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
 
   // Initialize with API data or use provided initialCampaigns
   useEffect(() => {
+    const cached = localStorage.getItem("cached_campaigns");
     if (initialCampaigns.length > 0) {
       setAllCampaigns(initialCampaigns);
       setTotalPages(Math.ceil(initialCampaigns.length / itemsPerPage));
+      setLoading(false);
+    } else if (cached) {
+      const parsed = JSON.parse(cached);
+      setAllCampaigns(parsed);
+      setTotalPages(Math.ceil(parsed.length / itemsPerPage));
       setLoading(false);
     } else {
       fetchCampaigns();
@@ -395,38 +391,63 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
           </div>
         ) : (
           <>
-            
-<table className="min-w-full">
-  <thead>
-    <tr className="border-b border-gray-200">
-      {headers.map((header) => (
-        <th
-          key={header.id}
-          className={`py-3 px-2 md:px-4 text-left text-[10px] md:text-xs font-medium text-gray-500 uppercase tracking-wider ${
-            header.sortable ? "cursor-pointer hover:bg-gray-50" : ""
-          }`}
-          onClick={() => header.sortable && handleSort(header.id)}
-        >
-          <div className="flex items-center">
-            {header.label}
-            {header.sortable && getSortIcon(header.id)}
-          </div>
-        </th>
-      ))}
-    </tr>
-  </thead>
-  <tbody>
-    {displayedCampaigns.map((campaign) => (
-      <CampaignList
-        key={campaign._id}
-        campaign={campaign}
-        onAccept={() => handleAcceptCampaign(campaign)}
-        onViewDetails={onViewDetails}
-        isJoined={isJoined[campaign._id] === "joined"}
+            <table className="min-w-full">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  {headers.map((header) => (
+                    <th
+                      key={header.id}
+                      className={`py-3 px-2 md:px-4 text-left text-[10px] md:text-xs font-medium text-gray-500 uppercase tracking-wider ${
+                        header.sortable ? "cursor-pointer hover:bg-gray-50" : ""
+                      }`}
+                      onClick={() => header.sortable && handleSort(header.id)}
+                    >
+                      <div className="flex items-center">
+                        {header.label}
+                        {header.sortable && getSortIcon(header.id)}
+                      </div>
+                    </th>
+                  ))}
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {displayedCampaigns.map((campaign) => (
+                  <CampaignList
+                    key={campaign._id}
+                    campaign={campaign}
+                    onAccept={() => handleAcceptCampaign(campaign)}
+                    onViewDetails={onViewDetails}
+                    isJoined={isJoined[campaign._id] === "joined"}
+                  />
+                ))}
+              </tbody>
+            </table>
+<div className="flex justify-end items-center mt-4 px-2 md:px-4">
+  <button
+    className={`rounded-md flex items-center justify-center p-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-[#330065] text-white hover:bg-purple-800`}
+    onClick={() => {
+      localStorage.removeItem("cached_campaigns");
+      fetchCampaigns();
+    }}
+    title="Refresh Campaigns"
+  >
+    <svg 
+      className="w-4 h-4" 
+      fill="none" 
+      stroke="currentColor" 
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path 
+        strokeLinecap="round" 
+        strokeLinejoin="round" 
+        strokeWidth={2} 
+        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
       />
-    ))}
-  </tbody>
-</table>
+    </svg>
+  </button>
+</div>
             <div className="flex justify-center mt-6 space-x-2">
               {renderPagination()}
             </div>
