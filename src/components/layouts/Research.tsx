@@ -4,7 +4,6 @@ import { AudioLines, MicIcon, MoveUp, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Loading } from "../ui/loading";
 import ChatBox from "./ChatBox";
 
 type ChatMessage = {
@@ -46,6 +45,13 @@ const Research = () => {
   const vadIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const voiceStartTimer = useRef<NodeJS.Timeout | null>(null);
+  const [isVoiceLikelyDetected, setIsVoiceLikelyDetected] = useState(false);
+  const silentCounterRef = useRef(0);
+  const VOICE_THRESHOLD = 0.04;
+  const SILENCE_COUNT_LIMIT = 10;
+  const pulseCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const hasAlreadyProcessed = useRef(false);
 
   const handleKeyPress = (e: any) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -118,12 +124,12 @@ const Research = () => {
 
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
+      const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
           sampleRate: 44100,
-        }
+        },
       });
       streamRef.current = stream;
 
@@ -148,7 +154,8 @@ const Research = () => {
       };
 
       mediaRecorder.current.onstop = async () => {
-        const recordingDuration = (Date.now() - recordingStartTime.current) / 1000;
+        const recordingDuration =
+          (Date.now() - recordingStartTime.current) / 1000;
         const audioBlob = new Blob(audioChunks.current, {
           type: mediaRecorder.current?.mimeType || "audio/webm",
         });
@@ -157,8 +164,8 @@ const Research = () => {
         setHasStartChat(true);
         setIsTyping(true);
 
-        if(!url){
-          setIsTyping(false)
+        if (!url) {
+          setIsTyping(false);
         }
 
         const message: ChatMessage = {
@@ -233,15 +240,15 @@ const Research = () => {
   };
 
   const setupAudioVisualization = (stream: MediaStream) => {
-
     if (!analyserRef.current || !audioContextRef.current) {
-  console.warn("❌ Audio context or analyser is not available.");
-}
+      console.warn("❌ Audio context or analyser is not available.");
+    }
 
     try {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      audioContextRef.current = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
       analyserRef.current = audioContextRef.current.createAnalyser();
-      
+
       const source = audioContextRef.current.createMediaStreamSource(stream);
 
       analyserRef.current.fftSize = 1024;
@@ -274,7 +281,8 @@ const Research = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Calculate average for color intensity
-      const average = dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
+      const average =
+        dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
       const intensity = average / 255;
 
       const barWidth = 3;
@@ -283,7 +291,7 @@ const Research = () => {
 
       for (let i = 0; i < bufferLength && x < canvas.width; i++) {
         barHeight = (dataArray[i] / 255) * canvas.height * 0.6;
-        
+
         // Dynamic color based on intensity
         if (voiceChatEnabled) {
           const greenIntensity = Math.min(255, intensity * 500);
@@ -291,7 +299,7 @@ const Research = () => {
         } else {
           ctx.fillStyle = "black";
         }
-        
+
         ctx.fillRect(x, (canvas.height - barHeight) / 2, barWidth, barHeight);
         x += barWidth + 2;
       }
@@ -301,7 +309,7 @@ const Research = () => {
   };
 
   const cleanupAudioResources = () => {
-    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+    if (audioContextRef.current && audioContextRef.current.state !== "closed") {
       audioContextRef.current.close();
       audioContextRef.current = null;
     }
@@ -322,69 +330,80 @@ const Research = () => {
     }
   };
 
-  // Fixed Voice Activity Detection
- const detectVoiceActivityRef = useRef<() => void>(() => {});
+  // Voice activity detected
+  const detectVoiceActivityRef = useRef<() => void>(() => {});
 
-useEffect(() => {
-  detectVoiceActivityRef.current = () => {
-    if (!analyserRef.current || !isVoiceChatActive || isSpeaking || isProcessing) return;
+  useEffect(() => {
+    detectVoiceActivityRef.current = () => {
+      const analyser = analyserRef.current;
+      if (
+        !voiceChatEnabled ||
+        !analyser ||
+        !isVoiceChatActive ||
+        isSpeaking ||
+        isProcessing
+      )
+        return;
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      analyser.getByteFrequencyData(dataArray);
 
-    console.log({
-  isVoiceChatActive,
-  recording,
-  isSpeaking,
-  isProcessing,
-});
+      const average =
+        dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
+      const normalizedLevel = average / 255;
 
+      console.log("🎤 Voice level:", normalizedLevel.toFixed(4));
 
-    const bufferLength = analyserRef.current.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-    analyserRef.current.getByteFrequencyData(dataArray);
+      // Voice detected
+      if (normalizedLevel > VOICE_THRESHOLD) {
+        silentCounterRef.current = 0;
 
-    const average = dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
-    const normalizedLevel = average / 255;
-    const VOICE_THRESHOLD = 0.015;
-    const SILENCE_DURATION = 2000;
-
-    console.log("🎤 Voice level:", normalizedLevel.toFixed(4));
-
-    if (normalizedLevel > VOICE_THRESHOLD) {
-      if (silenceTimer) {
-        clearTimeout(silenceTimer);
-        setSilenceTimer(null);
+        if (!isVoiceLikelyDetected) {
+          voiceStartTimer.current = setTimeout(() => {
+            setIsVoiceLikelyDetected(true);
+            if (!recording && !isSpeaking && !isProcessing) {
+              console.log("🎤 Sustained voice detected, starting recording...");
+              startVoiceChatRecording();
+            }
+          }, 300);
+        }
       }
-      if (!recording && !isSpeaking && !isProcessing) {
-        console.log("🎤 Voice detected! Starting recording...");
-        startVoiceChatRecording();
-      }
-    } else if (recording) {
-      if (!silenceTimer) {
-        console.log("🔇 Silence detected, starting timer...");
-        const timer = setTimeout(() => {
-          console.log("⏰ Silence timeout, stopping recording...");
-          stopVoiceChatRecording();
-        }, SILENCE_DURATION);
-        setSilenceTimer(timer);
-      }
-    }
-  };
-}, [isVoiceChatActive, recording, isSpeaking, silenceTimer, isProcessing]);
+      // Silence detected
+      else {
+        if (voiceStartTimer.current) {
+          clearTimeout(voiceStartTimer.current);
+          voiceStartTimer.current = null;
+        }
 
+        setIsVoiceLikelyDetected(false);
+
+        if (recording) {
+          silentCounterRef.current += 1;
+
+          if (silentCounterRef.current >= SILENCE_COUNT_LIMIT) {
+            console.log("🛑 Prolonged silence detected, stopping recording");
+            stopVoiceChatRecording();
+            silentCounterRef.current = 0;
+          }
+        }
+      }
+    };
+  }, [isVoiceChatActive, recording, isSpeaking, isProcessing]);
 
   const startVoiceChatRecording = async () => {
     if (isSpeaking || recording || isProcessing) return;
 
+    hasAlreadyProcessed.current = false;
+
     if (!streamRef.current) {
-  console.warn("⚠️ No audio stream available!");
-  return;
-}
-
-
+      console.warn("⚠️ No audio stream available!");
+      return;
+    }
 
     try {
       console.log("🎤 Starting voice chat recording...");
       recordingStartTime.current = Date.now();
-      
+
       const options = { mimeType: "audio/webm;codecs=opus" };
       let mediaRecorderInstance;
 
@@ -404,7 +423,8 @@ useEffect(() => {
       };
 
       mediaRecorder.current.onstop = () => {
-        console.log("🎤 Voice chat recording stopped");
+        if (hasAlreadyProcessed.current) return;
+        hasAlreadyProcessed.current = true;
         processVoiceChatAudio();
       };
 
@@ -433,10 +453,10 @@ useEffect(() => {
 
   const processVoiceChatAudio = async () => {
     if (isProcessing) return;
-    
+
     console.log("🔄 Processing voice chat audio...");
     setIsProcessing(true);
-    
+
     const recordingDuration = (Date.now() - recordingStartTime.current) / 1000;
 
     if (recordingDuration < 1) {
@@ -468,9 +488,24 @@ useEffect(() => {
       const data = await response.json();
       console.log("📡 Whisper API response:", data);
 
+      if (!data.text || !data.text.trim()) {
+        const botMessage: ChatMessage = {
+          id: Date.now() + 1,
+          text: "I didn’t catch that. Can you try again?",
+          sender: "bot",
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        };
+        setVoiceChatMessages((prev) => [...prev, botMessage]);
+        setIsProcessing(false);
+        return;
+      }
+
       if (data.text && data.text.trim()) {
         console.log("✅ Got transcript:", data.text);
-        
+
         const userMessage: ChatMessage = {
           id: Date.now(),
           text: data.text,
@@ -480,12 +515,12 @@ useEffect(() => {
             minute: "2-digit",
           }),
         };
-        setVoiceChatMessages(prev => [...prev, userMessage]);
+        setVoiceChatMessages((prev) => [...prev, userMessage]);
 
         // Generate bot response
         const botResponse = generateBotResponse(data.text);
         console.log("🤖 Bot response:", botResponse);
-        
+
         const botMessage: ChatMessage = {
           id: Date.now() + 1,
           text: botResponse,
@@ -496,17 +531,18 @@ useEffect(() => {
           }),
         };
 
-        setVoiceChatMessages(prev => [...prev, botMessage]);
-        
+        setVoiceChatMessages((prev) => [...prev, botMessage]);
+
         // Speak the response
         setTimeout(() => {
           speak(botResponse);
-        }, 500);
+        }, 200);
       } else {
         console.log("❌ No text in response or empty text");
       }
     } catch (error) {
       console.error("Voice chat processing error:", error);
+      stopVoiceChat();
     } finally {
       setIsProcessing(false);
     }
@@ -530,24 +566,24 @@ useEffect(() => {
 
     console.log("🔊 Starting to speak:", text);
     setIsSpeaking(true);
-    
+
     const utterance = new SpeechSynthesisUtterance(text);
     speechSynthesisRef.current = utterance;
-    
+
     utterance.rate = 0.9;
     utterance.pitch = 1.0;
     utterance.volume = 1.0;
-    
+
     utterance.onstart = () => {
       console.log("🗣️ Speech started");
       setIsSpeaking(true);
     };
-    
+
     utterance.onend = () => {
       console.log("🔇 Speech ended");
       setIsSpeaking(false);
     };
-    
+
     utterance.onerror = (error) => {
       console.error("❌ Speech error:", error);
       setIsSpeaking(false);
@@ -559,38 +595,47 @@ useEffect(() => {
   const handleVoiceChat = async () => {
     try {
       console.log("🎙️ Starting voice chat...");
-      
+
       // Clean up any existing resources first
       cleanupAudioResources();
-      
-      const stream = await navigator.mediaDevices.getUserMedia({ 
+
+      const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
           autoGainControl: true,
           sampleRate: 44100,
-        }
+        },
       });
-      
+
       streamRef.current = stream;
-      
-      // Setup audio visualization with the stream
+
       setupAudioVisualization(stream);
-      
+
       setVoiceChatEnabled(true);
       setIsVoiceChatActive(true);
       setVoiceChatMessages([]);
       setHasStartChat(true);
       setIsProcessing(false);
 
-      // Start VAD interval
-      vadIntervalRef.current = setInterval(() => {
-  detectVoiceActivityRef.current();
-}, 100);
+      setVoiceChatMessages([
+        {
+          id: Date.now(),
+          text: "🎙️ Voice chat started. Listening...",
+          sender: "bot",
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        },
+      ]);
 
-      
+      // Start VAD
+      vadIntervalRef.current = setInterval(() => {
+        detectVoiceActivityRef.current();
+      }, 100);
+
       console.log("✅ Voice chat started successfully");
-      
     } catch (error) {
       console.error("❌ Error starting voice chat:", error);
       toast({
@@ -603,12 +648,12 @@ useEffect(() => {
 
   const stopVoiceChat = () => {
     console.log("🛑 Stopping voice chat...");
-    
-    setVoiceChatEnabled(false);
-    setIsVoiceChatActive(false);
-    setIsListening(false);
-    setIsSpeaking(false);
-    setIsProcessing(false);
+
+    // Stop and clear the VAD interval
+    if (vadIntervalRef.current) {
+      clearInterval(vadIntervalRef.current);
+      vadIntervalRef.current = null;
+    }
 
     // Stop any ongoing recording
     if (mediaRecorder.current && mediaRecorder.current.state !== "inactive") {
@@ -629,12 +674,85 @@ useEffect(() => {
 
     cleanupAudioResources();
 
-    // Merge voice chat messages into main messages
-    if (voiceChatMessages.length > 0) {
-      setMessages(prev => [...prev, ...voiceChatMessages]);
-      setVoiceChatMessages([]);
-    }
+    const stopMessage: ChatMessage = {
+      id: Date.now(),
+      text: "Voice chat stopped",
+      sender: "bot",
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
+
+    const updatedVoiceMessages = [...voiceChatMessages, stopMessage];
+    setMessages((prev) => [...prev, ...updatedVoiceMessages]);
+
+    setVoiceChatMessages([]);
+    setVoiceChatEnabled(false);
+    setIsVoiceChatActive(false);
+    setIsListening(false);
+    setIsSpeaking(false);
+    setIsProcessing(false);
   };
+
+  const drawPulseCircle = () => {
+    const canvas = pulseCanvasRef.current;
+    const analyser = analyserRef.current;
+    if (!canvas || !analyser) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const maxRadius = Math.min(canvas.width, canvas.height) / 2 - 10;
+
+    const draw = () => {
+      if (!isSpeaking && !isProcessing) return;
+      animationRef.current = requestAnimationFrame(draw);
+
+      analyser.getByteFrequencyData(dataArray);
+      const avg =
+        dataArray.reduce((sum, val) => sum + val, 0) / dataArray.length;
+      const volume = avg / 255;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const time = Date.now() / 1000;
+      const bounce = Math.sin(time * 3) * 5;
+      const pulseRadius = maxRadius * (0.6 + 0.4 * volume) + bounce;
+
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, pulseRadius, 0, Math.PI * 2);
+      ctx.fillStyle = isProcessing ? "#ffc300" : "#845ec2";
+      ctx.globalAlpha = 0.7;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    };
+
+    draw();
+  };
+
+  useEffect(() => {
+    if ((isSpeaking || isProcessing) && pulseCanvasRef.current) {
+      pulseCanvasRef.current.width = 150;
+      pulseCanvasRef.current.height = 150;
+      drawPulseCircle();
+    } else {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+      const ctx = pulseCanvasRef.current?.getContext("2d");
+      if (ctx && pulseCanvasRef.current)
+        ctx.clearRect(
+          0,
+          0,
+          pulseCanvasRef.current.width,
+          pulseCanvasRef.current.height
+        );
+    }
+  }, [isSpeaking, isProcessing]);
 
   useEffect(() => {
     if (recording) {
@@ -716,18 +834,16 @@ useEffect(() => {
             onKeyPress={handleKeyPress}
             rows={1}
             className={`w-full outline-[#D7D7D7] rounded-[20px] resize-none px-5 py-5 md:px-7 md:py-6 pr-16 leading-normal text-[#212221] text-base border-[0.5px] border-[#D7D7D7] bg-[#F6F6F6] max-h-[200px] transition-opacity duration-200 ${
-              (recording && !voiceChatEnabled) || voiceChatEnabled ? "opacity-60 cursor-not-allowed" : ""
+              (recording && !voiceChatEnabled) || voiceChatEnabled
+                ? "opacity-60 cursor-not-allowed"
+                : ""
             }`}
-            placeholder={
-              recording && !voiceChatEnabled ? "Recording..." : 
-              voiceChatEnabled ? "Voice chat active..." : 
-              "Ask anything..."
-            }
+            placeholder={recording || voiceChatEnabled ? "" : "Ask anything..."}
             disabled={(recording && !voiceChatEnabled) || voiceChatEnabled}
           />
 
           {/* Waveform Canvas Overlay */}
-          {(recording || voiceChatEnabled) && (
+          {recording && (
             <div className="absolute left-0 top-0 w-full h-full pointer-events-none flex px-10 items-center justify-center overflow-hidden">
               <canvas
                 ref={canvasRef}
@@ -741,21 +857,47 @@ useEffect(() => {
           )}
 
           {voiceChatEnabled && (
-            <div className="absolute left-4 top-4 right-4 bottom-4 pointer-events-none flex items-center justify-center">
-              <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-lg">
+            <div className="absolute left-0 top-0 w-full h-full px-10 overflow-hidden flex items-center justify-center">
+              {/* X Button to stop voice chat  */}
+              <button
+                onClick={stopVoiceChat}
+                className="absolute top-4 right-4 z-20 bg-white border border-gray-300 rounded-full p-1 hover:bg-red-500 hover:text-white transition"
+                style={{ pointerEvents: "auto" }}
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Circle wave when speaking/processing */}
+              {(isSpeaking || isProcessing) && (
+                <canvas
+                  ref={pulseCanvasRef}
+                  className="w-[150px] h-[150px] rounded-full"
+                  style={{
+                    position: "absolute",
+                    zIndex: 10,
+                    background: "transparent",
+                  }}
+                />
+              )}
+
+              {/* Waveform when listening */}
+              {isListening && (
+                <canvas
+                  ref={canvasRef}
+                  className="w-full h-full"
+                  style={{
+                    display: "block",
+                    background: "transparent",
+                  }}
+                />
+              )}
+
+              {/* Text fallback */}
+              {!isListening && !isSpeaking && !isProcessing && (
                 <p className="text-lg font-medium text-center">
-                  {isSpeaking ? "🔊 Speaking..." : 
-                   isProcessing ? "🔄 Processing..." :
-                   isListening ? "🎤 Listening..." : 
-                   recording ? "🔴 Recording..." :
-                   "🎙️ Voice chat active - Say something..."}
+                  🎙️ Voice chat active - Say something...
                 </p>
-                <div className="mt-2 text-sm text-gray-600 text-center">
-                  {recording ? "Stop speaking to send" : 
-                   isProcessing ? "Processing your message..." :
-                   "Start speaking to record"}
-                </div>
-              </div>
+              )}
             </div>
           )}
 
@@ -767,10 +909,10 @@ useEffect(() => {
                 onClick={recording ? stopRecording : startRecording}
                 disabled={voiceChatEnabled}
               >
-                {recording ? <X  /> : <MicIcon />}
+                {recording ? <X /> : <MicIcon />}
               </button>
             )}
-            
+
             {inputText && !recording && !voiceChatEnabled && (
               <Button
                 onClick={handleSendMessage}
@@ -779,18 +921,18 @@ useEffect(() => {
                 <MoveUp />
               </Button>
             )}
-            
-            {!inputText && !recording && (
+
+            {!inputText && !recording && !voiceChatEnabled && (
               <Button
-                onClick={voiceChatEnabled ? stopVoiceChat : handleVoiceChat}
+                onClick={handleVoiceChat}
                 className="bg-[#D7D7D7] rounded-full w-7 h-7 md:w-10 md:h-10 mt-3 md:mt-0 p-2 flex items-center font-bold justify-center bg-primary text-white hover:bg-white hover:text-black transition"
               >
-                {voiceChatEnabled ? <X /> : <AudioLines />}
+                <AudioLines />
               </Button>
             )}
           </div>
         </div>
-        
+
         {!hasStartChat && (
           <>
             <p className="mx-auto lg:mx-0 mt-[24px] mb-[16px] text-[#6A6B6A]">
@@ -806,7 +948,9 @@ useEffect(() => {
                   key={index}
                   onClick={() => handleSampleClick(text)}
                   className={`cursor-pointer px-[10px] py-[8px] border-[0.5px] border-[#D7D7D7] rounded-[32px] hover:bg-primary/90 hover:text-primary-foreground ${
-                    (recording || voiceChatEnabled) ? "opacity-50 cursor-not-allowed" : ""
+                    recording || voiceChatEnabled
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
                   }`}
                 >
                   {text}
@@ -823,7 +967,9 @@ useEffect(() => {
                   key={index}
                   onClick={() => handleSampleClick(text)}
                   className={`cursor-pointer px-[10px] py-[8px] border-[0.5px] border-[#D7D7D7] rounded-[32px] hover:bg-primary/90 hover:text-primary-foreground ${
-                    (recording || voiceChatEnabled) ? "opacity-50 cursor-not-allowed" : ""
+                    recording || voiceChatEnabled
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
                   }`}
                 >
                   {text}
