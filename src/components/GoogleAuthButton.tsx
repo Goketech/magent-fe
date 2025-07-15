@@ -104,7 +104,7 @@ const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full mb-10">
       {/* Google's rendered button */}
       <div 
         ref={buttonRef} 

@@ -74,16 +74,16 @@ function page() {
       localStorage.setItem("wallet_connected_address", data.user.walletAddress);
       localStorage.setItem("email", data.user.email);
       localStorage.setItem("auth_token", data.token);
-      localStorage.setItem("publisher_campaign", JSON.stringify(data.user.publisherCampaigns || []));
-
-
+      localStorage.setItem(
+        "publisher_campaign",
+        JSON.stringify(data.user.publisherCampaigns || [])
+      );
 
       toast({
         title: "Login Successful",
         description: "Welcome back!",
         variant: "success",
       });
-
       navigate.push("/dashboard");
     } catch (error: any) {
       console.error("Error during login:", error);
