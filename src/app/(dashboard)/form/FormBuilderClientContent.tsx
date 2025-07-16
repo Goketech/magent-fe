@@ -1,16 +1,57 @@
 "use client";
 
-import { FormField } from "@/lib/form.types";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { MdArrowBackIos } from "react-icons/md";
 import FormBuilderClientWrapper from "@/components/forms/form-builder/FormBuilderClientWrapper";
+import { apiClient } from "@/utils/apiClient";
+import { FormField } from "@/lib/form.types";
 
-export default function FormBuilderClientContent() {
+interface Props {
+  formId?: string;
+}
+
+export default function FormBuilderClientContent({ formId }: Props) {
   const searchParams = useSearchParams();
-  const campaignId = searchParams.get('campaignId');
   const router = useRouter();
+  const [initialFields, setInitialFields] = useState<FormField[]>([]);
+  const [initialTitle, setInitialTitle] = useState("");
+  const [initialDescription, setInitialDescription] = useState("");
+  const [campaignId, setCampaignId] = useState<string | undefined>();
+  const [isLoading, setIsLoading] = useState(true);
 
-  const initialFields: FormField[] = [];
+  useEffect(() => {
+    const cid = searchParams.get("campaignId");
+    const isEdit = !!formId;
+
+    if (isEdit) {
+      // fetch form for editing
+      const fetchForm = async () => {
+        try {
+          const form = await apiClient(`/form/${formId}`);
+          setInitialFields(form.fields || []);
+          setInitialTitle(form.title || "");
+          setInitialDescription(form.description || "");
+          const campaign = form.campaignId?._id || form.campaignId;
+          setCampaignId(campaign);
+          console.log(form, "Fetched form for editing");
+        } catch (err) {
+          console.error("Failed to load form", err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchForm();
+    } else {
+      setCampaignId(cid ?? undefined);
+      setIsLoading(false);
+    }
+  }, [formId, searchParams]);
+
+  if (isLoading) {
+    return <div className="p-6 text-sm text-gray-600">Loading form...</div>;
+  }
 
   return (
     <main className="h-screen bg-gray-50">
@@ -26,9 +67,13 @@ export default function FormBuilderClientContent() {
         </div>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-semibold text-gray-900">Form Builder</h1>
+            <h1 className="text-lg font-semibold text-gray-900">
+              {formId ? "Edit Form" : "Create Form"}
+            </h1>
             <p className="text-sm text-gray-500">
-              {campaignId ? `Creating form for Campaign: ${campaignId}` : "Create a new form"}
+              {campaignId
+                ? `Form for Campaign: ${campaignId}`
+                : "No Campaign Linked"}
             </p>
           </div>
           {campaignId && (
@@ -37,7 +82,13 @@ export default function FormBuilderClientContent() {
         </div>
       </div>
       <div className="h-[calc(100vh-80px)]">
-        <FormBuilderClientWrapper initialFields={initialFields} campaignId={campaignId ?? undefined} />
+        <FormBuilderClientWrapper
+          initialFields={initialFields}
+          initialTitle={initialTitle}
+          initialDescription={initialDescription}
+          campaignId={campaignId}
+          formId={formId}
+        />
       </div>
     </main>
   );
