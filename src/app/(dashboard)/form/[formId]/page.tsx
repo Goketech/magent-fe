@@ -2,10 +2,10 @@
 import FormBuilderClientContent from "../FormBuilderClientContent";
 
 interface PageProps {
-  params: { formId: string };
+  params: Promise<{ formId: string }>;
 }
 
-export default function EditFormPage({ params }: PageProps) {
-  const formId = params.formId;
+export default async function EditFormPage({ params }: PageProps) {
+  const { formId } = await params;
   return <FormBuilderClientContent formId={formId} />;
 }
