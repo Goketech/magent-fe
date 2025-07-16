@@ -6,5 +6,6 @@ interface PageProps {
 }
 
 export default function EditFormPage({ params }: PageProps) {
-  return <FormBuilderClientContent formId={params.formId} />;
+  const formId = params.formId;
+  return <FormBuilderClientContent formId={formId} />;
 }

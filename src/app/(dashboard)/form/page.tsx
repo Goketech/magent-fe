@@ -1,15 +1,12 @@
 "use client";
 
-import { Metadata } from "next";
-import { Suspense } from "react"; // ✅
-import FormBuilderClientContent from "./FormBuilderClientContent"; // new file
+import { Suspense } from "react";
+import FormBuilderClientContent from "./FormBuilderClientContent";
 
-
-export default function FormsPage({ params }: { params: { formId: string } }) {
+export default function CreateFormPage() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <FormBuilderClientContent formId={params.formId} />
+      <FormBuilderClientContent />
     </Suspense>
   );
 }
-
