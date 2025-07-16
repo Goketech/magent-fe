@@ -21,107 +21,116 @@ interface Props {
   campaignId?: string;
   initialTitle?: string;
   initialDescription?: string;
+  formId?: string; // <-- new
 }
-
 export default function FormBuilderClientWrapper({
   initialFields,
   campaignId,
   initialTitle = "",
   initialDescription = "",
+  formId, // <-- receive the formId here
 }: Props) {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const handleSave = useCallback(
+    async (formData: {
+      title: string;
+      description: string;
+      campaignId: string;
+      fields: FormField[];
+    }) => {
+      setIsLoading(true);
 
-const handleSave = useCallback(
-  async (formData: {
-    title: string;
-    description: string;
-    campaignId: string;
-    fields: FormField[];
-  }) => {
-    setIsLoading(true); // Start loading
-    
-    try {
-      // First API call - create form
-      const response = await apiClient("/form", {
-        method: "POST",
-        body: formData,
-      });
-
-      // Second API call - publish form
       try {
-        await apiClient(`/form/${response._id}/publish`, {
-          method: "POST",
-          body: { isPublic: true },
-        });
+        let response;
 
-        toast({
-          variant: "success",
-          description: "Form Published successfully!",
-        });
-      } catch (publishError) {
-        // Handle publish error specifically
-        let publishErrorMessage = "Error publishing form.";
-        if (publishError instanceof Error) {
+        if (formId) {
+          // Update existing form
+          response = await apiClient(`/form/${formId}`, {
+            method: "PUT",
+            body: {
+              title: formData.title,
+              description: formData.description,
+              fields: formData.fields,
+              isPublic: true,
+            },
+          });
+
+          toast({
+            variant: "success",
+            description: "Form updated successfully!",
+          });
+        } else {
+          // Create new form
+          response = await apiClient("/form", {
+            method: "POST",
+            body: formData,
+          });
+
+          // Publish the form
           try {
-            // Try to parse the error message as JSON to get the server error
-            const errorData = JSON.parse(publishError.message.replace('API request failed - ', ''));
-            publishErrorMessage = errorData.error || publishError.message;
+            await apiClient(`/form/${response._id}/publish`, {
+              method: "POST",
+              body: { isPublic: true },
+            });
+
+            toast({
+              variant: "success",
+              description: "Form published successfully!",
+            });
+          } catch (publishError) {
+            let publishErrorMessage = "Error publishing form.";
+            if (publishError instanceof Error) {
+              try {
+                const errorData = JSON.parse(
+                  publishError.message.replace("API request failed - ", "")
+                );
+                publishErrorMessage = errorData.error || publishError.message;
+              } catch {
+                publishErrorMessage = publishError.message;
+              }
+            }
+
+            toast({
+              variant: "destructive",
+              description: publishErrorMessage,
+            });
+
+            toast({
+              variant: "success",
+              description: "Form saved successfully.",
+            });
+
+            return;
+          }
+        }
+      } catch (error) {
+        let errorMessage = "Error saving form.";
+        if (error instanceof Error) {
+          try {
+            const errorData = JSON.parse(
+              error.message.replace("API request failed - ", "")
+            );
+            errorMessage = errorData.error || error.message;
           } catch {
-            publishErrorMessage = publishError.message;
+            errorMessage = error.message;
           }
         }
 
         toast({
           variant: "destructive",
-          description: publishErrorMessage,
+          description: errorMessage,
         });
-
-        // Still show success for saving if only publishing failed
-        toast({
-          variant: "success",
-          description: "Form saved successfully.",
-        });
-
-        return; // Exit after handling publish error
+      } finally {
+        setIsLoading(false);
       }
-
-      // If both succeed
-      toast({
-        variant: "success",
-        description: "Form saved and published successfully!",
-      });
-
-    } catch (error) {
-      console.error("Error saving form:", error);
-
-      let errorMessage = "Error saving form. Please try again.";
-      if (error instanceof Error) {
-        try {
-          // Try to parse the error message as JSON to get the server error
-          const errorData = JSON.parse(error.message.replace('API request failed - ', ''));
-          errorMessage = errorData.error || error.message;
-        } catch {
-          errorMessage = error.message;
-        }
-      }
-
-      toast({
-        variant: "destructive",
-        description: errorMessage,
-      });
-    } finally {
-      setIsLoading(false); // End loading regardless of success or failure
-    }
-  },
-  [toast]
-);
-
+    },
+    [toast, formId]
+  );
 
   const handlePreview = useCallback(() => {}, []);
 
-  // Handle case where no campaignId is provided
   if (!campaignId) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -167,6 +176,8 @@ const handleSave = useCallback(
       onSave={handleSave}
       isLoading={isLoading}
       onPreview={handlePreview}
+      formId={formId} // <-- pass it to child component if needed
     />
   );
 }
+

@@ -5,10 +5,11 @@ import { Suspense } from "react"; // ✅
 import FormBuilderClientContent from "./FormBuilderClientContent"; // new file
 
 
-export default function FormsPage() {
+export default function FormsPage({ params }: { params: { formId: string } }) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <FormBuilderClientContent />
+      <FormBuilderClientContent formId={params.formId} />
     </Suspense>
   );
 }
+
