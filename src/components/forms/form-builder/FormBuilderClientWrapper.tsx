@@ -21,14 +21,14 @@ interface Props {
   campaignId?: string;
   initialTitle?: string;
   initialDescription?: string;
-  formId?: string; // <-- new
+  formId?: string; 
 }
 export default function FormBuilderClientWrapper({
   initialFields,
   campaignId,
   initialTitle = "",
   initialDescription = "",
-  formId, // <-- receive the formId here
+  formId,
 }: Props) {
   const router = useRouter();
   const { toast } = useToast();

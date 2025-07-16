@@ -82,7 +82,6 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
 
     fetchFormAnalytics();
   }, [campaign._id]);
-  console.log("Form Analytics:", formAnalytics);
 
   if (isLoading) {
     return (
@@ -113,7 +112,6 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
   const handleEditForm = () => {
     setNavigating(true);
     const formId = campaign.feedbackFormId?.split("/").pop();
-    console.log("Navigating to formId:", formId);
 
     if (!formId) return;
 

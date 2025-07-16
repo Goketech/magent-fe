@@ -34,7 +34,6 @@ export default function FormBuilderClientContent({ formId }: Props) {
           setInitialDescription(form.description || "");
           const campaign = form.campaignId?._id || form.campaignId;
           setCampaignId(campaign);
-          console.log(form, "Fetched form for editing");
         } catch (err) {
           console.error("Failed to load form", err);
         } finally {

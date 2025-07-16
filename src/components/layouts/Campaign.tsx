@@ -240,7 +240,6 @@ const joinedStatuses = useMemo(() => {
   const handleBackUserCampaign = () => {
     setSelectedUserCampaign(null);
   };
-  console.log(allCampaigns, "allCampaigns");
 
   /**
    * Uploads a File to Cloudinary, returns the secure URL.
