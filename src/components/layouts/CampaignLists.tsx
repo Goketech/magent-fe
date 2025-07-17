@@ -15,24 +15,32 @@ interface TableHeader {
 }
 
 interface CampaignListsProps {
-  initialCampaigns?: Campaign[];
-  itemsPerPage?: number;
+  allCampaigns: Campaign[]; // Now passed from parent
+  loading: boolean; // Loading state from parent
+  isEmpty: boolean; // Whether the campaign list is empty
+  totalPages: number; // Pagination info from parent
+
   activeFilters?: FilterState;
+  setAllCampaigns?: React.Dispatch<React.SetStateAction<Campaign[]>>;
   onViewDetails: (campaign: Campaign | MyCampaignType) => void;
   onCampaignCountChange?: (count: number) => void;
+
   isJoined: Record<string, "joined" | undefined>;
   handleJoinSuccess?: (campaignId: string, joinResponse: any) => void;
+
+  itemsPerPage?: number; // Optional in case pagination is handled here
 }
+
 
 const EMPTY_ARRAY: Campaign[] = [];
 
 const CampaignLists: React.FC<CampaignListsProps> = ({
-  initialCampaigns = EMPTY_ARRAY,
-  onCampaignCountChange,
-  handleJoinSuccess,
-  isJoined,
+  allCampaigns,
+  setAllCampaigns,
+  loading,
+  isEmpty,
+  totalPages,
   itemsPerPage = 10,
-  onViewDetails,
   activeFilters = {
     industry: "",
     status: "",
@@ -41,12 +49,13 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
     endDate: "",
     searchQuery: "",
   },
+  onViewDetails,
+  onCampaignCountChange,
+  isJoined,
+  handleJoinSuccess,
 }) => {
-  const [allCampaigns, setAllCampaigns] = useState<Campaign[]>([]);
+  // const [allCampaigns, setAllCampaigns] = useState<Campaign[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(1);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [isEmpty, setIsEmpty] = useState<boolean>(false);
 
   const [sortConfig, setSortConfig] = useState<{
     key: string;
@@ -92,27 +101,26 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
       }
 
       // Filter by date range
-      if (activeFilters.startDate && activeFilters.endDate) {
-        // For demonstration, we'll just check if the campaign duration mentions the months
-        // In a real app, you'd want to parse actual dates and compare them
-        result = result.filter((campaign) => {
-          const [startMonth, endMonth] = campaign.duration
-            .split("-")
-            .map((d) => d.trim().split(" ")[0]);
-          const filterStartMonth = new Date(
-            activeFilters.startDate
-          ).toLocaleString("default", { month: "short" });
-          const filterEndMonth = new Date(activeFilters.endDate).toLocaleString(
-            "default",
-            { month: "short" }
-          );
+      if (activeFilters.startDate || activeFilters.endDate) {
+  const filterStart = activeFilters.startDate
+    ? new Date(activeFilters.startDate)
+    : null;
+  const filterEnd = activeFilters.endDate
+    ? new Date(activeFilters.endDate)
+    : null;
 
-          return (
-            startMonth.includes(filterStartMonth) ||
-            endMonth.includes(filterEndMonth)
-          );
-        });
-      }
+  result = result.filter((campaign) => {
+    const campaignStart = new Date(campaign.startDate);
+    const campaignEnd = new Date(campaign.endDate);
+
+    const startsAfterOrOn = filterStart ? campaignStart >= filterStart : true;
+    const endsBeforeOrOn = filterEnd ? campaignEnd <= filterEnd : true;
+
+    return startsAfterOrOn && endsBeforeOrOn;
+  });
+}
+
+
 
       // Filter by search query
       if (activeFilters.searchQuery) {
@@ -140,58 +148,6 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
     { id: "status", label: "STATUS", sortable: true },
     { id: "actions", label: "" },
   ];
-
-  // Fetch campaigns from the API
-  const fetchCampaigns = async () => {
-    setLoading(true);
-
-    try {
-      const data = await apiClient("/campaign/marketplace-campaigns", {
-        method: "GET",
-      });
-
-      setAllCampaigns(data.campaigns);
-      localStorage.setItem("cached_campaigns", JSON.stringify(data.campaigns));
-      if (data.campaigns.length === 0) {
-        setIsEmpty(true);
-        setLoading(false);
-      }
-      setTotalPages(Math.ceil(data.campaigns.length / itemsPerPage));
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Error saving form. Please try again.",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Initialize with API data or use provided initialCampaigns
-  useEffect(() => {
-    const cached = localStorage.getItem("cached_campaigns");
-    if (initialCampaigns.length > 0) {
-      setAllCampaigns(initialCampaigns);
-      setTotalPages(Math.ceil(initialCampaigns.length / itemsPerPage));
-      setLoading(false);
-    } else if (cached) {
-      const parsed = JSON.parse(cached);
-      setAllCampaigns(parsed);
-      setTotalPages(Math.ceil(parsed.length / itemsPerPage));
-      setLoading(false);
-    } else {
-      fetchCampaigns();
-    }
-  }, [initialCampaigns, itemsPerPage]);
-
-  // Update totalPages when filtered results change
-  useEffect(() => {
-    setTotalPages(Math.ceil(filteredCampaigns.length / itemsPerPage));
-    setCurrentPage(1);
-  }, [filteredCampaigns, itemsPerPage]);
 
   useEffect(() => {
     if (onCampaignCountChange) {
@@ -247,7 +203,9 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
       return 0;
     });
 
-    setAllCampaigns(sortedCampaigns);
+    if (setAllCampaigns) {
+      setAllCampaigns(sortedCampaigns);
+    }
   };
 
   const getSortIcon = (headerId: string) => {
@@ -423,7 +381,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
                 ))}
               </tbody>
             </table>
-<div className="flex justify-end items-center mt-4 px-2 md:px-4">
+{/* <div className="flex justify-end items-center mt-4 px-2 md:px-4">
   <button
     className={`rounded-md flex items-center justify-center p-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-[#330065] text-white hover:bg-purple-800`}
     onClick={() => {
@@ -447,7 +405,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
       />
     </svg>
   </button>
-</div>
+</div> */}
             <div className="flex justify-center mt-6 space-x-2">
               {renderPagination()}
             </div>

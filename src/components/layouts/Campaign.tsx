@@ -3,6 +3,8 @@ import React, { useState, useMemo, useEffect } from "react";
 import CampaignHead from "./CampaignHead";
 import CampaignFilter, { FilterState } from "./CampaignFilter";
 import CampaignLists from "./CampaignLists";
+import type { Campaign } from "./CampaignList";
+
 import CampaignDetails from "./CampaignDetails";
 import MyCampaignLists from "./MyCampaignLists";
 import CreateCampaign from "./CreateCampaign";
@@ -23,6 +25,8 @@ import {
 import { capitalizeEachWord } from "@/utils/capitalize";
 import { apiClient } from "@/utils/apiClient";
 import { logEvent } from "@/utils/logEvent";
+
+const EMPTY_ARRAY: Campaign[] = [];
 
 const Campaign: React.FC = () => {
   const { toast } = useToast();
@@ -50,6 +54,8 @@ const Campaign: React.FC = () => {
   const [userCampaigns, setUserCampaigns] = useState<MyCampaignType[]>([]);
   const [isCreatingCampaign, setIsCreatingCampaign] = useState(false);
   const [campaignCount, setCampaignCount] = useState(0);
+
+
   // const [joinedStatuses, setJoinedStatuses] = useState<Record<string, "joined">>({});
 
     const [publisherCampaigns, setPublisherCampaigns] = useState<
@@ -58,6 +64,50 @@ const Campaign: React.FC = () => {
   
 
   const filters = useMemo(() => rawFilters, [rawFilters]);
+  const [allCampaigns, setAllCampaigns] = useState<Campaign[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isEmpty, setIsEmpty] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const itemsPerPage = 10;
+  const initialCampaigns = EMPTY_ARRAY
+
+  const fetchCampaigns = async () => {
+    setIsLoading(true);
+
+    try {
+      const data = await apiClient("/campaign/marketplace-campaigns", {
+        method: "GET",
+      });
+
+      setAllCampaigns(data.campaigns);
+      if (data.campaigns.length === 0) {
+        setIsEmpty(true);
+        setIsLoading(false);
+      }
+      setTotalPages(Math.ceil(data.campaigns.length / itemsPerPage));
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Error fetching campaigns. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (initialCampaigns.length > 0) {
+      setAllCampaigns(initialCampaigns);
+      setTotalPages(Math.ceil(initialCampaigns.length / itemsPerPage));
+      setIsLoading(false);
+    } else {
+      fetchCampaigns();
+    }
+  }, [initialCampaigns, itemsPerPage]);
 
   // Load campaigns from localStorage on component mount
 useEffect(() => {
@@ -190,7 +240,6 @@ const joinedStatuses = useMemo(() => {
   const handleBackUserCampaign = () => {
     setSelectedUserCampaign(null);
   };
-  
 
   /**
    * Uploads a File to Cloudinary, returns the secure URL.
@@ -508,13 +557,17 @@ const joinedStatuses = useMemo(() => {
       )}
       {activeView === "marketplace" ? (
         <CampaignLists
-          activeFilters={filters}
-          onViewDetails={handleViewDetails}
-          onCampaignCountChange={handleCampaignCountChange}
-          handleJoinSuccess={handleJoinSuccess}
-          isJoined={joinedStatuses}
-          
-        />
+      allCampaigns={allCampaigns}
+      loading={isLoading}
+      setAllCampaigns={setAllCampaigns}
+      isEmpty={isEmpty}
+      totalPages={totalPages}
+      activeFilters={filters}
+      onViewDetails={handleViewDetails}
+      onCampaignCountChange={handleCampaignCountChange}
+      handleJoinSuccess={handleJoinSuccess}
+      isJoined={joinedStatuses}
+    />
       ) : userCampaigns.length === 0 ? (
         <EmptyState onCreateCampaign={handleCreateCampaign} />
       ) : (
