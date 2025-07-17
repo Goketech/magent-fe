@@ -42,6 +42,7 @@ const DraggableField: React.FC<{
 
   return (
     <div
+    
       ref={ref}
       onClick={onClick}
       className={`p-3 border mb-2 cursor-move rounded ${
@@ -69,7 +70,7 @@ export const FormCanvas: React.FC<FormCanvasProps> = ({
           .sort((a, b) => a.order - b.order)
           .map((field, index) => (
             <DraggableField
-              key={field.id}
+              key={`${field.id}-${index}`}
               field={field}
               index={index}
               isSelected={field.id === selectedFieldId}

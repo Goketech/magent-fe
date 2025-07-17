@@ -14,7 +14,7 @@ export const FormPreview: React.FC<FormPreviewProps> = ({ fields }) => {
         .sort((a, b) => a.order - b.order)
         .map((field) => (
           <DynamicField
-            key={field.id}
+            key={`${field._id}-preview`}
             field={field}
             value={field.config.defaultValue || ''}
             onChange={() => null} // preview only

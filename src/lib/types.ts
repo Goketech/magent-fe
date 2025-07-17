@@ -5,6 +5,7 @@ interface BaseCampaign {
   name: string;
   goals: string;
   industry: string;
+  duration: string;
   status: string;
   startDate?: number;
   endDate?: number;
