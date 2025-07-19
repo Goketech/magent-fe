@@ -332,9 +332,14 @@ const MyCampaignLists: React.FC<CampaignListsProps> = ({
         )}
       </div>
 
-      <div className="flex justify-center mt-6 space-x-2">
-        {renderPagination()}
-      </div>
+      {(displayedCampaigns.length > 10 ||
+              filteredCampaigns.length > 10) && (
+              <div className="flex justify-center mt-8">
+                <div className="inline-flex items-center space-x-2 bg-white border border-gray-200 rounded-lg shadow-sm px-4 py-2">
+                  {renderPagination()}
+                </div>
+              </div>
+            )}
     </div>
   );
 };

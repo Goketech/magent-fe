@@ -54,15 +54,20 @@ const CampaignList: React.FC<CampaignListProps> = ({
     }
   };
   const isCreatedByMe = mycampaigns.some(
-  (myCamp) => myCamp.id === campaign._id
-);
+    (myCamp) => myCamp.id === campaign._id
+  );
 
-console.log(mycampaigns, "mycampaigns");
+  console.log(mycampaigns, "mycampaigns");
 
   const handleAccept = () => {
     const localStored = localStorage.getItem("wallet_connected_address");
     // Check if wallet is connected (either publicKey exists or stored address exists)
-    if (localStored && localStored !== "null" && connected && localStored === publicKey?.toBase58()) {
+    if (
+      localStored &&
+      localStored !== "null" &&
+      connected &&
+      localStored === publicKey?.toBase58()
+    ) {
       setIsModalOpen(true);
       onAccept(campaign._id);
     } else {
@@ -140,24 +145,22 @@ console.log(mycampaigns, "mycampaigns");
         <td className="py-3 px-4 text-[10px] md:text-xs">
           <div className="flex items-center gap-2">
             <button
-  className={`rounded-md flex gap-3 items-center px-4 py-1.5 text-[10px] md:text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-    isJoined
-      ? "bg-green-600 text-white hover:bg-green-700"
-      : "bg-[#330065] text-white hover:bg-purple-800"
-  }`}
-  onClick={handleAccept}
-  disabled={
-    campaign.status === "completed" ||
-    campaign.status === "Inactive" ||
-    isJoined ||
-    isCreatedByMe
-  }
->
-  <MdOutlineCheckCircle size={20} />
-  {"Accept"}
-</button>
-
-
+              className={`rounded-md flex gap-3 items-center px-4 py-1.5 text-[10px] md:text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                isJoined
+                  ? "bg-green-600 text-white hover:bg-green-700"
+                  : "bg-[#330065] text-white hover:bg-purple-800"
+              }`}
+              onClick={handleAccept}
+              disabled={
+                campaign.status === "completed" ||
+                campaign.status === "Inactive" ||
+                isJoined ||
+                isCreatedByMe
+              }
+            >
+              <MdOutlineCheckCircle size={20} />
+              {"Accept"}
+            </button>
 
             <div>
               <div className="relative">
