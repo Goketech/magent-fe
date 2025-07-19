@@ -24,7 +24,7 @@ interface CampaignListsProps {
   setAllCampaigns?: React.Dispatch<React.SetStateAction<Campaign[]>>;
   onViewDetails: (campaign: Campaign | MyCampaignType) => void;
   onCampaignCountChange?: (count: number) => void;
-
+  mycampaigns: MyCampaignType[];
   isJoined: Record<string, "joined" | undefined>;
   handleJoinSuccess?: (campaignId: string, joinResponse: any) => void;
 
@@ -40,6 +40,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
   loading,
   isEmpty,
   totalPages,
+  mycampaigns,
   itemsPerPage = 10,
   activeFilters = {
     industry: "",
@@ -67,6 +68,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
   >(null);
 
   const { toast } = useToast();
+
 
   // Load publisher campaigns from localStorage
 
@@ -373,6 +375,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
                 {displayedCampaigns.map((campaign) => (
                   <CampaignList
                     key={campaign._id}
+                    mycampaigns={mycampaigns}
                     campaign={campaign}
                     onAccept={() => handleAcceptCampaign(campaign)}
                     onViewDetails={onViewDetails}

@@ -5,6 +5,8 @@ import { MoreVertical } from "lucide-react";
 import { MdOutlineCheckCircle } from "react-icons/md";
 import { useToast } from "@/hooks/use-toast";
 import { capitalizeEachWord } from "@/utils/capitalize";
+import { MyCampaign as MyCampaignType } from "@/lib/types";
+
 import { useWallet } from "@solana/wallet-adapter-react";
 
 export interface Campaign {
@@ -23,6 +25,7 @@ export interface Campaign {
 interface CampaignListProps {
   campaign: Campaign;
   onAccept: (id: string) => void;
+  mycampaigns: MyCampaignType[];
   onViewDetails: (campaign: Campaign) => void;
   isJoined?: boolean;
 }
@@ -31,6 +34,7 @@ const CampaignList: React.FC<CampaignListProps> = ({
   campaign,
   onAccept,
   onViewDetails,
+  mycampaigns,
   isJoined,
 }) => {
   const [showOptions, setShowOptions] = useState<boolean>(false);
@@ -49,6 +53,11 @@ const CampaignList: React.FC<CampaignListProps> = ({
         return "bg-gray-100 text-gray-600";
     }
   };
+  const isCreatedByMe = mycampaigns.some(
+  (myCamp) => myCamp.id === campaign._id
+);
+
+console.log(mycampaigns, "mycampaigns");
 
   const handleAccept = () => {
     const localStored = localStorage.getItem("wallet_connected_address");
@@ -131,21 +140,25 @@ const CampaignList: React.FC<CampaignListProps> = ({
         <td className="py-3 px-4 text-[10px] md:text-xs">
           <div className="flex items-center gap-2">
             <button
-              className={`rounded-md flex gap-3 items-center px-4 py-1.5 text-[10px] md:text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-                isJoined
-                  ? "bg-green-600 text-white hover:bg-green-700"
-                  : "bg-[#330065] text-white hover:bg-purple-800"
-              }`}
-              onClick={handleAccept}
-              disabled={
-                campaign?.status === "completed" ||
-                campaign?.status === "Inactive" ||
-                isJoined
-              }
-            >
-              <MdOutlineCheckCircle size={20} />
-              {isJoined ? "Joined" : "Accept"}
-            </button>
+  className={`rounded-md flex gap-3 items-center px-4 py-1.5 text-[10px] md:text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+    isJoined
+      ? "bg-green-600 text-white hover:bg-green-700"
+      : "bg-[#330065] text-white hover:bg-purple-800"
+  }`}
+  onClick={handleAccept}
+  disabled={
+    campaign.status === "completed" ||
+    campaign.status === "Inactive" ||
+    isJoined ||
+    isCreatedByMe
+  }
+>
+  <MdOutlineCheckCircle size={20} />
+  {"Accept"}
+</button>
+
+
+
             <div>
               <div className="relative">
                 <button
