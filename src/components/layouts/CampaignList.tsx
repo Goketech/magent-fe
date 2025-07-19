@@ -5,6 +5,8 @@ import { MoreVertical } from "lucide-react";
 import { MdOutlineCheckCircle } from "react-icons/md";
 import { useToast } from "@/hooks/use-toast";
 import { capitalizeEachWord } from "@/utils/capitalize";
+import { MyCampaign as MyCampaignType } from "@/lib/types";
+
 import { useWallet } from "@solana/wallet-adapter-react";
 
 export interface Campaign {
@@ -17,12 +19,13 @@ export interface Campaign {
   endDate: number;
   startDate: number;
   industry: string;
-  status: "Active" | "completed" | "Pending" | "Inactive" | "Joined";
+  status: "active" | "completed" | "pending" | "inactive" | "joined";
 }
 
 interface CampaignListProps {
   campaign: Campaign;
   onAccept: (id: string) => void;
+  mycampaigns: MyCampaignType[];
   onViewDetails: (campaign: Campaign) => void;
   isJoined?: boolean;
 }
@@ -31,6 +34,7 @@ const CampaignList: React.FC<CampaignListProps> = ({
   campaign,
   onAccept,
   onViewDetails,
+  mycampaigns,
   isJoined,
 }) => {
   const [showOptions, setShowOptions] = useState<boolean>(false);
@@ -49,11 +53,21 @@ const CampaignList: React.FC<CampaignListProps> = ({
         return "bg-gray-100 text-gray-600";
     }
   };
+  const isCreatedByMe = mycampaigns.some(
+    (myCamp) => myCamp.id === campaign._id
+  );
+
+  console.log(mycampaigns, "mycampaigns");
 
   const handleAccept = () => {
     const localStored = localStorage.getItem("wallet_connected_address");
     // Check if wallet is connected (either publicKey exists or stored address exists)
-    if (localStored && localStored !== "null" && connected && localStored === publicKey?.toBase58()) {
+    if (
+      localStored &&
+      localStored !== "null" &&
+      connected &&
+      localStored === publicKey?.toBase58()
+    ) {
       setIsModalOpen(true);
       onAccept(campaign._id);
     } else {
@@ -138,14 +152,16 @@ const CampaignList: React.FC<CampaignListProps> = ({
               }`}
               onClick={handleAccept}
               disabled={
-                campaign?.status === "completed" ||
-                campaign?.status === "Inactive" ||
-                isJoined
+                campaign.status === "completed" ||
+                campaign.status === "inactive" ||
+                isJoined ||
+                isCreatedByMe
               }
             >
               <MdOutlineCheckCircle size={20} />
               {isJoined ? "Joined" : "Accept"}
             </button>
+
             <div>
               <div className="relative">
                 <button

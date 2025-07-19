@@ -15,22 +15,21 @@ interface TableHeader {
 }
 
 interface CampaignListsProps {
-  allCampaigns: Campaign[]; // Now passed from parent
-  loading: boolean; // Loading state from parent
-  isEmpty: boolean; // Whether the campaign list is empty
-  totalPages: number; // Pagination info from parent
+  allCampaigns: Campaign[];
+  loading: boolean;
+  isEmpty: boolean;
+  totalPages: number;
 
   activeFilters?: FilterState;
   setAllCampaigns?: React.Dispatch<React.SetStateAction<Campaign[]>>;
   onViewDetails: (campaign: Campaign | MyCampaignType) => void;
   onCampaignCountChange?: (count: number) => void;
-
+  mycampaigns: MyCampaignType[];
   isJoined: Record<string, "joined" | undefined>;
   handleJoinSuccess?: (campaignId: string, joinResponse: any) => void;
 
   itemsPerPage?: number; // Optional in case pagination is handled here
 }
-
 
 const EMPTY_ARRAY: Campaign[] = [];
 
@@ -40,6 +39,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
   loading,
   isEmpty,
   totalPages,
+  mycampaigns,
   itemsPerPage = 10,
   activeFilters = {
     industry: "",
@@ -102,25 +102,25 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
 
       // Filter by date range
       if (activeFilters.startDate || activeFilters.endDate) {
-  const filterStart = activeFilters.startDate
-    ? new Date(activeFilters.startDate)
-    : null;
-  const filterEnd = activeFilters.endDate
-    ? new Date(activeFilters.endDate)
-    : null;
+        const filterStart = activeFilters.startDate
+          ? new Date(activeFilters.startDate)
+          : null;
+        const filterEnd = activeFilters.endDate
+          ? new Date(activeFilters.endDate)
+          : null;
 
-  result = result.filter((campaign) => {
-    const campaignStart = new Date(campaign.startDate);
-    const campaignEnd = new Date(campaign.endDate);
+        result = result.filter((campaign) => {
+          const campaignStart = new Date(campaign.startDate);
+          const campaignEnd = new Date(campaign.endDate);
 
-    const startsAfterOrOn = filterStart ? campaignStart >= filterStart : true;
-    const endsBeforeOrOn = filterEnd ? campaignEnd <= filterEnd : true;
+          const startsAfterOrOn = filterStart
+            ? campaignStart >= filterStart
+            : true;
+          const endsBeforeOrOn = filterEnd ? campaignEnd <= filterEnd : true;
 
-    return startsAfterOrOn && endsBeforeOrOn;
-  });
-}
-
-
+          return startsAfterOrOn && endsBeforeOrOn;
+        });
+      }
 
       // Filter by search query
       if (activeFilters.searchQuery) {
@@ -373,6 +373,7 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
                 {displayedCampaigns.map((campaign) => (
                   <CampaignList
                     key={campaign._id}
+                    mycampaigns={mycampaigns}
                     campaign={campaign}
                     onAccept={() => handleAcceptCampaign(campaign)}
                     onViewDetails={onViewDetails}
@@ -381,34 +382,19 @@ const CampaignLists: React.FC<CampaignListsProps> = ({
                 ))}
               </tbody>
             </table>
-{/* <div className="flex justify-end items-center mt-4 px-2 md:px-4">
-  <button
-    className={`rounded-md flex items-center justify-center p-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-[#330065] text-white hover:bg-purple-800`}
-    onClick={() => {
-      localStorage.removeItem("cached_campaigns");
-      fetchCampaigns();
-    }}
-    title="Refresh Campaigns"
-  >
-    <svg 
-      className="w-4 h-4" 
-      fill="none" 
-      stroke="currentColor" 
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        strokeWidth={2} 
-        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
-      />
-    </svg>
-  </button>
-</div> */}
-            <div className="flex justify-center mt-6 space-x-2">
-              {renderPagination()}
-            </div>
+            {filteredCampaigns.length === 0 && (
+              <div className="py-6 text-center text-gray-500">
+                No campaigns match the current filters.
+              </div>
+            )}
+            {(displayedCampaigns.length > 10 ||
+              filteredCampaigns.length > 10) && (
+              <div className="flex justify-center mt-8">
+                <div className="inline-flex items-center space-x-2 bg-white border border-gray-200 rounded-lg shadow-sm px-4 py-2">
+                  {renderPagination()}
+                </div>
+              </div>
+            )}
           </>
         )}
 
