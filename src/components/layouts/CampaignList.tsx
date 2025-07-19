@@ -145,22 +145,23 @@ const CampaignList: React.FC<CampaignListProps> = ({
         <td className="py-3 px-4 text-[10px] md:text-xs">
           <div className="flex items-center gap-2">
             <button
-              className={`rounded-md flex gap-3 items-center px-4 py-1.5 text-[10px] md:text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-                isJoined
-                  ? "bg-green-600 text-white hover:bg-green-700"
-                  : "bg-[#330065] text-white hover:bg-purple-800"
-              }`}
-              onClick={handleAccept}
-              disabled={
-                campaign.status === "completed" ||
-                campaign.status === "Inactive" ||
-                isJoined ||
-                isCreatedByMe
-              }
-            >
-              <MdOutlineCheckCircle size={20} />
-              {"Accept"}
-            </button>
+  className={`rounded-md flex gap-3 items-center px-4 py-1.5 text-[10px] md:text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+    isJoined
+      ? "bg-green-600 text-white hover:bg-green-700"
+      : "bg-[#330065] text-white hover:bg-purple-800"
+  }`}
+  onClick={handleAccept}
+  disabled={
+    campaign.status === "completed" ||
+    campaign.status === "Inactive" ||
+    isJoined ||
+    isCreatedByMe
+  }
+>
+  <MdOutlineCheckCircle size={20} />
+  {isJoined ? "Joined" : "Accept"}
+</button>
+
 
             <div>
               <div className="relative">
