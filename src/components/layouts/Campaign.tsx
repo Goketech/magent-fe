@@ -567,6 +567,7 @@ const joinedStatuses = useMemo(() => {
       onCampaignCountChange={handleCampaignCountChange}
       handleJoinSuccess={handleJoinSuccess}
       isJoined={joinedStatuses}
+      mycampaigns={userCampaigns}
     />
       ) : userCampaigns.length === 0 ? (
         <EmptyState onCreateCampaign={handleCreateCampaign} />
