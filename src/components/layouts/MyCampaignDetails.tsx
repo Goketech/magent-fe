@@ -2,12 +2,14 @@ import { MdArrowBackIos } from "react-icons/md";
 import { MyCampaign } from "@/lib/types";
 import { capitalizeEachWord } from "@/utils/capitalize";
 import React, { useState } from "react";
+import { MyCampaign as MyCampaignType } from "@/lib/types";
 import AcceptModal from "@/components/ui/AcceptModal";
 import { useToast } from "@/hooks/use-toast";
 
 interface MyCampaignDetailsProps {
   campaign: MyCampaign;
   onBack: () => void;
+  mycampaigns: MyCampaignType[];
   isCampaignJoined: (campaignId: string) => boolean;
   handleJoinSuccess?: (campaignId: string, joinResponse: any) => void;
 }
@@ -17,6 +19,7 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
   onBack,
   isCampaignJoined,
   handleJoinSuccess,
+  mycampaigns,
 }) => {
   const [copied, setCopied] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,46 +27,46 @@ const MyCampaignDetails: React.FC<MyCampaignDetailsProps> = ({
   const { toast } = useToast();
 
   const isJoined = isCampaignJoined(campaign._id);
-  // const checkIfCampaignIsJoined = (campaignId: string): boolean => {
-  //   return publisherCampaigns.some((pc: any) => pc.campaignId === campaignId);
-  // };
+  const isCreatedByMe = mycampaigns.some(
+    (myCamp) => myCamp.id === campaign._id
+  );
 
-const handleCopyLink = async () => {
-  try {
-    // Check if feedback form URL exists
-    if (!campaign.feedbackFormUrl) {
+  const handleCopyLink = async () => {
+    try {
+      // Check if feedback form URL exists
+      if (!campaign.feedbackFormUrl) {
+        toast({
+          variant: "destructive",
+          description: "No forms yet, check back later.",
+        });
+        return;
+      }
+
+      const publisherCampaigns = JSON.parse(
+        localStorage.getItem("publisher_campaign") || "[]"
+      );
+      console.log("Publisher Campaigns: ", publisherCampaigns);
+      const matchingCampaign = publisherCampaigns.find(
+        (c: any) => c.campaignId === campaign._id
+      );
+
+      const referralCode = matchingCampaign?.referralCode;
+
+      const urlWithReferral = referralCode
+        ? `${campaign.feedbackFormUrl}?ref=${referralCode}`
+        : campaign.feedbackFormUrl;
+
+      await navigator.clipboard.writeText(urlWithReferral);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
       toast({
         variant: "destructive",
-        description: "No forms yet, check back later.",
+        description: "Failed to copy link.",
       });
-      return;
     }
-
-    const publisherCampaigns = JSON.parse(
-      localStorage.getItem("publisher_campaign") || "[]"
-    );
-    console.log("Publisher Campaigns: ", publisherCampaigns);
-    const matchingCampaign = publisherCampaigns.find(
-      (c: any) => c.campaignId === campaign._id
-    );
-
-    const referralCode = matchingCampaign?.referralCode;
-
-    const urlWithReferral = referralCode
-      ? `${campaign.feedbackFormUrl}?ref=${referralCode}`
-      : campaign.feedbackFormUrl;
-
-    await navigator.clipboard.writeText(urlWithReferral);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  } catch (err) {
-    console.error("Failed to copy: ", err);
-    toast({
-      variant: "destructive",
-      description: "Failed to copy link.",
-    });
-  }
-};
+  };
   const handleAccept = () => {
     const localStored = localStorage.getItem("wallet_connected_address");
     // Check if wallet is connected (either publicKey exists or stored address exists)
@@ -128,7 +131,9 @@ const handleCopyLink = async () => {
                 <p className="text-xs sm:text-sm">{campaign?.targetNumber}</p>
               </div>
               <div>
-                <p className="text-xs opacity-70 py-1 sm:py-2">Total Publishers</p>
+                <p className="text-xs opacity-70 py-1 sm:py-2">
+                  Total Publishers
+                </p>
                 <p className="text-xs sm:text-sm">{campaign?.publisherCount}</p>
               </div>
             </div>
@@ -143,7 +148,9 @@ const handleCopyLink = async () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
         <div>
-          <h3 className="text-base sm:text-lg font-medium mb-3 sm:mb-4">Campaign Overview</h3>
+          <h3 className="text-base sm:text-lg font-medium mb-3 sm:mb-4">
+            Campaign Overview
+          </h3>
           <div className="space-y-3 sm:space-y-4">
             <div className="flex justify-between gap-1 sm:gap-0">
               <p className="text-xs sm:text-sm text-gray-600">Campaign Name</p>
@@ -170,7 +177,9 @@ const handleCopyLink = async () => {
               </p>
             </div>
             <div className="flex justify-between gap-1 sm:gap-0">
-              <p className="text-xs sm:text-sm text-gray-600">Target Audience</p>
+              <p className="text-xs sm:text-sm text-gray-600">
+                Target Audience
+              </p>
               <p className="text-xs sm:text-sm font-medium">
                 {campaign?.targetAudience?.gender == "both"
                   ? "Male and Female"
@@ -180,7 +189,9 @@ const handleCopyLink = async () => {
               </p>
             </div>
             <div className="flex justify-between gap-1 sm:gap-0">
-              <p className="text-xs sm:text-sm text-gray-600">Campaign Duration</p>
+              <p className="text-xs sm:text-sm text-gray-600">
+                Campaign Duration
+              </p>
               <p className="text-xs sm:text-sm font-medium">
                 {campaign.startDate && campaign.endDate
                   ? `${new Date(campaign.startDate).toLocaleDateString(
@@ -202,13 +213,17 @@ const handleCopyLink = async () => {
               </p>
             </div>
             <div className="flex justify-between gap-1 sm:gap-0">
-              <p className="text-xs sm:text-sm text-gray-600">Total Liquidity</p>
+              <p className="text-xs sm:text-sm text-gray-600">
+                Total Liquidity
+              </p>
               <p className="text-xs sm:text-sm font-medium">
                 {`$${campaign.totalLiquidity}` || "N/A"}
               </p>
             </div>
             <div className="flex justify-between gap-1 sm:gap-0">
-              <p className="text-xs sm:text-sm text-gray-600">Total Publisher</p>
+              <p className="text-xs sm:text-sm text-gray-600">
+                Total Publisher
+              </p>
               <p className="text-xs sm:text-sm font-medium">
                 {`${campaign.publisherCount}` || "N/A"}
               </p>
@@ -254,16 +269,17 @@ const handleCopyLink = async () => {
             </div>
             <div className="flex justify-center sm:justify-end">
               <button
-                className={`rounded-2xl flex gap-2 sm:gap-3 items-center px-3 sm:px-4 py-1.5 text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`rounded-md flex gap-3 items-center px-4 py-1.5 text-[10px] md:text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                   isJoined
                     ? "bg-green-600 text-white hover:bg-green-700"
                     : "bg-[#330065] text-white hover:bg-purple-800"
                 }`}
                 onClick={handleAccept}
                 disabled={
-                  campaign?.status === "completed" ||
-                  campaign?.status === "Inactive" ||
-                  isJoined
+                  campaign.status === "completed" ||
+                  campaign.status === "inactive" ||
+                  isJoined ||
+                  isCreatedByMe
                 }
               >
                 {isJoined ? "Joined" : "Accept"}
@@ -316,7 +332,9 @@ const handleCopyLink = async () => {
           </div>
         </div>
         <div>
-          <h3 className="text-base sm:text-lg font-medium mb-3 sm:mb-4">Media</h3>
+          <h3 className="text-base sm:text-lg font-medium mb-3 sm:mb-4">
+            Media
+          </h3>
           {campaign.media && campaign.media.length > 0 ? (
             <>
               <div className="bg-gray-100 rounded-lg overflow-hidden">
