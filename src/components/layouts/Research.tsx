@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import ChatBox from "./ChatBox";
+import { apiClient } from "@/utils/apiClient";
 
 type ChatMessage = {
   id: number;
@@ -76,43 +77,63 @@ const Research = () => {
     }
   }, [inputText]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     setHasStartChat(true);
-    if (inputText.trim()) {
-      const message = {
-        id: Date.now(),
-        text: inputText,
-        sender: "user",
+
+    if (!inputText.trim()) return;
+
+    const message = {
+      id: Date.now(),
+      text: inputText,
+      sender: "user",
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
+
+    setMessages((prev) => [...prev, message]);
+    setInputText("");
+    setIsTyping(true);
+
+    try {
+      const data = await apiClient("/api/ai/query", {
+        method: "POST",
+        body: { input: inputText },
+      });
+
+      if (!data || !Array.isArray(data) || data.length === 0) {
+        toast({
+          variant: "destructive",
+          description: "An error occurred while fetching the response.",
+        });
+        return;
+      }
+
+      const response = {
+        id: Date.now() + 1,
+        text: data[0].text || "Sorry, I couldn't generate a response.",
+        sender: "bot",
         timestamp: new Date().toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         }),
       };
-      setMessages([...messages, message]);
-      setInputText("");
 
-      // Simulate bot typing
-      setIsTyping(true);
-      setTimeout(() => {
-        setIsTyping(false);
-        const responses = [
-          "I understand your concern. Let me help you with that.",
-          "That's a great question! Here's what I can tell you...",
-          "Thanks for providing that information. I'll assist you right away.",
-          "I'm here to help! Let me look into that for you.",
-          "Perfect! I can definitely help you with this request.",
-        ];
-        const response = {
-          id: Date.now() + 1,
-          text: responses[Math.floor(Math.random() * responses.length)],
-          sender: "bot",
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        };
-        setMessages((prev) => [...prev, response]);
-      }, 2000);
+      setMessages((prev) => [...prev, response]);
+    } catch (error: any) {
+      const fallbackMessage: ChatMessage = {
+        id: Date.now() + 1,
+        text: "An error occurred while processing your message.",
+        sender: "bot",
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      };
+      setMessages((prev) => [...prev, fallbackMessage]);
+    } finally {
+      setIsTyping(false);
     }
   };
 
@@ -166,6 +187,7 @@ const Research = () => {
 
         if (!url) {
           setIsTyping(false);
+          return;
         }
 
         const message: ChatMessage = {
@@ -191,16 +213,39 @@ const Research = () => {
           });
 
           const data = await response.json();
-          const botMessage: ChatMessage = {
-            id: Date.now() + 1,
-            text: data.text,
-            sender: "bot",
-            timestamp: new Date().toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-          };
-          setMessages((prev) => [...prev, botMessage]);
+
+          // Now send the transcribed text to the AI API
+          try {
+            const aiResponse = await apiClient("/api/ai/query", {
+              method: "POST",
+              body: { input: data.text },
+            });
+
+            const botResponse: ChatMessage = {
+              id: Date.now() + 2,
+              text:
+                aiResponse[0]?.text || "Sorry, I couldn't generate a response.",
+              sender: "bot",
+              timestamp: new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            };
+
+            setMessages((prev) => [...prev, botResponse]);
+          } catch (error) {
+            console.error("AI API error:", error);
+            const fallbackMessage: ChatMessage = {
+              id: Date.now() + 2,
+              text: "An error occurred while processing your message.",
+              sender: "bot",
+              timestamp: new Date().toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            };
+            setMessages((prev) => [...prev, fallbackMessage]);
+          }
         } catch (error) {
           console.error("Whisper API error:", error);
           const errorMessage: ChatMessage = {
@@ -518,25 +563,46 @@ const Research = () => {
         setVoiceChatMessages((prev) => [...prev, userMessage]);
 
         // Generate bot response
-        const botResponse = generateBotResponse(data.text);
-        console.log("🤖 Bot response:", botResponse);
+        try {
+          const aiResponse = await apiClient("/api/ai/query", {
+            method: "POST",
+            body: { input: data.text },
+          });
 
-        const botMessage: ChatMessage = {
-          id: Date.now() + 1,
-          text: botResponse,
-          sender: "bot",
-          timestamp: new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        };
+          const botText =
+            aiResponse[0]?.text || "Sorry, I couldn't generate a response.";
 
-        setVoiceChatMessages((prev) => [...prev, botMessage]);
+          const botMessage: ChatMessage = {
+            id: Date.now() + 1,
+            text: botText,
+            sender: "bot",
+            timestamp: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          };
 
-        // Speak the response
-        setTimeout(() => {
-          speak(botResponse);
-        }, 200);
+          setVoiceChatMessages((prev) => [...prev, botMessage]);
+
+          // Speak the response
+          setTimeout(() => {
+            speak(botText);
+          }, 200);
+        } catch (error) {
+          console.error("AI API error:", error);
+
+          const fallbackMessage: ChatMessage = {
+            id: Date.now() + 1,
+            text: "An error occurred while processing your message.",
+            sender: "bot",
+            timestamp: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          };
+
+          setVoiceChatMessages((prev) => [...prev, fallbackMessage]);
+        }
       } else {
         console.log("❌ No text in response or empty text");
       }
