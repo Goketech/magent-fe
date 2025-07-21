@@ -104,7 +104,6 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
   const handleViewAnalytics = () => {
     setShowAnalytics(!showAnalytics);
   };
-  console.log("analyitcs", formAnalytics);
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(campaign.feedbackFormUrl || "");
