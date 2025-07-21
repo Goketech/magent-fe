@@ -5,8 +5,22 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { apiClient } from "@/utils/apiClient";
 import { useToast } from "@/hooks/use-toast";
+import { FormAnalyticsPanel } from "./FormAnalyticsPanel";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
-interface FormAnalytics {
+export interface FormAnalytics {
   overview: {
     totalSubmissions: number;
     completedSubmissions: number;
@@ -35,11 +49,7 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
   onBack,
 }) => {
   const router = useRouter();
-  const { toast } = useToast();
   const [copied, setCopied] = useState(false);
-  const [expandedFields, setExpandedFields] = useState<{
-    [key: string]: boolean;
-  }>({});
   const [formAnalytics, setFormAnalytics] = useState<FormAnalytics | null>(
     null
   );
@@ -94,7 +104,7 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
   const handleViewAnalytics = () => {
     setShowAnalytics(!showAnalytics);
   };
-
+  console.log("analyitcs", formAnalytics);
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(campaign.feedbackFormUrl || "");
@@ -118,20 +128,8 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
     router.push(`/form/${formId}?edit=true`);
   };
 
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "N/A";
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   return (
     <div className="w-full p-4 bg-white rounded-md shadow">
-      {/* Header with back button */}
       <div className="flex items-center mb-4">
         <button
           onClick={onBack}
@@ -141,8 +139,6 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
           Back
         </button>
       </div>
-
-      {/* Campaign header section */}
       <div
         className="rounded-lg p-3 sm:p-4 mb-4 sm:mb-6 text-white relative overflow-hidden"
         style={{
@@ -363,242 +359,10 @@ const CampaignDetails: React.FC<CampaignDetailsProps> = ({
 
       {/* Analytics Section */}
       {formAnalytics && showAnalytics && (
-        <div className="mt-4 sm:mt-8 border-t pt-4 sm:pt-6">
-          <div className="flex justify-between items-center mb-4 sm:mb-6">
-            <h3 className="text-base sm:text-lg font-medium">Form Analytics</h3>
-            <button
-              onClick={() => setShowAnalytics(false)}
-              className="text-purple-800 hover:text-purple-500 text-xs sm:text-sm"
-            >
-              Hide Analytics
-            </button>
-          </div>
-
-          {/* Form Info */}
-          <div
-            className="rounded-lg p-3 sm:p-4 mb-4 sm:mb-6"
-            style={{
-              backgroundImage:
-                "url('/details.png'), linear-gradient(#330065, #330065)",
-              backgroundSize: "contain",
-              backgroundRepeat: "repeat",
-              backgroundBlendMode: "overlay",
-            }}
-          >
-            <h4 className="font-medium mb-2 text-white text-sm sm:text-base">
-              Form Information
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 text-xs sm:text-sm text-white">
-              <div className="">
-                <span className="opacity-70">Form Title:</span>
-                <span className="ml-2 font-medium">
-                  {formAnalytics.form.title}
-                </span>
-              </div>
-              <div>
-                <span className="opacity-70">Status:</span>
-                <span
-                  className={`ml-2 px-2 py-1 rounded text-xs ${
-                    formAnalytics.form.status === "published"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-yellow-100 text-yellow-800"
-                  }`}
-                >
-                  {formAnalytics.form.status}
-                </span>
-              </div>
-              <div>
-                <span className="opacity-70">Created:</span>
-                <span className="ml-2 font-medium">
-                  {formatDate(formAnalytics.form.createdAt)}
-                </span>
-              </div>
-              <div>
-                <span className="opacity-70">Public:</span>
-                <span className="ml-2 font-medium">
-                  {formAnalytics.form.isPublic ? "Yes" : "No"}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Overview Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
-            <div className="bg-white border rounded-lg p-3 sm:p-4 text-center">
-              <div className="text-lg sm:text-2xl font-bold text-blue-600">
-                {formAnalytics.overview.totalSubmissions}
-              </div>
-              <div className="text-xs sm:text-sm text-gray-600">
-                Total Submissions
-              </div>
-            </div>
-            <div className="bg-white border rounded-lg p-3 sm:p-4 text-center">
-              <div className="text-lg sm:text-2xl font-bold text-green-600">
-                {formAnalytics.overview.completedSubmissions}
-              </div>
-              <div className="text-xs sm:text-sm text-gray-600">Completed</div>
-            </div>
-            <div className="bg-white border rounded-lg p-3 sm:p-4 text-center">
-              <div className="text-lg sm:text-2xl font-bold text-orange-600">
-                {formAnalytics.overview.partialSubmissions}
-              </div>
-              <div className="text-xs sm:text-sm text-gray-600">Partial</div>
-            </div>
-            <div className="bg-white border rounded-lg p-3 sm:p-4 text-center">
-              <div className="text-lg sm:text-2xl font-bold text-purple-600">
-                {formAnalytics.overview.completionRate}%
-              </div>
-              <div className="text-xs sm:text-sm text-gray-600">
-                Completion Rate
-              </div>
-            </div>
-          </div>
-
-          {/* Field Analytics */}
-          {formAnalytics.fieldAnalytics &&
-            Object.keys(formAnalytics.fieldAnalytics).length > 0 && (
-              <div className="bg-white border rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
-                <h4 className="font-medium mb-3 sm:mb-4 text-sm sm:text-base">
-                  Field Responses
-                </h4>
-                <div className="space-y-3 sm:space-y-4">
-                  {Object.entries(formAnalytics.fieldAnalytics).map(
-                    ([fieldId, fieldData]) => (
-                      <div
-                        key={fieldId}
-                        className="border-b pb-3 sm:pb-4 last:border-b-0"
-                      >
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-1 sm:gap-0">
-                          <h5 className="font-medium text-gray-800 capitalize text-sm sm:text-base">
-                            {fieldData.label}
-                          </h5>
-                          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded self-start sm:self-auto">
-                            {fieldData.type}
-                          </span>
-                        </div>
-
-                        {/* Response breakdown */}
-                        <div className="space-y-2">
-                          {fieldData.responses &&
-                          fieldData.responses.length > 0 ? (
-                            <>
-                              {(fieldData.type === "text"
-                                ? expandedFields[fieldId]
-                                  ? fieldData.responses
-                                  : fieldData.responses.slice(-5)
-                                : fieldData.responses
-                              ).map((response: any, index: number) => (
-                                <div
-                                  key={index}
-                                  className="flex justify-between items-center text-xs sm:text-sm"
-                                >
-                                  <span className="text-gray-600 flex-1 pr-2 truncate">
-                                    {fieldData.type === "text"
-                                      ? response._id || "No content"
-                                      : response._id === "option1"
-                                      ? "Option 1"
-                                      : response._id === "option2"
-                                      ? "Option 2"
-                                      : response._id === "option3"
-                                      ? "Option 3"
-                                      : response._id === "option4"
-                                      ? "Option 4"
-                                      : response._id}
-                                  </span>
-
-                                  {/* Only show bar and count for non-text responses */}
-                                  {fieldData.type !== "text" && (
-                                    <div className="flex items-center gap-2 flex-shrink-0">
-                                      <div className="w-12 sm:w-20 bg-gray-200 rounded-full h-2">
-                                        <div
-                                          className="bg-purple-600 h-2 rounded-full"
-                                          style={{
-                                            width: `${
-                                              (response.count /
-                                                formAnalytics.overview
-                                                  .totalSubmissions) *
-                                              100
-                                            }%`,
-                                          }}
-                                        ></div>
-                                      </div>
-                                      <span className="font-medium text-purple-600 min-w-[1.5rem] sm:min-w-[2rem] text-xs sm:text-sm">
-                                        {response.count}
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
-                              ))}
-
-                              {/* Show "See more" for text inputs if more than 5 responses */}
-                              {fieldData.type === "text" &&
-                                fieldData.responses.length > 5 && (
-                                  <button
-                                    onClick={() =>
-                                      setExpandedFields((prev) => ({
-                                        ...prev,
-                                        [fieldId]: !prev[fieldId],
-                                      }))
-                                    }
-                                    className="text-purple-600 text-xs mt-2"
-                                  >
-                                    {expandedFields[fieldId]
-                                      ? "See less"
-                                      : "See more"}
-                                  </button>
-                                )}
-                            </>
-                          ) : (
-                            <div className="text-xs sm:text-sm text-gray-500 italic">
-                              No responses yet
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
-            )}
-
-          {/* div */}
-
-          {/* Last Submission */}
-          <div className="bg-white border rounded-lg p-3 sm:p-4">
-            <h4 className="font-medium mb-2 text-sm sm:text-base">
-              Last Submission
-            </h4>
-            <p className="text-xs sm:text-sm text-gray-600">
-              {formAnalytics.overview.lastSubmission
-                ? formatDate(formAnalytics.overview.lastSubmission)
-                : "No submissions yet"}
-            </p>
-          </div>
-
-          {/* Recent Submissions */}
-          {formAnalytics.recentSubmissions.length > 0 && (
-            <div className="mt-4 bg-white border rounded-lg p-3 sm:p-4">
-              <h4 className="font-medium mb-2 text-sm sm:text-base">
-                Recent Submissions
-              </h4>
-              <div className="space-y-2">
-                {formAnalytics.recentSubmissions.map((submission, index) => (
-                  <div
-                    key={index}
-                    className="text-xs sm:text-sm border-b pb-2 last:border-b-0"
-                  >
-                    <span className="text-gray-600">
-                      Submission {index + 1} -{" "}
-                      {formatDate(
-                        submission.submittedAt || submission.createdAt
-                      )}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+        <FormAnalyticsPanel
+          formAnalytics={formAnalytics}
+          setShowAnalytics={setShowAnalytics}
+        />
       )}
     </div>
   );
