@@ -233,9 +233,9 @@ export const FormAnalyticsPanel = ({
                       <h5 className="font-medium text-gray-800 capitalize text-sm sm:text-base">
                         {fieldData.label}
                       </h5>
-                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded self-start sm:self-auto">
+                      {/* <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded self-start sm:self-auto">
                         {fieldData.type}
-                      </span>
+                      </span> */}
                     </div>
 
                     {/* Chart or Text Response Display */}
@@ -295,10 +295,15 @@ export const FormAnalyticsPanel = ({
                     )}
 
                     {/* Response breakdown */}
-                    <div className="space-y-2">
+
+                    {(fieldData.type === "text" ||
+                      (!shouldUsePieChart && !shouldUseBarChart)) && (
+                       <div className="space-y-2">
                       {fieldData.responses && fieldData.responses.length > 0 ? (
                         <>
-                          {fieldData.type === "text" ? (
+                          {!["checkbox", "radio", "select"].includes(
+                            fieldData.type
+                          ) ? (
                             // Text field responses
                             <>
                               {(expandedFields[fieldId]
@@ -398,6 +403,8 @@ export const FormAnalyticsPanel = ({
                         </div>
                       )}
                     </div>
+                    )}
+                   
                   </div>
                 );
               }
