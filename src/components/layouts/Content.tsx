@@ -21,6 +21,11 @@ interface TwitterProfile {
   username: string;
 }
 
+interface LinkedInProfile {
+  name: string; // Full name
+  picture: string; // Profile picture URL
+}
+
 function Content() {
   const { toast } = useToast();
   const { jwt, connected, authenticate } = useAuth();
@@ -57,6 +62,21 @@ function Content() {
     fetchProfile();
   }, []);
 
+  useEffect(() => {
+    const fetchLinkedinProfile = async () => {
+      const profile = await fetchLinkedInProfile();
+      updateStepData({
+        socialMediaAccount: {
+          name: profile!.name,
+          userName: '',
+          profilePicture: profile!.picture,
+        },
+      });
+    };
+
+    fetchLinkedinProfile();
+  }, []);
+
   const handleTwitterLogin = async () => {
     try {
       const response = await fetch("/api/auth/twitter/login", {
@@ -78,6 +98,29 @@ function Content() {
       console.error("Auth error:", error);
     }
   };
+
+  const handleLinkedInLogin = async () => {
+    try {
+      const response = await fetch("/api/auth/linkedIn/login", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Unable to authenticate with Linkedin");
+      }
+
+      const data = await response.json();
+      console.log("data", data)
+      localStorage.setItem("linkedin_oauth_state", data.state);
+      localStorage.setItem("linkedin_code_verifier", data.codeVerifier);
+      window.location.href = data.url;
+    } catch (error) {
+      console.error("Auth error:", error);
+    }
+  }
 
   const handleDisconnectTwitter = async () => {
     try {
@@ -119,6 +162,33 @@ function Content() {
       return null;
     }
   }
+
+  const fetchLinkedInProfile = async (): Promise<LinkedInProfile | null> => {
+  try {
+    const accessToken = localStorage.getItem("linkedin_access_token");
+
+    if (!accessToken) {
+      throw new Error("No access token found");
+    }
+
+    const response = await fetch("/api/auth/linkedIn/me", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch user profile");
+    }
+
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error("Error fetching LinkedIn profile:", error);
+    return null;
+  }
+};
+
 
   const generateSampleTweet = async () => {
     setIsPublishing(false);
@@ -568,52 +638,101 @@ function Content() {
                     <h2 className="text-[20px] font-semibold">
                       Connect your social media account
                     </h2>
-                    <div className="border p-4 flex justify-between items-center mt-4 bg-[#F6F6F6] rounded-[4px]">
-                      {stepData.socialMediaAccount.name ? (
-                        <>
-                          <div className="flex gap-3 items-center">
-                            <Image
-                              src={stepData.socialMediaAccount.profilePicture}
-                              alt="twitter"
-                              width={40}
-                              height={40}
-                            />
-                            <div>
-                              <p className="text-[#212221] text-base font-medium">
-                                {stepData.socialMediaAccount.name}
-                              </p>
-                              <p className="text-[#6A6B6A] text-sm">
-                                @{stepData.socialMediaAccount.userName}
-                              </p>
+                    <div className="flex flex-col space-y-3">
+                      <div className="border p-4 flex justify-between items-center mt-4 bg-[#F6F6F6] rounded-[4px]">
+                        {stepData.socialMediaAccount.name ? (
+                          <>
+                            <div className="flex gap-3 items-center">
+                              <Image
+                                src={stepData.socialMediaAccount.profilePicture}
+                                alt="twitter"
+                                width={40}
+                                height={40}
+                              />
+                              <div>
+                                <p className="text-[#212221] text-base font-medium">
+                                  {stepData.socialMediaAccount.name}
+                                </p>
+                                <p className="text-[#6A6B6A] text-sm">
+                                  @{stepData.socialMediaAccount.userName}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                          <button
-                            className="text-red-500 hover:text-red-600 transition"
-                            onClick={handleDisconnectTwitter}
-                          >
-                            Disconnect
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-[#212221] text-sm flex gap-3 items-center">
-                            {" "}
-                            <Image
-                              src="/x.svg"
-                              alt="twitter"
-                              width={16}
-                              height={14}
-                            />{" "}
-                            Connect your account
-                          </span>
-                          <button
-                            className="text-[#330065] text-sm hover:text-[#220044] transition"
-                            onClick={handleTwitterLogin}
-                          >
-                            Connect
-                          </button>
-                        </>
-                      )}
+                            <button
+                              className="text-red-500 hover:text-red-600 transition"
+                              onClick={handleDisconnectTwitter}
+                            >
+                              Disconnect
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-[#212221] text-sm flex gap-3 items-center">
+                              {" "}
+                              <Image
+                                src="/x.svg"
+                                alt="twitter"
+                                width={16}
+                                height={14}
+                              />{" "}
+                              Connect your account
+                            </span>
+                            <button
+                              className="text-[#330065] text-sm hover:text-[#220044] transition"
+                              onClick={handleTwitterLogin}
+                            >
+                              Connect
+                            </button>
+                          </>
+                        )}
+                      </div>
+                      <div className="border p-4 flex justify-between items-center mt-4 bg-[#F6F6F6] rounded-[4px]">
+                        {stepData.socialMediaAccount.name ? (
+                          <>
+                            <div className="flex gap-3 items-center">
+                              <Image
+                                src={stepData.socialMediaAccount.profilePicture}
+                                alt="twitter"
+                                width={40}
+                                height={40}
+                              />
+                              <div>
+                                <p className="text-[#212221] text-base font-medium">
+                                  {stepData.socialMediaAccount.name}
+                                </p>
+                                <p className="text-[#6A6B6A] text-sm">
+                                  @{stepData.socialMediaAccount.userName}
+                                </p>
+                              </div>
+                            </div>
+                            <button
+                              className="text-red-500 hover:text-red-600 transition"
+                              onClick={handleDisconnectTwitter}
+                            >
+                              Disconnect
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-[#212221] text-sm flex gap-3 items-center">
+                              {" "}
+                              <Image
+                                src="/linkedin.svg"
+                                alt="twitter"
+                                width={16}
+                                height={14}
+                              />{" "}
+                              Connect your account
+                            </span>
+                            <button
+                              className="text-[#330065] text-sm hover:text-[#220044] transition"
+                              onClick={handleLinkedInLogin}
+                            >
+                              Connect
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )}

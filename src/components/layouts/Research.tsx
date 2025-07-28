@@ -209,6 +209,7 @@ const Research = () => {
 
         const formData = new FormData();
         formData.append("file", audioBlob, "recording.webm");
+        formData.append("language", "en");
 
         try {
           const response = await fetch("/api/whisper", {
@@ -679,6 +680,8 @@ const Research = () => {
       // Clean up any existing resources first
       cleanupAudioResources();
 
+      setHasStartChat(true);
+
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: true,
@@ -695,7 +698,6 @@ const Research = () => {
       setVoiceChatEnabled(true);
       setIsVoiceChatActive(true);
       setVoiceChatMessages([]);
-      setHasStartChat(true);
       setIsProcessing(false);
 
       setVoiceChatMessages([
@@ -923,7 +925,7 @@ const Research = () => {
           />
 
           {/* Waveform Canvas Overlay */}
-          {recording && (
+          {recording && (!isSpeaking || isProcessing ) && (
             <div className="absolute left-0 top-0 w-full h-full pointer-events-none flex px-10 items-center justify-center overflow-hidden">
               <canvas
                 ref={canvasRef}

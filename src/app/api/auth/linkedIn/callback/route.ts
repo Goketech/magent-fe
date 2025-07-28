@@ -13,7 +13,7 @@ export async function POST(request: NextRequest){
 
     return NextResponse.json(tokens);
   } catch (error) {
-   console.error('Token exchange error:', error);
+  console.error('Token exchange error:', error instanceof Error ? error.message : JSON.stringify(error));
    return NextResponse.json(
      { error: 'Failed to exchange code for tokens' },
      { status: 500 }

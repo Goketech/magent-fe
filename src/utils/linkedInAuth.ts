@@ -54,8 +54,8 @@ export class LinkedInAuth {
       redirect_uri: this.config.redirectUri,
       scope: this.config.scopes.join(" "),
       state,
-      code_challenge: codeChallenge,
-      code_challenge_method: "S256",
+      // code_challenge: codeChallenge,
+      // code_challenge_method: "S256",
     });
 
     return {
@@ -86,30 +86,39 @@ export class LinkedInAuth {
       redirect_uri: this.config.redirectUri,
       client_id: this.config.clientId,
       client_secret: this.config.clientSecret,
-      code_verifier: codeVerifier,
+      // code_verifier: codeVerifier,
     });
 
-    console.log(
-      "Fetching token from:",
-      "https://www.linkedin.com/oauth/v2/accessToken"
-    );
+    // Fixed the endpoint URL - removed the extra 'Token' at the end
+    const tokenUrl = "https://www.linkedin.com/oauth/v2/accessToken";
+    console.log("Fetching token from:", tokenUrl);
+    console.log("Request params:", params.toString());
 
-    const response = await fetch(
-      "https://www.linkedin.com/oauth/v2/accessToken",
-      {
+    try {
+      const response = await fetch(tokenUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
+          "Accept": "application/json",
         },
         body: params.toString(),
+      });
+
+      console.log("Response status:", response.status);
+      console.log("Response headers:", Object.fromEntries(response.headers.entries()));
+
+      const responseText = await response.text();
+      console.log("Response body:", responseText);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch access token: ${response.status} ${response.statusText} - ${responseText}`);
       }
-    );
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch access token: ${response.statusText}`);
+      return JSON.parse(responseText);
+    } catch (error) {
+      console.error("Detailed fetch error:", error);
+      throw error;
     }
-
-    return response.json();
   }
 
   // Refresh an expired access token
@@ -174,5 +183,10 @@ export const linkedInAuth = new LinkedInAuth({
   clientId: process.env.LINKEDIN_CLIENT_ID!,
   clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
   redirectUri: process.env.LINKEDIN_REDIRECT_URI!,
-  scopes: ["r_liteprofile", "r_emailaddress", "w_member_social"],
+  scopes: [
+    "openid", 
+    "profile"
+    // "email",
+    // "w_member_social"
+  ],
 });
