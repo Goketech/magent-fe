@@ -77,7 +77,7 @@ function Content() {
           updateStepData({
             socialMediaAccount: {
               name: linkedinProfile.name,
-              userName: '',
+              userName: "",
               profilePicture: linkedinProfile.picture,
             },
           });
@@ -714,9 +714,6 @@ function Content() {
                               <div>
                                 <p className="text-[#212221] text-base font-medium">
                                   {stepData.socialMediaAccount.name}
-                                </p>
-                                <p className="text-[#6A6B6A] text-sm">
-                                  @{stepData.socialMediaAccount.userName}
                                 </p>
                               </div>
                             </div>
