@@ -22,8 +22,8 @@ interface TwitterProfile {
 }
 
 interface LinkedInProfile {
-  name: string; // Full name
-  picture: string; // Profile picture URL
+  name: string;
+  picture: string;
 }
 
 function Content() {
@@ -48,34 +48,48 @@ function Content() {
     inputMode === "type" ? stepData.typeTopics : stepData.selectTopics;
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const profile = await fetchTwitterProfile();
-      updateStepData({
-        socialMediaAccount: {
-          name: profile!.name,
-          userName: profile!.username,
-          profilePicture: profile!.profile_image_url,
-        },
-      });
-    };
+  const initializeProfiles = async () => {
+    const twitterToken = localStorage.getItem("twitter_access_token");
+    const linkedinToken = localStorage.getItem("linkedin_access_token");
+    
+    if (twitterToken) {
+      try {
+        const twitterProfile = await fetchTwitterProfile();
+        if (twitterProfile) {
+          updateStepData({
+            socialMediaAccount: {
+              name: twitterProfile.name,
+              userName: twitterProfile.username,
+              profilePicture: twitterProfile.profile_image_url,
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching Twitter profile:", error);
+      }
+    }
+    
+    if (linkedinToken) {
+      try {
+        const linkedinProfile = await fetchLinkedInProfile();
+        if (linkedinProfile) {
+          console.log(linkedinProfile);
+          updateStepData({
+            socialMediaAccount: {
+              name: linkedinProfile.name,
+              userName: '',
+              profilePicture: linkedinProfile.picture,
+            },
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching LinkedIn profile:", error);
+      }
+    }
+  };
 
-    fetchProfile();
-  }, []);
-
-  useEffect(() => {
-    const fetchLinkedinProfile = async () => {
-      const profile = await fetchLinkedInProfile();
-      updateStepData({
-        socialMediaAccount: {
-          name: profile!.name,
-          userName: '',
-          profilePicture: profile!.picture,
-        },
-      });
-    };
-
-    fetchLinkedinProfile();
-  }, []);
+  initializeProfiles();
+}, []);
 
   const handleTwitterLogin = async () => {
     try {
@@ -182,7 +196,8 @@ function Content() {
     }
 
     const data = await response.json();
-    return data.data;
+    console.log(data)
+    return data;
   } catch (error) {
     console.error("Error fetching LinkedIn profile:", error);
     return null;

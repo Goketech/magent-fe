@@ -185,8 +185,8 @@ export const linkedInAuth = new LinkedInAuth({
   redirectUri: process.env.LINKEDIN_REDIRECT_URI!,
   scopes: [
     "openid", 
-    "profile"
-    // "email",
-    // "w_member_social"
+    "profile",
+    "email",
+    "w_member_social"
   ],
 });
