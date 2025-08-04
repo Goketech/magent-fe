@@ -531,6 +531,7 @@ const joinedStatuses = useMemo(() => {
       onBack={handleBack}
       handleJoinSuccess={handleJoinSuccess}
       isCampaignJoined ={isCampaignJoined}
+      mycampaigns={userCampaigns}
     />
   ) : selectedUserCampaign ? (
     <CampaignDetails

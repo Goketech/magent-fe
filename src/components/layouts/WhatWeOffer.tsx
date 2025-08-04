@@ -220,7 +220,7 @@ const allOfferCards: OfferCardData[] = [
     color: "bg-[#C8B6FF]",
     label: "Research",
     title: "Intelligent research made simple with AI",
-    text: "We simplify market research by aggregating data from diverse sources, saving organizations valuable time and effort. We helps define clear marketing objectives, identify market size and potential, uncover industry trends, discover ideal customers and competitors.",
+    text: "We simplify market research by aggregating data from diverse sources, saving organizations valuable time and effort. We help define clear marketing objectives, identify market size and potential, uncover industry trends, discover ideal customers and competitors.",
   },
   {
     id: "reports",

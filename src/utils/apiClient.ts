@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 // import {showUnauthorizedToast} from "@/utils/capitalize"
 
+
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
 interface ApiOptions {
@@ -8,6 +9,11 @@ interface ApiOptions {
   body?: any;
   token?: string; // optional override
 }
+const handleUnauthorized = () => {
+  if (typeof window !== "undefined") {
+    window.location.href = "/login";
+  }
+};
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -50,6 +56,7 @@ export const apiClient = async (path: string, options: ApiOptions = {}) => {
     });
 
     if (res.status === 401) {
+      handleUnauthorized();
       throw new Error('Unauthorized - redirecting');
     }
 

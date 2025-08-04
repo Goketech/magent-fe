@@ -248,7 +248,6 @@ function Content() {
     try {
       const response = await apiClient("/twitter/sample-post", {
         method: "POST",
-        token: jwt ?? undefined,
         body: {
           topic:
             inputMode === "type" ? stepData.typeTopics : stepData.selectTopics,
@@ -257,7 +256,7 @@ function Content() {
         },
       });
 
-      if (!response.ok) {
+      if (!response[0].text) {
         toast({
           variant: "destructive",
           description: "Failed to generate sample post. Please try again.",
@@ -265,8 +264,7 @@ function Content() {
         return;
       }
 
-      const data = await response.json();
-      updateStepData({ samplePost: data[0].text });
+      updateStepData({ samplePost: response[0].text });
       toast({
         variant: "success",
         description: "Sample post generated successfully",
@@ -383,7 +381,7 @@ function Content() {
       }
     );
 
-    if (!updateResponse.ok) {
+    if (!updateResponse) {
       toast({
         variant: "destructive",
         description: "Failed to verify transaction. Please try again.",
@@ -437,7 +435,7 @@ function Content() {
         },
       });
 
-      if (!response.ok) {
+      if (!response) {
         toast({
           variant: "destructive",
           description: "Failed to schedule tweets. Please try again.",
@@ -446,7 +444,6 @@ function Content() {
         return;
       }
 
-      const data = await response.json();
       toast({
         variant: "success",
         description: "Tweet Scheduled successfully",

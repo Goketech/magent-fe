@@ -51,7 +51,7 @@
     "react-loader-spinner": "^6.1.6",
     "react-slick": "^0.30.3",
     "react-typed": "^2.0.12",
-    "recharts": "^2.15.0",
+    "recharts": "^2.15.4",
     "slick-carousel": "^1.8.1",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
