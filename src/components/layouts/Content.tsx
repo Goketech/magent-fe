@@ -40,6 +40,13 @@ function Content() {
   const [isPublishing, setIsPublishing] = useState(false);
   const [showPreviewPopup, setShowPreviewPopup] = useState(false);
   const [inputMode, setInputMode] = useState<"type" | "select">("type");
+  const [isTwitterConnected, setIsTwitterConnected] = useState(false);
+  const [isLinkedInConnected, setIsLinkedInConnected] = useState(false);
+  const [twitterProfile, setTwitterProfile] = useState<TwitterProfile | null>(
+    null
+  );
+  const [linkedinProfile, setLinkedInProfile] =
+    useState<LinkedInProfile | null>(null);
   // const [isRegenerating, setIsRegenerating] = useState(false);
   const maxTopics = 2;
   const { stepData, updateStepData } = useStepContext();
@@ -48,48 +55,52 @@ function Content() {
     inputMode === "type" ? stepData.typeTopics : stepData.selectTopics;
 
   useEffect(() => {
-  const initializeProfiles = async () => {
-    const twitterToken = localStorage.getItem("twitter_access_token");
-    const linkedinToken = localStorage.getItem("linkedin_access_token");
-    
-    if (twitterToken) {
-      try {
-        const twitterProfile = await fetchTwitterProfile();
-        if (twitterProfile) {
-          updateStepData({
-            socialMediaAccount: {
-              name: twitterProfile.name,
-              userName: twitterProfile.username,
-              profilePicture: twitterProfile.profile_image_url,
-            },
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching Twitter profile:", error);
-      }
-    }
-    
-    if (linkedinToken) {
-      try {
-        const linkedinProfile = await fetchLinkedInProfile();
-        if (linkedinProfile) {
-          console.log(linkedinProfile);
-          updateStepData({
-            socialMediaAccount: {
-              name: linkedinProfile.name,
-              userName: "",
-              profilePicture: linkedinProfile.picture,
-            },
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching LinkedIn profile:", error);
-      }
-    }
-  };
+    const initializeProfiles = async () => {
+      const twitterToken = localStorage.getItem("twitter_access_token");
+      const linkedinToken = localStorage.getItem("linkedin_access_token");
 
-  initializeProfiles();
-}, []);
+      if (twitterToken) {
+        try {
+          const twitterProfile = await fetchTwitterProfile();
+          if (twitterProfile) {
+            updateStepData({
+              socialMediaAccount: {
+                name: twitterProfile.name,
+                userName: twitterProfile.username,
+                profilePicture: twitterProfile.profile_image_url,
+              },
+            });
+            setTwitterProfile(twitterProfile);
+            setIsTwitterConnected(true);
+          }
+        } catch (error) {
+          console.error("Error fetching Twitter profile:", error);
+        }
+      }
+
+      if (linkedinToken) {
+        try {
+          const linkedinProfile = await fetchLinkedInProfile();
+          if (linkedinProfile) {
+            console.log(linkedinProfile);
+            updateStepData({
+              socialMediaAccount: {
+                name: linkedinProfile.name,
+                userName: "",
+                profilePicture: linkedinProfile.picture,
+              },
+            });
+            setLinkedInProfile(linkedinProfile);
+            setIsLinkedInConnected(true);
+          }
+        } catch (error) {
+          console.error("Error fetching LinkedIn profile:", error);
+        }
+      }
+    };
+
+    initializeProfiles();
+  }, []);
 
   const handleTwitterLogin = async () => {
     try {
@@ -127,18 +138,20 @@ function Content() {
       }
 
       const data = await response.json();
-      console.log("data", data)
+      console.log("data", data);
       localStorage.setItem("linkedin_oauth_state", data.state);
       localStorage.setItem("linkedin_code_verifier", data.codeVerifier);
       window.location.href = data.url;
     } catch (error) {
       console.error("Auth error:", error);
     }
-  }
+  };
 
   const handleDisconnectTwitter = async () => {
     try {
       localStorage.removeItem("twitter_access_token");
+      setTwitterProfile(null);
+      setIsTwitterConnected(false);
       updateStepData({
         socialMediaAccount: {
           name: "",
@@ -148,6 +161,23 @@ function Content() {
       });
     } catch (error) {
       console.error("Error disconnecting Twitter:", error);
+    }
+  };
+
+  const handleDisconnectLinkedIn = async () => {
+    try {
+      localStorage.removeItem("linkedin_access_token");
+      setLinkedInProfile(null);
+      setIsLinkedInConnected(false);
+      updateStepData({
+        socialMediaAccount: {
+          name: "",
+          userName: "",
+          profilePicture: "",
+        },
+      });
+    } catch (error) {
+      console.error("Error disconnecting LinkedIn:", error);
     }
   };
 
@@ -178,32 +208,31 @@ function Content() {
   }
 
   const fetchLinkedInProfile = async (): Promise<LinkedInProfile | null> => {
-  try {
-    const accessToken = localStorage.getItem("linkedin_access_token");
+    try {
+      const accessToken = localStorage.getItem("linkedin_access_token");
 
-    if (!accessToken) {
-      throw new Error("No access token found");
+      if (!accessToken) {
+        throw new Error("No access token found");
+      }
+
+      const response = await fetch("/api/auth/linkedIn/me", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch user profile");
+      }
+
+      const data = await response.json();
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error("Error fetching LinkedIn profile:", error);
+      return null;
     }
-
-    const response = await fetch("/api/auth/linkedIn/me", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch user profile");
-    }
-
-    const data = await response.json();
-    console.log(data)
-    return data;
-  } catch (error) {
-    console.error("Error fetching LinkedIn profile:", error);
-    return null;
-  }
-};
-
+  };
 
   const generateSampleTweet = async () => {
     setIsPublishing(false);
@@ -654,42 +683,18 @@ function Content() {
                       Connect your social media account
                     </h2>
                     <div className="flex flex-col space-y-3">
-                      <div className="border p-4 flex justify-between items-center mt-4 bg-[#F6F6F6] rounded-[4px]">
-                        {stepData.socialMediaAccount.name ? (
-                          <>
-                            <div className="flex gap-3 items-center">
-                              <Image
-                                src={stepData.socialMediaAccount.profilePicture}
-                                alt="twitter"
-                                width={40}
-                                height={40}
-                              />
-                              <div>
-                                <p className="text-[#212221] text-base font-medium">
-                                  {stepData.socialMediaAccount.name}
-                                </p>
-                                <p className="text-[#6A6B6A] text-sm">
-                                  @{stepData.socialMediaAccount.userName}
-                                </p>
-                              </div>
-                            </div>
-                            <button
-                              className="text-red-500 hover:text-red-600 transition"
-                              onClick={handleDisconnectTwitter}
-                            >
-                              Disconnect
-                            </button>
-                          </>
-                        ) : (
-                          <>
+                      {/* Show connect cards only when neither is connected */}
+                      {!isTwitterConnected && !isLinkedInConnected && (
+                        <>
+                          {/* Twitter Connect */}
+                          <div className="border p-4 flex justify-between items-center mt-4 bg-[#F6F6F6] rounded-[4px]">
                             <span className="text-[#212221] text-sm flex gap-3 items-center">
-                              {" "}
                               <Image
                                 src="/x.svg"
                                 alt="twitter"
                                 width={16}
                                 height={14}
-                              />{" "}
+                              />
                               Connect your account
                             </span>
                             <button
@@ -698,42 +703,17 @@ function Content() {
                             >
                               Connect
                             </button>
-                          </>
-                        )}
-                      </div>
-                      <div className="border p-4 flex justify-between items-center mt-4 bg-[#F6F6F6] rounded-[4px]">
-                        {stepData.socialMediaAccount.name ? (
-                          <>
-                            <div className="flex gap-3 items-center">
-                              <Image
-                                src={stepData.socialMediaAccount.profilePicture}
-                                alt="twitter"
-                                width={40}
-                                height={40}
-                              />
-                              <div>
-                                <p className="text-[#212221] text-base font-medium">
-                                  {stepData.socialMediaAccount.name}
-                                </p>
-                              </div>
-                            </div>
-                            <button
-                              className="text-red-500 hover:text-red-600 transition"
-                              onClick={handleDisconnectTwitter}
-                            >
-                              Disconnect
-                            </button>
-                          </>
-                        ) : (
-                          <>
+                          </div>
+
+                          {/* LinkedIn Connect */}
+                          <div className="border p-4 flex justify-between items-center mt-4 bg-[#F6F6F6] rounded-[4px]">
                             <span className="text-[#212221] text-sm flex gap-3 items-center">
-                              {" "}
                               <Image
                                 src="/linkedin.svg"
-                                alt="twitter"
+                                alt="linkedin"
                                 width={16}
                                 height={14}
-                              />{" "}
+                              />
                               Connect your account
                             </span>
                             <button
@@ -742,9 +722,62 @@ function Content() {
                             >
                               Connect
                             </button>
-                          </>
-                        )}
-                      </div>
+                          </div>
+                        </>
+                      )}
+
+                      {/* Twitter Connected Card */}
+                      {isTwitterConnected && twitterProfile && (
+                        <div className="border p-4 flex justify-between items-center mt-4 bg-[#F6F6F6] rounded-[4px]">
+                          <div className="flex gap-3 items-center">
+                            <Image
+                              src={twitterProfile.profile_image_url}
+                              alt="twitter"
+                              width={40}
+                              height={40}
+                            />
+                            <div>
+                              <p className="text-[#212221] text-base font-medium">
+                                {twitterProfile.name}
+                              </p>
+                              <p className="text-[#6A6B6A] text-sm">
+                                @{twitterProfile.username}
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            className="text-red-500 hover:text-red-600 transition"
+                            onClick={handleDisconnectTwitter}
+                          >
+                            Disconnect
+                          </button>
+                        </div>
+                      )}
+
+                      {/* LinkedIn Connected Card */}
+                      {isLinkedInConnected && linkedinProfile && (
+                        <div className="border p-4 flex justify-between items-center mt-4 bg-[#F6F6F6] rounded-[4px]">
+                          <div className="flex gap-3 items-center">
+                            <Image
+                              src={linkedinProfile.picture}
+                              alt="linkedin"
+                              width={40}
+                              height={40}
+                            />
+                            <div>
+                              <p className="text-[#212221] text-base font-medium">
+                                {linkedinProfile.name}
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            className="text-red-500 hover:text-red-600 transition"
+                            onClick={handleDisconnectLinkedIn}
+                          >
+                            Disconnect
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
