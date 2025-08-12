@@ -7,6 +7,7 @@ import {
   MdSettings,
   MdLogout,
   MdMenu,
+  MdNotifications,
 } from "react-icons/md";
 import React, {useState} from "react";
 import Image from "next/image";
@@ -34,6 +35,7 @@ const SideNav = ({
     { id: "Research", label: "Research", icon: <MdManageSearch size={20} /> },
     { id: "Campaign", label: "Campaign", icon: <MdAdsClick size={20} /> },
     { id: "Content", label: "SMM", icon: <MdFlashOn size={20} /> },
+    { id: "Notification", label: "Notification", icon: <MdNotifications size={20} /> },
     { id: "Library", label: "Library", icon: <MdBookmark size={20} /> },
   ];
 
