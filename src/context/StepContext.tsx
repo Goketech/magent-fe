@@ -12,6 +12,7 @@ import Research from "@/components/layouts/Research";
 import Library from "@/components/layouts/Library";
 import Advert from "@/components/layouts/Advert";
 import Campaign from "@/components/layouts/Campaign";
+import Notification from "@/components/layouts/Notification";
 import { useAuth } from "./AuthProvider";
 
 interface Topic {
@@ -88,6 +89,7 @@ export const StepProvider = ({ children }: { children: ReactNode }) => {
     Library,
     Advert,
     Campaign,
+    Notification,
   };
 
   const updateStepData = (newData: Partial<StepData>) => {

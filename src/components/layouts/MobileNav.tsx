@@ -5,6 +5,7 @@ import {
   MdAdsClick,
   MdFlashOn,
   MdBookmark,
+  MdNotifications,
   MdSettings,
   MdLogout,
 } from "react-icons/md";
@@ -23,6 +24,7 @@ const MobileNav = () => {
     { id: "Research", label: "Research", icon: <MdManageSearch size={20} /> },
     { id: "Campaign", label: "Campaign", icon: <MdAdsClick size={20} /> },
     { id: "Content", label: "SMM", icon: <MdFlashOn size={20} /> },
+    { id: "Notification", label: "Notification", icon: <MdNotifications size={20} /> },
     { id: "Library", label: "Library", icon: <MdBookmark size={20} /> },
   ];
 
