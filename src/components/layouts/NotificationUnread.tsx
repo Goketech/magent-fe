@@ -33,8 +33,8 @@ const NotificationUnread = () => {
   return (
     <div className="space-y-6">
       {notifications.map((note, idx) => (
-        <div key={idx} className="border-b border-gray-200 pb-4 md:flex  md:items-start">
-          <div className=" bg-red-200 w-[110px]">
+        <div key={idx} className="border-b border-gray-200 pb-4 md:flex  md:items-start gap-6">
+          <div className=" w-[110px]">
             <p className="text-[.8rem] text-gray-500">{note.time}</p>
           </div>
           <div>
