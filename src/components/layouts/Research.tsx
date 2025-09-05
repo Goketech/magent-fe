@@ -49,7 +49,7 @@ const Research = () => {
   const voiceStartTimer = useRef<NodeJS.Timeout | null>(null);
   const [isVoiceLikelyDetected, setIsVoiceLikelyDetected] = useState(false);
   const silentCounterRef = useRef(0);
-  const VOICE_THRESHOLD = 0.04;
+  const VOICE_THRESHOLD = 0.03;
   const SILENCE_COUNT_LIMIT = 10;
   const pulseCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const hasAlreadyProcessed = useRef(false);
@@ -122,9 +122,13 @@ const Research = () => {
 
       setMessages((prev) => [...prev, response]);
     } catch (error: any) {
+      const errorMessage =
+        error?.error ||
+        error?.message ||
+        "An error occurred while processing your message.";
       const fallbackMessage: ChatMessage = {
         id: Date.now() + 1,
-        text: "An error occurred while processing your message.",
+        text: errorMessage,
         sender: "bot",
         timestamp: new Date().toLocaleTimeString([], {
           hour: "2-digit",
@@ -205,6 +209,7 @@ const Research = () => {
 
         const formData = new FormData();
         formData.append("file", audioBlob, "recording.webm");
+        formData.append("language", "en");
 
         try {
           const response = await fetch("/api/whisper", {
@@ -233,11 +238,15 @@ const Research = () => {
             };
 
             setMessages((prev) => [...prev, botResponse]);
-          } catch (error) {
+          } catch (error: any) {
             console.error("AI API error:", error);
+            const errorMessage =
+              error?.error ||
+              error?.message ||
+              "An error occurred while processing your message.";
             const fallbackMessage: ChatMessage = {
               id: Date.now() + 2,
-              text: "An error occurred while processing your message.",
+              text: errorMessage,
               sender: "bot",
               timestamp: new Date().toLocaleTimeString([], {
                 hour: "2-digit",
@@ -523,6 +532,7 @@ const Research = () => {
     try {
       const formData = new FormData();
       formData.append("file", audioBlob, "recording.webm");
+      formData.append("language", "en");
 
       console.log("📡 Sending audio to Whisper API...");
       const response = await fetch("/api/whisper", {
@@ -588,12 +598,17 @@ const Research = () => {
           setTimeout(() => {
             speak(botText);
           }, 200);
-        } catch (error) {
+        } catch (error: any) {
           console.error("AI API error:", error);
+
+          const errorMessage =
+            error?.error ||
+            error?.message ||
+            "An error occurred while processing your message.";
 
           const fallbackMessage: ChatMessage = {
             id: Date.now() + 1,
-            text: "An error occurred while processing your message.",
+            text: errorMessage,
             sender: "bot",
             timestamp: new Date().toLocaleTimeString([], {
               hour: "2-digit",
@@ -665,6 +680,8 @@ const Research = () => {
       // Clean up any existing resources first
       cleanupAudioResources();
 
+      setHasStartChat(true);
+
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: true,
@@ -681,7 +698,6 @@ const Research = () => {
       setVoiceChatEnabled(true);
       setIsVoiceChatActive(true);
       setVoiceChatMessages([]);
-      setHasStartChat(true);
       setIsProcessing(false);
 
       setVoiceChatMessages([
@@ -909,7 +925,7 @@ const Research = () => {
           />
 
           {/* Waveform Canvas Overlay */}
-          {recording && (
+          {recording && (!isSpeaking || isProcessing ) && (
             <div className="absolute left-0 top-0 w-full h-full pointer-events-none flex px-10 items-center justify-center overflow-hidden">
               <canvas
                 ref={canvasRef}

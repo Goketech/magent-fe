@@ -5,7 +5,7 @@ const LINKEDIN_API_URL = "https://api.linkedin.com/v2/userinfo";
 
 export async function GET(req: NextRequest) {
   try {
-    const authHeader = req.headers.get("authorization"); // Get the Bearer token from the request
+    const authHeader = req.headers.get("authorization");
 
     if (!authHeader) {
       return NextResponse.json({ error: "Missing Authorization header" }, { status: 401 });
@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     const response = await fetch(LINKEDIN_API_URL, {
       method: "GET",
       headers: {
-        Authorization: authHeader, // Pass Bearer token
+        Authorization: authHeader,
         "Content-Type": "application/json",
       },
     });
